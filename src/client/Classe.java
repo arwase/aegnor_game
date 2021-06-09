@@ -6,8 +6,7 @@ import kernel.Constant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Classe
-{
+public class Classe {
     private int id;
     private String name;
     private int MapInit;
@@ -20,14 +19,13 @@ public class Classe
     public ArrayList<BoostStat> _boostVita = new ArrayList<>();
     private ArrayList<BoostStat> _boostSage = new ArrayList<>();
     private ArrayList<BoostStat> _boostAgi = new ArrayList<>();
-    private  ArrayList<BoostStat> _boostChance = new ArrayList<>();
+    private ArrayList<BoostStat> _boostChance = new ArrayList<>();
     private HashMap<Integer, Integer> _stats = new HashMap<>();
     private HashMap<Integer, Integer> _sorts = new HashMap<>();
 
     public Classe(int id, String name, String gfxs, String size, int MapInit, int CellInit, int pdv, String boostVita, String
-                  boostSagesse, String boostForce, String boostIntel, String boostChance, String boostAgil, String stats
-    , String sorts)
-    {
+            boostSagesse, String boostForce, String boostIntel, String boostChance, String boostAgil, String stats
+            , String sorts) {
         this.id = id;
         this.name = name;
         this.MapInit = MapInit;
@@ -64,25 +62,27 @@ public class Classe
             }
         }
     }
-    public int getId()
-    {
+
+    public int getId() {
         return this.id;
     }
+
     public static final BoostStat BoostDefecto = new BoostStat(0, 1, 1);
+
     public static class BoostStat {
 
         public int inicio;
         public int cost;
         public int puntos;
 
-        public BoostStat(int inicio, int cost, int puntos)
-        {
+        public BoostStat(int inicio, int cost, int puntos) {
             this.inicio = inicio;
             this.cost = cost;
             this.puntos = puntos;
         }
     }
-    private void addBoostStat(String sBoost,ArrayList<BoostStat> boost) {
+
+    private void addBoostStat(String sBoost, ArrayList<BoostStat> boost) {
         for (String s : sBoost.split("\\|")) {
             try {
                 String[] ss = s.split(",");
@@ -100,57 +100,49 @@ public class Classe
     }
 
     public BoostStat getBoostStat(int statID, int valorStat) {
-    var boosts = switch (statID) {
-        case Constant.STATS_ADD_VITA -> this._boostVita;
-        case Constant.STATS_ADD_FORC -> this._boostForce;
-        case Constant.STATS_ADD_INTE -> this._boostIntel;
-        case Constant.STATS_ADD_AGIL -> this._boostAgi;
-        case Constant.STATS_ADD_CHAN -> this._boostChance;
-        case Constant.STATS_ADD_SAGE -> this._boostSage;
-        default -> new ArrayList<BoostStat>();
-    };
+        var boosts = switch (statID) {
+            case Constant.STATS_ADD_VITA -> this._boostVita;
+            case Constant.STATS_ADD_FORC -> this._boostForce;
+            case Constant.STATS_ADD_INTE -> this._boostIntel;
+            case Constant.STATS_ADD_AGIL -> this._boostAgi;
+            case Constant.STATS_ADD_CHAN -> this._boostChance;
+            case Constant.STATS_ADD_SAGE -> this._boostSage;
+            default -> new ArrayList<BoostStat>();
+        };
         var boost = BoostDefecto;
-    int temp = -1;
-    for (BoostStat b : boosts) {
-        if (b.inicio >= (temp + 1) && b.inicio <= valorStat) {
-            temp = b.inicio;
-            boost = b;
+        int temp = -1;
+        for (BoostStat b : boosts) {
+            if (b.inicio >= (temp + 1) && b.inicio <= valorStat) {
+                temp = b.inicio;
+                boost = b;
+            }
         }
-    }
-    return boost;
+        return boost;
     }
 
     public Boolean aprenderHechizo(Player perso, int nivel) {
-    AtomicReference<Boolean> loop = new AtomicReference<>(false);
-    this._sorts.forEach((key, value) ->{
-        if (value == nivel) {
-            perso.learnSpell(key, 1);
-            loop.set(true);
-        }
-    });
-    return loop.get();
+        AtomicReference<Boolean> loop = new AtomicReference<>(false);
+        this._sorts.forEach((key, value) -> {
+            if (value == nivel) {
+                perso.learnSpell(key, 1);
+                loop.set(true);
+            }
+        });
+        return loop.get();
     }
 
-    public int getGfxs(int index)
-    {
-        try
-        {
+    public int getGfxs(int index) {
+        try {
             return this._gfxs.get(index);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return id * 10 + 3;
         }
     }
 
-    public int getTallas(int index)
-    {
-        try
-        {
+    public int getTallas(int index) {
+        try {
             return this._size.get(index);
-    }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return 100;
         }
     }

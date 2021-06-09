@@ -82,7 +82,7 @@ public class EventFindMe extends Event {
         }
 
         public String getNextIndice() {
-            if(this.actual > this.indices.length - 1) return null;
+            if (this.actual > this.indices.length - 1) return null;
             String indice = this.indices[this.actual];
             this.actual++;
             return indice;

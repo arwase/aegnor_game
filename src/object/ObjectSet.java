@@ -36,7 +36,7 @@ public class ObjectSet {
                         int stat = Integer.parseInt(infos[0]);
                         int value = Integer.parseInt(infos[1]);
                         //on ajoute a la stat
-                        if(value > 0) {
+                        if (value > 0) {
                             S.addOneStat(stat, value);
                         }
                     } catch (Exception e) {

@@ -9,10 +9,14 @@ import client.Player;
 public interface IEvent {
 
     void prepare();
+
     void perform();
+
     void execute();
+
     void close();
 
     boolean onReceivePacket(EventManager manager, Player player, String packet) throws Exception;
+
     GameCase getEmptyCellForPlayer(Player player);
 }

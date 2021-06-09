@@ -59,7 +59,7 @@ public class QuestPlayer {
                 this.player.delQuestPerso(this.getId());
                 this.removeQuestPlayer();
             }
-        } else if(this.getQuest() == null) {
+        } else if (this.getQuest() == null) {
             if (this.player.getQuestPerso().containsKey(this.getId())) {
                 this.player.delQuestPerso(this.getId());
                 this.removeQuestPlayer();

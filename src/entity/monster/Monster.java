@@ -35,7 +35,7 @@ public class Monster {
     private boolean isCapturable;
     private int aggroDistance = 0;
 
-    public Monster(int id,String name, int gfxId, int align, String colors,
+    public Monster(int id, String name, int gfxId, int align, String colors,
                    String thisGrades, String thisSpells, String thisStats,
                    String thisStatsInfos, String thisPdvs, String thisPoints,
                    String thisInit, int minKamas, int maxKamas, String thisXp, int ia,
@@ -80,7 +80,7 @@ public class Monster {
                 } catch (Exception e) {
                     e.printStackTrace();
                     World.world.logger.error("#1# Erreur lors du chargement du monstre (template) : "
-                             + id);
+                            + id);
                 }
                 //PA / PM
                 int PA = 3;
@@ -214,13 +214,13 @@ public class Monster {
     public enum TipoGrupo {
         FIJO, NORMAL, SOLO_UNA_PELEA, HASTA_QUE_MUERA
     }
+
     public Boolean modifyStats(Byte grade, String packet) {
         try {
             MobGrade mob;
-            if(grades.get((int)grade) != null) {
+            if (grades.get((int) grade) != null) {
                 mob = grades.get((int) grade);
-            }
-            else {
+            } else {
                 return false;
             }
             String[] split = packet.split(Pattern.quote("|"));
@@ -253,12 +253,11 @@ public class Monster {
         StringBuilder strMinKamas = new StringBuilder();
         StringBuilder strMaxKamas = new StringBuilder();
         var e = false;
-        for (int i = 1 ; i < 6; i++) {
+        for (int i = 1; i < 6; i++) {
             MobGrade mob;
-            if(grades.get(i) != null) {
+            if (grades.get(i) != null) {
                 mob = grades.get(i);
-            }
-            else{
+            } else {
                 break;
             }
             if (e) {
@@ -328,7 +327,7 @@ public class Monster {
     }
 
     public MobGrade getGradeByLevel(int lvl) {
-        if(this.getGrades() == null) return null;
+        if (this.getGrades() == null) return null;
         for (MobGrade grade : this.getGrades().values())
             if (grade != null && grade.getLevel() == lvl)
                 return grade;
@@ -336,7 +335,7 @@ public class Monster {
     }
 
     public MobGrade getRandomGrade() {
-        if(this.getGrades() == null) return null;
+        if (this.getGrades() == null) return null;
         int randomgrade = (int) (Math.random() * (6 - 1)) + 1, graderandom = 1;
 
         for (MobGrade grade : this.getGrades().values()) {
@@ -801,11 +800,11 @@ public class Monster {
                 }
             }
 
-            for(Entry<Integer, MobGrade> mob :this.mobs.entrySet())// kralamour
-                if(mob.getValue().getTemplate().getId() == 423)
+            for (Entry<Integer, MobGrade> mob : this.mobs.entrySet())// kralamour
+                if (mob.getValue().getTemplate().getId() == 423)
                     this.orientation = 3;
 
-            if(!objects.isEmpty()) {
+            if (!objects.isEmpty()) {
                 for (String value : objects.split(",")) {
                     final GameObject gameObject = World.world.getGameObject(Integer.parseInt(value));
                     if (gameObject != null)
@@ -921,7 +920,7 @@ public class Monster {
         }
 
         public void addStarBonus() {
-            if(this.getStarBonus() >= 150) {
+            if (this.getStarBonus() >= 150) {
                 this.starBonus = 150;
             } else {
                 this.starBonus += 3;
@@ -982,9 +981,9 @@ public class Monster {
         }
 
         public ArrayList<GameObject> getObjects() {
-            if(this.objects == null && Config.INSTANCE.getHEROIC())
+            if (this.objects == null && Config.INSTANCE.getHEROIC())
                 this.objects = new ArrayList<>();
-            else if(!Config.INSTANCE.getHEROIC())
+            else if (!Config.INSTANCE.getHEROIC())
                 return new ArrayList<>();
             return objects;
         }
@@ -1062,7 +1061,7 @@ public class Monster {
                 this.statsInfos.add(Integer.parseInt(str));
 
             try {
-                if(resist.length > 3) {
+                if (resist.length > 3) {
                     this.stats.put(Constant.STATS_ADD_RP_NEU, Integer.parseInt(resist[0]));
                     this.stats.put(Constant.STATS_ADD_RP_TER, Integer.parseInt(resist[1]));
                     this.stats.put(Constant.STATS_ADD_RP_FEU, Integer.parseInt(resist[2]));
@@ -1236,12 +1235,13 @@ public class Monster {
         }
 
         public Stats getStats() {
-            if(this.getTemplate().getId() == 42 && !stats.containsKey(Constant.STATS_CREATURE))
+            if (this.getTemplate().getId() == 42 && !stats.containsKey(Constant.STATS_CREATURE))
                 stats.put(Constant.STATS_CREATURE, 5);
-            if(this.stats.get(-1) != null) {
+            if (this.stats.get(-1) != null) {
                 Map<Integer, Integer> stats = new HashMap<>();
                 stats.putAll(this.stats);
-                stats.remove(-1); stats.remove(-100);
+                stats.remove(-1);
+                stats.remove(-100);
 
                 int random = Formulas.getRandomValue(210, 214);
                 int one = this.stats.get(-1), all = this.stats.get(-100);
@@ -1281,8 +1281,7 @@ public class Monster {
         public void changeStats(String statInfos) {
             this.stats.clear();
             String[] stats = statInfos.split(",");
-            for(String s : stats)
-            {
+            for (String s : stats) {
                 String[] details = s.split(":");
                 this.stats.put(Integer.parseInt(details[0]), Integer.parseInt(details[1]));
             }
@@ -1300,9 +1299,8 @@ public class Monster {
                     case Constant.STATS_ADD_CHAN:
                     case Constant.STATS_ADD_AGIL:
                     case Constant.STATS_ADD_FORC:
-                    case Constant.STATS_ADD_INTE :
-                    case Constant.STATS_ADD_INIT :
-                    {
+                    case Constant.STATS_ADD_INTE:
+                    case Constant.STATS_ADD_INIT: {
                         if (!strStats.isEmpty()) {
                             strStats.append(",");
                         }
@@ -1315,8 +1313,8 @@ public class Monster {
         }
 
         public String getStringResi() {
-            String Resi ="";
-            Resi = this.stats.get(Constant.STATS_ADD_RP_NEU) + "," + this.stats.get(Constant.STATS_ADD_RP_TER) + "," + this.stats.get(Constant.STATS_ADD_RP_FEU) + "," + this.stats.get(Constant.STATS_ADD_RP_EAU) + "," +this.stats.get(Constant.STATS_ADD_RP_AIR);
+            String Resi = "";
+            Resi = this.stats.get(Constant.STATS_ADD_RP_NEU) + "," + this.stats.get(Constant.STATS_ADD_RP_TER) + "," + this.stats.get(Constant.STATS_ADD_RP_FEU) + "," + this.stats.get(Constant.STATS_ADD_RP_EAU) + "," + this.stats.get(Constant.STATS_ADD_RP_AIR);
             return Resi;
         }
     }

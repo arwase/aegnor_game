@@ -11,7 +11,7 @@ public class QuestStep {
     //region Static function
     private static Map<Integer, QuestStep> questStepList = new HashMap<>();
 
-    public  static Map<Integer, QuestStep> getQuestStepList() {
+    public static Map<Integer, QuestStep> getQuestStepList() {
         return questStepList;
     }
 

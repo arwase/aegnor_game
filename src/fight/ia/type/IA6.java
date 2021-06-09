@@ -8,7 +8,7 @@ import fight.ia.util.Function;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA6 extends AbstractIA  {
+public class IA6 extends AbstractIA {
 
     public IA6(Fight fight, Fighter fighter, byte count) {
         super(fight, fighter, count);
@@ -29,7 +29,8 @@ public class IA6 extends AbstractIA  {
 
                                 if (attack != 0) {
                                     if (attack == 5) this.stop = true;
-                                    if (Function.getInstance().moveFarIfPossible(this.fight, this.fighter) != 0) this.stop = true;
+                                    if (Function.getInstance().moveFarIfPossible(this.fight, this.fighter) != 0)
+                                        this.stop = true;
                                 }
                             }
                         }

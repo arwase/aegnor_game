@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA20 extends AbstractIA  {
+public class IA20 extends AbstractIA {
 
     private byte attack = 0;
 
@@ -31,24 +31,24 @@ public class IA20 extends AbstractIA  {
 
             cells.addAll(this.fight.getAllGlyphs().stream().filter(glyph -> glyph != null && glyph.getCaster().getId() == this.fighter.getId()).map(glyph -> (short) glyph.getCell().getId()).collect(Collectors.toList()));
 
-            if(nearestEnnemy == null)
-                if(Function.getInstance().moveNearIfPossible(this.fight, this.fighter, highestEnnemy))
+            if (nearestEnnemy == null)
+                if (Function.getInstance().moveNearIfPossible(this.fight, this.fighter, highestEnnemy))
                     action = true;
-            if(this.attack == 0 && !action)
+            if (this.attack == 0 && !action)
                 attack = Function.getInstance().attackIfPossibleKaskargo(this.fight, this.fighter, this.fighter);
 
-            if(attack != 0) {
+            if (attack != 0) {
                 this.attack++;
                 action = true;
             }
 
 
-            if(!action && !cells.isEmpty()) {
-                if(cells.contains((short) this.fighter.getCell().getId()))
+            if (!action && !cells.isEmpty()) {
+                if (cells.contains((short) this.fighter.getCell().getId()))
                     tp = Function.getInstance().tpIfPossibleKaskargo(this.fight, this.fighter, nearestEnnemy);
             }
-            if(tp != 0) action = true;
-            if(!action) Function.getInstance().moveNearIfPossible(this.fight, this.fighter, highestEnnemy);
+            if (tp != 0) action = true;
+            if (!action) Function.getInstance().moveNearIfPossible(this.fight, this.fighter, highestEnnemy);
 
             addNext(this::decrementCount, 1000);
         } else {

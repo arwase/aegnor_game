@@ -17,7 +17,8 @@ public class QuestPlayerData extends AbstractDAO<QuestPlayer> {
     }
 
     @Override
-    public void load(Object obj) {}
+    public void load(Object obj) {
+    }
 
     @Override
     public boolean update(QuestPlayer qp) {

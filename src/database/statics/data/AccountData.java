@@ -46,7 +46,7 @@ public class AccountData extends AbstractDAO<Account> {
             result = super.getData("SELECT * from accounts");
             ResultSet RS = result.resultSet;
             while (RS.next()) {
-                if(RS.getString("pseudo").isEmpty()) continue;
+                if (RS.getString("pseudo").isEmpty()) continue;
                 Account a = new Account(RS.getInt("guid"), RS.getString("account").toLowerCase(), RS.getString("pseudo"), RS.getString("reponse"), (RS.getInt("banned") == 1), RS.getString("lastIP"), RS.getString("lastConnectionDate"), RS.getString("friends"), RS.getString("enemy"), RS.getInt("points"), RS.getLong("subscribe"), RS.getLong("muteTime"), RS.getString("mutePseudo"), RS.getString("lastVoteIP"), RS.getString("heurevote"));
                 World.world.addAccount(a);
             }
@@ -63,7 +63,7 @@ public class AccountData extends AbstractDAO<Account> {
         try {
             result = super.getData("SELECT guid, subscribe FROM accounts WHERE guid = " + id);
 
-            if(result != null) {
+            if (result != null) {
                 ResultSet RS = result.resultSet;
                 while (RS.next()) {
                     subscribe = RS.getLong("subscribe");
@@ -163,7 +163,9 @@ public class AccountData extends AbstractDAO<Account> {
         return false;
     }
 
-    /** Points **/
+    /**
+     * Points
+     **/
     public int loadPoints(String user) {
         return Database.getStatics().getAccountData().loadPointsWithoutUsersDb(user);
     }
@@ -213,7 +215,7 @@ public class AccountData extends AbstractDAO<Account> {
             if (RS.next()) user = RS.getInt("users");
             close(result);
 
-            if(user == -1) {
+            if (user == -1) {
                 result = super.getData("SELECT id, points FROM `users` WHERE `id` = " + user + ";");
                 RS = result.resultSet;
                 if (RS.next()) points = RS.getInt("users");
@@ -235,7 +237,7 @@ public class AccountData extends AbstractDAO<Account> {
             if (RS.next()) user = RS.getInt("users");
             close(result);
 
-            if(user != -1) {
+            if (user != -1) {
                 p = getPreparedStatement("UPDATE `users` SET `points` = ? WHERE `id` = ?;");
                 p.setInt(1, points);
                 p.setInt(2, id);

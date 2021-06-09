@@ -74,7 +74,7 @@ public class Minotoror {
                 map = (short) 9563;
                 break;
         }
-        if((demi != -1 && map == demi) || (momi != -1 && map == momi)) return chooseRandomMap();
+        if ((demi != -1 && map == demi) || (momi != -1 && map == momi)) return chooseRandomMap();
         return map;
     }
 
@@ -768,13 +768,33 @@ public class Minotoror {
     }
 
     public static boolean isValidMap(GameMap map) {
-        if(map == null) return false;
-        switch(map.getId()) {
-            case 9553: case 9564: case 9571: case 9572: case 9573:
-            case 9574: case 9575: case 9576: case 9577: case 9554:
-            case 9555: case 9556: case 9557: case 9558: case 9559:
-            case 9560: case 9561: case 9562: case 9563: case 9565:
-            case 9566: case 9567: case 9568: case 9569: case 9570:
+        if (map == null) return false;
+        switch (map.getId()) {
+            case 9553:
+            case 9564:
+            case 9571:
+            case 9572:
+            case 9573:
+            case 9574:
+            case 9575:
+            case 9576:
+            case 9577:
+            case 9554:
+            case 9555:
+            case 9556:
+            case 9557:
+            case 9558:
+            case 9559:
+            case 9560:
+            case 9561:
+            case 9562:
+            case 9563:
+            case 9565:
+            case 9566:
+            case 9567:
+            case 9568:
+            case 9569:
+            case 9570:
                 return true;
         }
         return false;

@@ -25,7 +25,7 @@ public class InteractiveObject {
 
         @Override
         public void update() {
-            if(this.queue.isEmpty()) return;
+            if (this.queue.isEmpty()) return;
             long time = System.currentTimeMillis();
             new ArrayList<>(this.queue).stream().filter(interactiveObject -> interactiveObject.getTemplate() != null && time - interactiveObject.lastTime >
                     interactiveObject.getTemplate().getRespawnTime()).forEach(interactiveObject -> {
@@ -57,14 +57,14 @@ public class InteractiveObject {
     }
 
     public static void getActionIO(final Player player, GameCase cell, int id) {
-        switch(id) {
+        switch (id) {
             case 7041:
             case 7042:
             case 7043:
             case 7044:
             case 7045:
             case 1748:
-                if(InteractiveDoor.tryActivate(player, cell))
+                if (InteractiveDoor.tryActivate(player, cell))
                     return;
                 break;
         }
@@ -79,7 +79,7 @@ public class InteractiveObject {
                         if (qp != null) {
                             QuestStep qe = q.getCurrentQuestStep(qp);
                             if (qe != null)
-                                if(qe.getId() == 783)
+                                if (qe.getId() == 783)
                                     q.updateQuestData(player, true, qe.getValidationType());
                         }
                     }

@@ -154,7 +154,7 @@ public class Hdv {
             try {
                 String name = "undefined";
 
-                if(World.world.getAccount(toBuy.getOwner()) != null)
+                if (World.world.getAccount(toBuy.getOwner()) != null)
                     name = World.world.getAccount(toBuy.getOwner()).getName();
 
                 Logging.objects.debug("BuyHdv : "
@@ -162,7 +162,9 @@ public class Hdv {
                         + toBuy.getGameObject().getTemplate().getName() + " x"
                         + toBuy.getGameObject().getQuantity() + " venant du compte "
                         + name);
-            } catch(Exception e) { e.printStackTrace(); }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             delEntry(toBuy);//Retire l'item de l'HDV ainsi que de la liste du vendeur
             Database.getDynamics().getHdvObjectData().delete(toBuy.getGameObject().getGuid());
             if (World.world.getAccount(toBuy.getOwner()) != null

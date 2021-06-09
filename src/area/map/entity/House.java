@@ -39,10 +39,11 @@ public class House {
         }
         this.houseMaps.trimToSize();
     }
-    public ArrayList<Short> getHouseMaps ()
-    {
+
+    public ArrayList<Short> getHouseMaps() {
         return houseMaps;
     }
+
     public void open(Player P, String packet, boolean isHome)//Ouvrir une maison ;o
     {
         if ((!this.canDo(Constant.H_OCANTOPEN) && (packet.compareTo(this.getKey()) == 0))

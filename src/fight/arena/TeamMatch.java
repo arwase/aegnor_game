@@ -87,7 +87,7 @@ public class TeamMatch {
         sendToAll("Nous avons trouvé " + (this.firstTeam.size() + this.secondTeam.size() + PER_TEAM) + "/"
                 + PER_TEAM * 2 + " joueurs pour commencer le Kolizeum .");
 
-        if(this.firstTeam.isEmpty()) {
+        if (this.firstTeam.isEmpty()) {
             party.getPlayers().stream().filter(player -> this.firstTeam.size() < PER_TEAM).forEach(this.firstTeam::add);
             party.getPlayers().forEach(player -> {
                 player.sendMessage("Vous venez de vous inscrire au Kolizeum avec votre groupe, en attente de d'autres joueurs...");
@@ -110,7 +110,7 @@ public class TeamMatch {
             player.kolizeum = null;
         });
 
-        if(this.firstTeam.contains(party.getChief())) {
+        if (this.firstTeam.contains(party.getChief())) {
             this.firstTeam.clear();
         } else {
             this.secondTeam.clear();
@@ -118,28 +118,28 @@ public class TeamMatch {
     }
 
     boolean isAvailable(Player player, boolean group) {
-        if(group) {
-            if(!firstTeam.isEmpty() && !secondTeam.isEmpty()) return false;
+        if (group) {
+            if (!firstTeam.isEmpty() && !secondTeam.isEmpty()) return false;
 
             int level = getTotalLevel(player.getParty().getPlayers());
             int level2 = getTotalLevel(firstTeam.isEmpty() ? secondTeam : firstTeam);
-            if(level > level2) {
-                if((level - level2) > MINIMUM_LEVEL) {
+            if (level > level2) {
+                if ((level - level2) > MINIMUM_LEVEL) {
                     return false;
                 }
             } else {
-                if((level2 - level) > MINIMUM_LEVEL) {
+                if ((level2 - level) > MINIMUM_LEVEL) {
                     return false;
                 }
             }
             return firstTeam.isEmpty() || secondTeam.isEmpty();
         } else {
-            if(((firstTeam.size() + secondTeam.size()) == PER_TEAM * 2))
+            if (((firstTeam.size() + secondTeam.size()) == PER_TEAM * 2))
                 return false;
-            for(Player other : getAllPlayers()) {
-                if(other.getLevel() > player.getLevel() && (other.getLevel() - player.getLevel()) > MINIMUM_LEVEL)
+            for (Player other : getAllPlayers()) {
+                if (other.getLevel() > player.getLevel() && (other.getLevel() - player.getLevel()) > MINIMUM_LEVEL)
                     return false;
-                else if((player.getLevel() - other.getLevel()) > MINIMUM_LEVEL)
+                else if ((player.getLevel() - other.getLevel()) > MINIMUM_LEVEL)
                     return false;
             }
         }
@@ -170,7 +170,7 @@ public class TeamMatch {
     private short getTotalLevel(List<Player> players) {
         short average = 0;
 
-        for(Player player : players) {
+        for (Player player : players) {
             average += player.getLevel();
         }
 

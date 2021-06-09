@@ -9,7 +9,7 @@ import fight.spells.Spell.SortStats;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA16 extends AbstractIA  {
+public class IA16 extends AbstractIA {
 
     public IA16(Fight fight, Fighter fighter, byte count) {
         super(fight, fighter, count);
@@ -22,7 +22,8 @@ public class IA16 extends AbstractIA  {
 
             if (target == null) return;
 
-            int value = Function.getInstance().moveToAttackIfPossible(this.fight, this.fighter), cellId = value - (value / 1000) * 1000;;
+            int value = Function.getInstance().moveToAttackIfPossible(this.fight, this.fighter), cellId = value - (value / 1000) * 1000;
+            ;
             SortStats spellStats = this.fighter.getMob().getSpells().get(value / 1000);
 
             if (cellId != -1) {
@@ -36,8 +37,7 @@ public class IA16 extends AbstractIA  {
             }
 
             addNext(this::decrementCount, 800);
-        }
-        else
+        } else
             this.stop = true;
     }
 }

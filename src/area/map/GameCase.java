@@ -52,9 +52,9 @@ public class GameCase {
     }
 
     public boolean isWalkable(boolean useObject, boolean inFight, int targetCell) {
-        if(this.object != null && useObject) {
-            if((inFight || this.getId() != targetCell) && this.object.getTemplate() != null) {
-                switch(this.object.getTemplate().getId()) {
+        if (this.object != null && useObject) {
+            if ((inFight || this.getId() != targetCell) && this.object.getTemplate() != null) {
+                switch (this.object.getTemplate().getId()) {
                     case 7515:
                     case 7511:
                     case 7517:
@@ -98,13 +98,13 @@ public class GameCase {
     public void addPlayer(Player player) {
         if (this.players == null)
             this.players = new ArrayList<>();
-        if(!this.players.contains(player))
+        if (!this.players.contains(player))
             this.players.add(player);
     }
 
     public void removePlayer(Player player) {
         if (this.players != null) {
-            if(this.players.contains(player))
+            if (this.players.contains(player))
                 this.players.remove(player);
             if (this.players.isEmpty()) this.players = null;
         }
@@ -119,13 +119,13 @@ public class GameCase {
     public void addFighter(Fighter fighter) {
         if (this.fighters == null)
             this.fighters = new ArrayList<>();
-        if(!this.fighters.contains(fighter))
+        if (!this.fighters.contains(fighter))
             this.fighters.add(fighter);
     }
 
     public void removeFighter(Fighter fighter) {
         if (this.fighters != null) {
-            if(this.fighters.contains(fighter))
+            if (this.fighters.contains(fighter))
                 this.fighters.remove(fighter);
             if (this.fighters.isEmpty()) this.fighters = null;
         }
@@ -138,7 +138,8 @@ public class GameCase {
     }
 
     public Fighter getFirstFighter() {
-        if(this.fighters != null) for(Fighter fighter : this.fighters) return fighter; // return this.fighters.get(0);o
+        if (this.fighters != null)
+            for (Fighter fighter : this.fighters) return fighter; // return this.fighters.get(0);o
         return null;
     }
 
@@ -147,19 +148,17 @@ public class GameCase {
             this.onCellStop = new ArrayList<>();
         this.onCellStop.add(new Action(id, args, cond, map));
     }
-    public void deleteOnCellStopAction(int id)
-    {
-        if(this.onCellStop != null)
-        {
-            for(Action a : onCellStop)
-            {
-                if(a.getId() == id)
-                {
+
+    public void deleteOnCellStopAction(int id) {
+        if (this.onCellStop != null) {
+            for (Action a : onCellStop) {
+                if (a.getId() == id) {
                     onCellStop.remove(a);
                 }
             }
         }
     }
+
     public void applyOnCellStopActions(Player perso) {
         if (this.onCellStop != null)
             for (Action action : this.onCellStop)
@@ -177,6 +176,7 @@ public class GameCase {
     public void setOnCellStop(ArrayList<Action> onCellStop) {
         this.onCellStop = onCellStop;
     }
+
     public void clearOnCellAction() {
         this.onCellStop = null;
     }
@@ -769,7 +769,7 @@ public class GameCase {
     }
 
     public void startAction(final Player player, GameAction GA) {
-        if(player.getExchangeAction() != null) return;
+        if (player.getExchangeAction() != null) return;
         int actionID = -1;
         short CcellID = -1;
         try {
@@ -828,7 +828,7 @@ public class GameCase {
                     this.getObject().disable();
                     SocketManager.GAME_SEND_GDF_PACKET_TO_MAP(player.getCurMap(), this);
                     int qua = Formulas.getRandomValue(1, 5);//On a entre 1 et 10 eaux
-                    GameObject obj = World.world.getObjTemplate(537).createNewItem(qua, false,0);
+                    GameObject obj = World.world.getObjTemplate(537).createNewItem(qua, false, 0);
                     if (player.addObjet(obj, true))
                         World.world.addGameObject(obj, true);
                     SocketManager.GAME_SEND_IQ_PACKET(player, player.getId(), qua);
@@ -863,7 +863,7 @@ public class GameCase {
                     this.getObject().disable();
                     SocketManager.GAME_SEND_GDF_PACKET_TO_MAP(player.getCurMap(), this);
                     int qua = Formulas.getRandomValue(1, 10);//On a entre 1 et 10 eaux
-                    GameObject obj = World.world.getObjTemplate(311).createNewItem(qua, false,0);
+                    GameObject obj = World.world.getObjTemplate(311).createNewItem(qua, false, 0);
                     if (player.addObjet(obj, true))
                         World.world.addGameObject(obj, true);
                     SocketManager.GAME_SEND_IQ_PACKET(player, player.getId(), qua);
@@ -916,13 +916,13 @@ public class GameCase {
                 try {
                     park.getEtable().stream().filter(mount -> mount != null).forEach(mount -> mount.checkBaby(player));
                     park.getListOfRaising().stream().filter(integer -> World.world.getMountById(integer) != null).forEach(integer -> World.world.getMountById(integer).checkBaby(player));
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                if(park.getGuild() != null)
-                    for(Player target : park.getGuild().getPlayers())
-                        if(target != null && target.getExchangeAction() != null && target.getExchangeAction().getType() == ExchangeAction.IN_MOUNTPARK && target.getCurMap().getId() == player.getCurMap().getId()) {
+                if (park.getGuild() != null)
+                    for (Player target : park.getGuild().getPlayers())
+                        if (target != null && target.getExchangeAction() != null && target.getExchangeAction().getType() == ExchangeAction.IN_MOUNTPARK && target.getCurMap().getId() == player.getCurMap().getId()) {
                             player.send("Im120");
                             return;
                         }
@@ -1020,7 +1020,7 @@ public class GameCase {
                 Trunk trunk = Trunk.getTrunkIdByCoord(player.getCurMap().getId(), CcellID);
 
                 if (trunk == null) {
-                    if(player.getInHouse() != null) {
+                    if (player.getInHouse() != null) {
                         trunk = new Trunk(Database.getStatics().getTrunkData().getNextId(), player.getInHouse().getId(), player.getCurMap().getId(), CcellID);
                         trunk.setOwnerId(player.getInHouse().getOwnerId());
                         trunk.setKey("-");
@@ -1029,7 +1029,7 @@ public class GameCase {
                         World.world.addTrunk(trunk);
                     }
                 }
-                if(player.getInHouse() != null && trunk.getOwnerId() != player.getAccID() && trunk.getHouseId() == player.getInHouse().getId() && player.getId() == player.getInHouse().getOwnerId()) {
+                if (player.getInHouse() != null && trunk.getOwnerId() != player.getAccID() && trunk.getHouseId() == player.getInHouse().getId() && player.getId() == player.getInHouse().getOwnerId()) {
                     trunk.setOwnerId(player.getId());
                     Database.getDynamics().getTrunkData().update(player, player.getInHouse());
                 }
@@ -1046,7 +1046,7 @@ public class GameCase {
             case 153:
                 trunk = Trunk.getTrunkIdByCoord(player.getCurMap().getId(), CcellID);
 
-                if(trunk != null) {
+                if (trunk != null) {
                     if (trunk.getPlayer() != null) {
                         player.send("Im120");
                         return;
@@ -1117,7 +1117,7 @@ public class GameCase {
                 this.object.disable();
                 SocketManager.GAME_SEND_GDF_PACKET_TO_MAP(perso.getCurMap(), this);
                 int qua = Formulas.getRandomValue(1, 5);//On a entre 1 et 5 patates
-                GameObject obj = World.world.getObjTemplate(537).createNewItem(qua, false,0);
+                GameObject obj = World.world.getObjTemplate(537).createNewItem(qua, false, 0);
                 if (perso.addObjet(obj, true))
                     World.world.addGameObject(obj, true);
                 SocketManager.GAME_SEND_IQ_PACKET(perso, perso.getId(), qua);
@@ -1131,7 +1131,7 @@ public class GameCase {
                 this.object.disable();
                 SocketManager.GAME_SEND_GDF_PACKET_TO_MAP(perso.getCurMap(), this);
                 qua = Formulas.getRandomValue(1, 10);//On a entre 1 et 10 eaux
-                obj = World.world.getObjTemplate(311).createNewItem(qua, false,0);
+                obj = World.world.getObjTemplate(311).createNewItem(qua, false, 0);
                 if (perso.addObjet(obj, true))
                     World.world.addGameObject(obj, true);
                 SocketManager.GAME_SEND_IQ_PACKET(perso, perso.getId(), qua);

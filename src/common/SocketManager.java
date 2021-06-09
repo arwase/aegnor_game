@@ -164,7 +164,10 @@ public class SocketManager {
             packet.append((color3 == -1 ? "-1" : Integer.toHexString(color3))).append("|");
             packet.append(perso.parseItemToASK());
             send(out, packet.toString());
-        } catch(Exception e) { e.printStackTrace(); System.out.println("Error occured : " + e.getMessage());}
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error occured : " + e.getMessage());
+        }
     }
 
     public static void GAME_SEND_ALIGNEMENT(GameClient out, int alliID) {
@@ -225,8 +228,7 @@ public class SocketManager {
 
     }
 
-    public static void GAME_SEND_MAPDATA_COMPLETE(Player player)
-    {
+    public static void GAME_SEND_MAPDATA_COMPLETE(Player player) {
         var map = player.getCurMap();
         var packet = new StringBuilder();
         packet.append("GDM").append('|').append(map.getId()).append('|').append(map.getDate()).append('|').append('|')
@@ -474,7 +476,7 @@ public class SocketManager {
         String packet = (_perso
                 .getFight() != null ?
                 map
-                .getFightersGMsPackets(_perso.getFight()) :
+                        .getFightersGMsPackets(_perso.getFight()) :
                 map
                         .getGMsPackets());
         send(_perso, packet);
@@ -942,6 +944,7 @@ public class SocketManager {
         }
 
     }
+
     public static void ENVIAR_ÑJ_STATS_DEFECTO_MOB(Player perso, String str) {
         String packet = "ÑJ" + str;
         send(perso, packet);
@@ -1348,15 +1351,18 @@ public class SocketManager {
         send(out, packet);
 
     }
+
     public static void ENVIAR_Ak_KAMAS_PDV_EXP_PJ(Player perso) {
         String packet = perso.stringStats2();
         send(perso, packet);
         ENVIAR_Ab_CIRCULO_XP_BANNER(perso);
         //("STATS KAMAS PDV EXP PJ: PERSO", packet);
     }
+
     private static void ENVIAR_Ab_CIRCULO_XP_BANNER(Player perso) {
         send(perso, "Ab");
     }
+
     public static void GAME_SEND_MESSAGE_TO_ALL(String msg, String color) {
         String packet = "cs<font color='#" + color + "'>" + msg + "</font>";
         for (Player P : World.world.getOnlinePlayers())
@@ -1513,6 +1519,7 @@ public class SocketManager {
 17:44:58.344 [NioProcessor-3] TRACE game.world.World - Roulbab --> EK0298
 17:44:58.344 [NioProcessor-3] TRACE game.world.World - Roulbab --> EK01157
 */
+
     public static void GAME_SEND_PM_ADD_PACKET_TO_GROUP(
             Party g, Player p) {
         String packet = "PM+" + p.parseToPM();
@@ -1838,11 +1845,13 @@ public class SocketManager {
         send(perso, packet);
 
     }
+
     public static void GAME_SEND_Ee_PACKET_WAIT(Player perso, char c, String s) {
         String packet = "Ee" + c + s;
         send(perso, packet);
 
     }
+
     public static void GAME_SEND_cC_PACKET(Player perso, char c, String s) {
         String packet = "cC" + c + s;
         send(perso, packet);
@@ -2202,7 +2211,7 @@ public class SocketManager {
     }
 
     public static void GAME_SEND_EHl(Player out, Hdv seller, int templateID) {
-        if(seller == null) return;
+        if (seller == null) return;
         String packet = "EHl" + seller.parseToEHl(templateID);
 
         send(out, packet);
@@ -2228,7 +2237,7 @@ public class SocketManager {
 
     public static void GAME_SEND_HDVITEM_SELLING(Player perso) {
         String packet = "EL";
-        HdvEntry[] entries = perso.getAccount().getHdvEntries(Math.abs(((Integer) perso.getExchangeAction().getValue()))); //R�cup�re un tableau de tout les items que le personnage � en vente dans l'HDV o� il est
+        HdvEntry[] entries = perso.getAccount().getHdvEntries(World.world.getHdv(Math.abs(((Integer) perso.getExchangeAction().getValue())  )).getHdvId()); //R�cup�re un tableau de tout les items que le personnage � en vente dans l'HDV o� il est
         boolean isFirst = true;
         for (HdvEntry curEntry : entries) {
             if (curEntry == null)
@@ -2241,6 +2250,7 @@ public class SocketManager {
             isFirst = false;
         }
         send(perso, packet);
+        System.out.println(packet);
     }
 
     public static void GAME_SEND_WEDDING(GameMap c, int action, int homme,
@@ -2331,8 +2341,7 @@ public class SocketManager {
 
     }
 
-    public static void GAME_SEND_MESSAGE_CONSOLE(Player player, String message)
-    {
+    public static void GAME_SEND_MESSAGE_CONSOLE(Player player, String message) {
         String packet = "BAT2" + message;
         send(player, packet);
     }
@@ -2650,18 +2659,18 @@ public class SocketManager {
 
     public static void QuestList(GameClient out, Player perso) {
         /*
-		 * Explication packet : QL + QuestID ; Finish ? 1 : 0 ;
-		 */
+         * Explication packet : QL + QuestID ; Finish ? 1 : 0 ;
+         */
         String packet = "QL" + perso.getQuestGmPacket();
         send(out, packet);
     }
 
     public static void QuestGep(GameClient out, Quest quest, Player perso) {
-		/*
-		 * Explication packet : aQuestId | aObjectifCurrent |
-		 * aEtapeId,aFinish;aEtapeId,aFinish... | aPreviousObjectif |
-		 * aNextObjectif | aDialogId | aDialogParams
-		 */
+        /*
+         * Explication packet : aQuestId | aObjectifCurrent |
+         * aEtapeId,aFinish;aEtapeId,aFinish... | aPreviousObjectif |
+         * aNextObjectif | aDialogId | aDialogParams
+         */
         // String packet = "QS"+"3|6|289,0;421,0|";//TODO suite ...
         String packet = "QS" + quest.getGmQuestDataPacket(perso);
         //String packet = "QS181|343|745,0|342|344|3646|";

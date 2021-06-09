@@ -10,13 +10,12 @@ import java.sql.SQLException;
 
 public class PubData extends AbstractDAO<Object> {
 
-    public PubData(HikariDataSource dataSource)
-	{
-		super(dataSource);
-	}
+    public PubData(HikariDataSource dataSource) {
+        super(dataSource);
+    }
 
-	@Override
-	public void load(Object obj) {
+    @Override
+    public void load(Object obj) {
         Result result = null;
         try {
             result = getData("SELECT * FROM `pubs` WHERE `server` LIKE '" + Config.INSTANCE.getSERVER_ID() + "|';");
@@ -30,8 +29,8 @@ public class PubData extends AbstractDAO<Object> {
         }
     }
 
-	@Override
-	public boolean update(Object t)	{
-		return false;
-	}
+    @Override
+    public boolean update(Object t) {
+        return false;
+    }
 }

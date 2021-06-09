@@ -37,7 +37,7 @@ public class GameHandler implements IoHandler {
 
         String[] s = packet.split("\n");
 
-        for(String str : s){
+        for (String str : s) {
             client.parsePacket(str);
             client.logger.trace(" <-- " + str);
         }
@@ -46,15 +46,15 @@ public class GameHandler implements IoHandler {
     @Override
     public void sessionClosed(IoSession arg0) throws Exception {
         GameClient client = (GameClient) arg0.getAttachment();
-        if(client != null)
+        if (client != null)
             client.disconnect();
         World.world.logger.info("Session " + arg0.getId() + " closed");
     }
 
     @Override
     public void exceptionCaught(IoSession arg0, Throwable arg1) throws Exception {
-        if(arg1 == null) return;
-        if(arg1.getMessage() != null && (arg1 instanceof org.apache.mina.filter.codec.RecoverableProtocolDecoderException || arg1.getMessage().startsWith("Une connexion ") ||
+        if (arg1 == null) return;
+        if (arg1.getMessage() != null && (arg1 instanceof org.apache.mina.filter.codec.RecoverableProtocolDecoderException || arg1.getMessage().startsWith("Une connexion ") ||
                 arg1.getMessage().startsWith("Connection reset by peer") || arg1.getMessage().startsWith("Connection timed out")))
             return;
         arg1.printStackTrace();
@@ -89,7 +89,7 @@ public class GameHandler implements IoHandler {
     @Override
     public void sessionIdle(IoSession arg0, IdleStatus arg1) throws Exception {
         //log.info("Session " + arg0.getId() + " idle");
-}
+    }
 
     @Override
     public void sessionOpened(IoSession arg0) throws Exception {

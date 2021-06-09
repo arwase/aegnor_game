@@ -426,7 +426,7 @@ public class Spell {
                     }
                     SE.applyToFight(fight, perso, cell, cibles);
                     num++;
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

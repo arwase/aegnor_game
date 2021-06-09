@@ -37,10 +37,10 @@ public class MountPark {
         this.door = door;
         this.maxObject = maxObject;
 
-        if(!cellOfObject.isEmpty()) {
-            for(String cases : cellOfObject.split(";")) {
+        if (!cellOfObject.isEmpty()) {
+            for (String cases : cellOfObject.split(";")) {
                 int cellId = Integer.parseInt(cases);
-                if(cellId > 0)
+                if (cellId > 0)
                     this.cellOfObject.add(cellId);
             }
         }
@@ -50,10 +50,8 @@ public class MountPark {
         this.owner = owner;
         this.guild = World.world.getGuild(guild);
         this.price = price;
-        if(!objects.isEmpty())
-        {
-            for(String object: objects.split("\\|"))
-            {
+        if (!objects.isEmpty()) {
+            for (String object : objects.split("\\|")) {
                 String[] infos = object.split(";");
                 int cellId = Integer.parseInt(infos[0]);
                 int objectId = Integer.parseInt(infos[1]);
@@ -65,19 +63,16 @@ public class MountPark {
             }
         }
         //chargement de la liste des dragodinde dans l'Ã©table
-        for(String i: raising.split(";"))
-        {
+        for (String i : raising.split(";")) {
             try {
                 Mount DD = World.world.getMountById(Integer.parseInt(i));
-                if(DD != null)
+                if (DD != null)
                     this.etable.add(DD);
             } catch (Exception e) {
             }
         }
-        if(!objDurab.isEmpty())
-        {
-            for(String object: objDurab.split("\\|"))
-            {
+        if (!objDurab.isEmpty()) {
+            for (String object : objDurab.split("\\|")) {
                 String[] infos = object.split(";");
                 int cellId = Integer.parseInt(infos[0]);
                 int durability = Integer.parseInt(infos[1]);
@@ -87,29 +82,29 @@ public class MountPark {
                 this.objDurab.put(cellId, inDurab);
             }
         }
-        if(!etable.isEmpty())
-            for(String dd: etable.split(";")) {
+        if (!etable.isEmpty())
+            for (String dd : etable.split(";")) {
                 try {
                     this.raising.add(Integer.parseInt(dd));
                     Mount mount = World.world.getMountById(Integer.parseInt(dd));
-                    if(mount != null) {
+                    if (mount != null) {
                         mount.setMapId(this.map.getId());
                         mount.setCellId(mount.getCellId());
                     }
-                } catch(Exception ignored) {
+                } catch (Exception ignored) {
                 }
             }
-        if(this.map != null)
+        if (this.map != null)
             this.map.setMountPark(this);
-        for(String firstCut: etable.split(";"))//PosseseurID,DragoID;PosseseurID2,DragoID2;PosseseurID,DragoID3
+        for (String firstCut : etable.split(";"))//PosseseurID,DragoID;PosseseurID2,DragoID2;PosseseurID,DragoID3
         {
-            try	{
+            try {
                 String[] secondCut = firstCut.split(",");
                 Mount DD = World.world.getMountById(Integer.parseInt(secondCut[1]));
-                if(DD == null)
+                if (DD == null)
                     continue;
                 this.raising.add(Integer.parseInt(secondCut[1]), Integer.parseInt(secondCut[0]));
-            }catch(Exception ignored) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -122,10 +117,10 @@ public class MountPark {
         this.door = door;
         this.maxObject = maxObject;
 
-        if(!cellOfObject.isEmpty()) {
-            for(String cases : cellOfObject.split(";")) {
+        if (!cellOfObject.isEmpty()) {
+            for (String cases : cellOfObject.split(";")) {
                 int cellId = Integer.parseInt(cases);
-                if(cellId > 0)
+                if (cellId > 0)
                     this.cellOfObject.add(cellId);
             }
         }
@@ -151,15 +146,14 @@ public class MountPark {
         this.cellOfObject = (ArrayList<Integer>) array.clone();
     }
 
-    public void setInfos(int owner, GameMap map, int cell, int size, int guild, int price, int placeOfSpawn, String raising, int door, String cellOfObject, int maxObject, String objects, String objDurab, String etable)
-    {
+    public void setInfos(int owner, GameMap map, int cell, int size, int guild, int price, int placeOfSpawn, String raising, int door, String cellOfObject, int maxObject, String objects, String objDurab, String etable) {
 
         this.owner = owner;
         this.size = size;
         this.guild = World.world.getGuild(guild);
         this.map.setMountPark(null);
         this.map = map;
-        if(this.map != null)
+        if (this.map != null)
             this.map.setMountPark(this);
         this.cell = cell;
         this.price = price;
@@ -169,10 +163,8 @@ public class MountPark {
 
         this.cellAndObject.clear();
         this.breedingObject.clear();
-        if(!objects.isEmpty())
-        {
-            for(String object: objects.split("\\|"))
-            {
+        if (!objects.isEmpty()) {
+            for (String object : objects.split("\\|")) {
                 String[] infos = object.split(";");
                 int cellId = Integer.parseInt(infos[0]);
                 int objectId = Integer.parseInt(infos[1]);
@@ -185,21 +177,18 @@ public class MountPark {
         }
         //chargement de la liste des dragodinde dans l'Ã©table
         this.etable.clear();
-        for(String i: etable.split(";"))
-        {
+        for (String i : etable.split(";")) {
             try {
                 Mount DD = World.world.getMountById(Integer.parseInt(i));
-                if(DD != null)
+                if (DD != null)
                     this.etable.add(DD);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         this.objDurab.clear();
-        if(!objDurab.isEmpty())
-        {
-            for(String object: objDurab.split("\\|"))
-            {
+        if (!objDurab.isEmpty()) {
+            for (String object : objDurab.split("\\|")) {
                 String[] infos = object.split(";");
                 int cellId = Integer.parseInt(infos[0]);
                 int durability = Integer.parseInt(infos[1]);
@@ -210,33 +199,30 @@ public class MountPark {
             }
         }
         this.cellOfObject.clear();
-        if(!cellOfObject.isEmpty())
-        {
-            for(String cases : cellOfObject.split(";"))
-            {
+        if (!cellOfObject.isEmpty()) {
+            for (String cases : cellOfObject.split(";")) {
                 int cellId = Integer.parseInt(cases);
-                if(cellId <= 0)
+                if (cellId <= 0)
                     continue;
                 this.cellOfObject.add(cellId);
             }
         }
         this.raising.clear();
-        if(!raising.isEmpty())
-        {
+        if (!raising.isEmpty()) {
             String[] dragodinde = raising.split(";");
-            for(String dd: dragodinde)
+            for (String dd : dragodinde)
                 this.raising.add(Integer.parseInt(dd));
         }
         this.raising.clear();
-        for(String firstCut: raising.split(";"))//PosseseurID,DragoID;PosseseurID2,DragoID2;PosseseurID,DragoID3
+        for (String firstCut : raising.split(";"))//PosseseurID,DragoID;PosseseurID2,DragoID2;PosseseurID,DragoID3
         {
-            try	{
+            try {
                 String[] secondCut = firstCut.split(",");
                 Mount DD = World.world.getMountById(Integer.parseInt(secondCut[1]));
-                if(DD == null)
+                if (DD == null)
                     continue;
                 this.raising.add(Integer.parseInt(secondCut[1]), Integer.parseInt(secondCut[0]));
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -295,10 +281,10 @@ public class MountPark {
     }
 
     public boolean hasEtableFull(int id) {
-        if(this.getOwner() == -1) {
+        if (this.getOwner() == -1) {
             int i = 0;
-            for(Mount mount : this.getEtable())
-                if(mount.getOwner() == id)
+            for (Mount mount : this.getEtable())
+                if (mount.getOwner() == id)
                     i++;
             return i >= 100;
         } else {
@@ -307,10 +293,10 @@ public class MountPark {
     }
 
     public boolean hasEnclosFull(int id) {
-        if(this.getOwner() == -1) {
+        if (this.getOwner() == -1) {
             int i = 0;
-            for(int mountId : this.getListOfRaising())
-                if(mountId == id)
+            for (int mountId : this.getListOfRaising())
+                if (mountId == id)
                     i++;
             return i >= this.getSize();
         } else {
@@ -319,9 +305,9 @@ public class MountPark {
     }
 
     public void addCellObject(int cell) {
-        if(this.cellOfObject.contains(cell))
+        if (this.cellOfObject.contains(cell))
             return;
-        if(cell <= 0)
+        if (cell <= 0)
             return;
         this.cellOfObject.add(cell);
     }
@@ -329,12 +315,11 @@ public class MountPark {
     public String parseStringCellObject() {
         String cell = "";
         boolean first = true;
-        for(Integer i: this.cellOfObject)
-        {
-            if(first)
+        for (Integer i : this.cellOfObject) {
+            if (first)
                 cell += i;
             else
-                cell += ";"+i;
+                cell += ";" + i;
             first = false;
         }
         return cell;
@@ -345,7 +330,7 @@ public class MountPark {
     }
 
     public void addObject(int cell, int object, int owner, int durability, int durabilityMax) {
-        if(this.breedingObject.containsKey(cell)) {
+        if (this.breedingObject.containsKey(cell)) {
             this.breedingObject.remove(cell);
             this.cellAndObject.remove(cell);
         }
@@ -361,7 +346,7 @@ public class MountPark {
     }
 
     public boolean delObject(int cell) {
-        if(!this.breedingObject.containsKey(cell) && !this.objDurab.containsKey(cell))
+        if (!this.breedingObject.containsKey(cell) && !this.objDurab.containsKey(cell))
             return false;
         this.objDurab.remove(cell);
         this.breedingObject.remove(cell);
@@ -382,7 +367,7 @@ public class MountPark {
     }
 
     public void delRaising(int id) {
-        if(this.raising.contains(id))
+        if (this.raising.contains(id))
             this.raising.remove(this.raising.indexOf(id));
     }
 
@@ -395,11 +380,11 @@ public class MountPark {
     }
 
     public synchronized void startMoveMounts() {
-        if(this.raising.size() > 0) {
-            char[] directions = { 'b', 'd', 'f', 'h' };
-            for(Integer id : this.raising) {
+        if (this.raising.size() > 0) {
+            char[] directions = {'b', 'd', 'f', 'h'};
+            for (Integer id : this.raising) {
                 Mount mount = World.world.getMountById(id);
-                if(mount != null) {
+                if (mount != null) {
                     mount.moveMountsAuto(directions[Formulas.getRandomValue(0, 3)], 3, false);
                 }
             }
@@ -410,14 +395,14 @@ public class MountPark {
         String str = "";
         boolean first = false;
 
-        if(this.breedingObject.size() == 0)
+        if (this.breedingObject.size() == 0)
             return str;
 
-        for(java.util.Map.Entry<Integer, java.util.Map<Integer, Integer>> entry : this.breedingObject.entrySet()) {
-            if(first) str += "|";
+        for (java.util.Map.Entry<Integer, java.util.Map<Integer, Integer>> entry : this.breedingObject.entrySet()) {
+            if (first) str += "|";
             str += entry.getKey();
 
-            for(java.util.Map.Entry<Integer, Integer> entry2 : entry.getValue().entrySet())
+            for (java.util.Map.Entry<Integer, Integer> entry2 : entry.getValue().entrySet())
                 str += ";" + entry2.getKey() + ";" + entry2.getValue();
             first = true;
         }
@@ -428,15 +413,14 @@ public class MountPark {
         String str = "";
         boolean first = false;
 
-        if(this.objDurab.size() == 0)
+        if (this.objDurab.size() == 0)
             return str;
 
-        for(java.util.Map.Entry<Integer, java.util.Map<Integer, Integer>> entry : this.objDurab.entrySet()) {
-            if(first)
+        for (java.util.Map.Entry<Integer, java.util.Map<Integer, Integer>> entry : this.objDurab.entrySet()) {
+            if (first)
                 str += "|";
             str += entry.getKey();
-            for(java.util.Map.Entry<Integer, Integer> entry2 : entry.getValue().entrySet())
-            {
+            for (java.util.Map.Entry<Integer, Integer> entry2 : entry.getValue().entrySet()) {
                 str += ";" + entry2.getKey() + ";" + entry2.getValue();
             }
             first = true;
@@ -448,11 +432,11 @@ public class MountPark {
         String str = "";
         boolean first = true;
 
-        if(this.raising.size() == 0)
+        if (this.raising.size() == 0)
             return "";
 
-        for(Integer id : this.raising) {
-            if(!first) str += ";";
+        for (Integer id : this.raising) {
+            if (!first) str += ";";
             str += id;
             first = false;
         }
@@ -461,8 +445,8 @@ public class MountPark {
 
     public String parseEtableToString() {
         String str = "";
-        for(Mount mount : this.etable) {
-            if(!str.equalsIgnoreCase(""))
+        for (Mount mount : this.etable) {
+            if (!str.equalsIgnoreCase(""))
                 str += ";";
             str += mount.getId();
         }

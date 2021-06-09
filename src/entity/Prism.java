@@ -71,7 +71,7 @@ public class Prism {
         String str = "+";
         str += Integer.toString(id, 36);
         GameMap gameMap = World.world.getMap(MapId);
-        if(gameMap != null) {
+        if (gameMap != null) {
             for (Fight fight : gameMap.getFights()) {
                 if (fight.getId() == FightId) {
                     for (Fighter fighter : fight.getFighters(1)) {
@@ -94,7 +94,7 @@ public class Prism {
         String stra = "";
         str += Integer.toString(id, 36);
         GameMap gameMap = World.world.getMap(MapId);
-        if(gameMap != null) {
+        if (gameMap != null) {
             for (Fight fight : gameMap.getFights()) {
                 if (fight.getId() == FightId) {
                     for (Fighter fighter : fight.getFighters(2)) {
@@ -205,7 +205,9 @@ public class Prism {
         return this.fight;
     }
 
-    public void setFight(Fight fight) { this.fight = fight; }
+    public void setFight(Fight fight) {
+        this.fight = fight;
+    }
 
     public Stats getStats() {
         return new Stats(this.stats);

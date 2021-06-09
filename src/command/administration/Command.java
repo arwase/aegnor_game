@@ -30,8 +30,8 @@ public class Command {
     }
 
     public static Command getCommandById(int id) {
-        for(Command command : Command.commands)
-            if(command.id == id)
+        for (Command command : Command.commands)
+            if (command.id == id)
                 return command;
         return null;
     }

@@ -9,7 +9,7 @@ import fight.spells.Spell.SortStats;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA12 extends AbstractNeedSpell  {
+public class IA12 extends AbstractNeedSpell {
 
     private byte attack = 0;
     private boolean boost = false;

@@ -14,6 +14,7 @@ public interface Lang {
     byte FRENCH = 1, ENGLISH = 2, SPANISH = 3;
 
     String get(int id);
+
     void initialize();
 
     static String get(Player player, int index) {
@@ -21,7 +22,7 @@ public interface Lang {
     }
 
     static String get(byte language, int index) {
-        switch(language) {
+        switch (language) {
             case FRENCH:
                 return French.getInstance().get(index);
             case ENGLISH:

@@ -18,21 +18,23 @@ public class JobCraft {
         this.player = player;
 
         this.thread = new Thread(() -> {
-            try { Thread.sleep(1200); } catch(Exception ignored) {
+            try {
+                Thread.sleep(1200);
+            } catch (Exception ignored) {
                 ignored.printStackTrace();
             }
             try {
-                if (itsOk)
-                {
+                if (itsOk) {
                     jobAction.craft(false, -1);
                 }
-            }
-            catch(Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println(e.getMessage());
             }
-            try { Thread.sleep(1200); } catch(Exception ignored) { }
+            try {
+                Thread.sleep(1200);
+            } catch (Exception ignored) {
+            }
             if (!itsOk) repeat(time, time, player);
         });
         this.thread.start();
@@ -62,7 +64,10 @@ public class JobCraft {
 
         if (time2 <= 0) this.end();
         else {
-            try { Thread.sleep(1200); } catch(Exception ignored) { }
+            try {
+                Thread.sleep(1200);
+            } catch (Exception ignored) {
+            }
             this.repeat(time1, (time2 - 1), player);
         }
     }

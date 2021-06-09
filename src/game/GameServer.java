@@ -29,15 +29,18 @@ public class GameServer {
     public static short MAX_PLAYERS = 700;
     public static GameServer INSTANCE = new GameServer();
 
-    private final static @NotNull ArrayList<Account> waitingClients = new ArrayList<>();
-    private final static @NotNull Logger log = LoggerFactory.getLogger(GameServer.class);
-    private final @NotNull IoAcceptor acceptor;
+    private final static @NotNull
+    ArrayList<Account> waitingClients = new ArrayList<>();
+    private final static @NotNull
+    Logger log = LoggerFactory.getLogger(GameServer.class);
+    private final @NotNull
+    IoAcceptor acceptor;
 
     static {
 
     }
 
-    private GameServer(){
+    private GameServer() {
         acceptor = new NioSocketAcceptor();
         acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(StandardCharsets.UTF_8, LineDelimiter.NUL, new LineDelimiter("\n\0"))));
         acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 60 * 10 /*10 Minutes*/);
@@ -89,11 +92,11 @@ public class GameServer {
         ExchangeClient.INSTANCE.send("SS" + state);
     }
 
-    public static Account getAndDeleteWaitingAccount(int id){
+    public static Account getAndDeleteWaitingAccount(int id) {
         Iterator<Account> it = waitingClients.listIterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             Account account = it.next();
-            if(account.getId() == id){
+            if (account.getId() == id) {
                 it.remove();
                 return account;
             }
@@ -102,7 +105,7 @@ public class GameServer {
     }
 
     public static void addWaitingAccount(Account account) {
-        if(!waitingClients.contains(account)) waitingClients.add(account);
+        if (!waitingClients.contains(account)) waitingClients.add(account);
     }
 
     public static void a() {

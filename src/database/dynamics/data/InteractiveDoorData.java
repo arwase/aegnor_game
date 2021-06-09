@@ -15,7 +15,8 @@ public class InteractiveDoorData extends AbstractDAO<InteractiveObjectTemplate> 
     }
 
     @Override
-    public void load(Object obj) {}
+    public void load(Object obj) {
+    }
 
     @Override
     public boolean update(InteractiveObjectTemplate obj) {

@@ -9,7 +9,7 @@ import fight.spells.Spell.SortStats;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA14 extends AbstractIA  {
+public class IA14 extends AbstractIA {
 
     public IA14(Fight fight, Fighter fighter, byte count) {
         super(fight, fighter, count);
@@ -24,7 +24,8 @@ public class IA14 extends AbstractIA  {
                     int value = Function.getInstance().moveToAttackIfPossible(this.fight, this.fighter), cellId = value - (value / 1000) * 1000;
                     SortStats spellStats = this.fighter.getMob().getSpells().get(value / 1000);
 
-                    if (this.fight.canCastSpell1(this.fighter, spellStats, this.fighter.getCell(), cellId)) this.fight.tryCastSpell(this.fighter, spellStats, cellId);
+                    if (this.fight.canCastSpell1(this.fighter, spellStats, this.fighter.getCell(), cellId))
+                        this.fight.tryCastSpell(this.fighter, spellStats, cellId);
                     else Function.getInstance().moveNearIfPossible(fight, this.fighter, target);
                 }
             } else {
@@ -32,7 +33,8 @@ public class IA14 extends AbstractIA  {
                 int value = Function.getInstance().moveToAttackIfPossible(this.fight, this.fighter), cellId = value - (value / 1000) * 1000;
                 SortStats spellStats = this.fighter.getMob().getSpells().get(value / 1000);
 
-                if (this.fight.canCastSpell1(this.fighter, spellStats, this.fighter.getCell(), cellId)) this.fight.tryCastSpell(this.fighter, spellStats, cellId);
+                if (this.fight.canCastSpell1(this.fighter, spellStats, this.fighter.getCell(), cellId))
+                    this.fight.tryCastSpell(this.fighter, spellStats, cellId);
                 else Function.getInstance().moveNearIfPossible(this.fight, this.fighter, target);
             }
 

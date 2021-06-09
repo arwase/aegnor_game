@@ -67,27 +67,27 @@ public class NpcTemplate {
             }
         }
 
-        if(!exchanges.equals("")) {
-            try	{
+        if (!exchanges.equals("")) {
+            try {
                 this.exchanges = new ArrayList<>();
-                for(String data : exchanges.split("~")) {
+                for (String data : exchanges.split("~")) {
                     ArrayList<Couple<Integer, Integer>> gives = new ArrayList<>(), gets = new ArrayList<>();
 
                     String[] split = data.split("\\|");
                     String give = split[1], get = split[0];
 
-                    for(String obj : give.split(",")) {
+                    for (String obj : give.split(",")) {
                         split = obj.split(":");
                         gives.add(new Couple<>(Integer.parseInt(split[0]), Integer.parseInt(split[1])));
                     }
 
-                    for(String obj : get.split(",")) {
+                    for (String obj : get.split(",")) {
                         split = obj.split(":");
                         gets.add(new Couple<>(Integer.parseInt(split[0]), Integer.parseInt(split[1])));
                     }
                     this.exchanges.add(new Couple<>(gets, gives));
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 World.world.logger.error("#3# Erreur sur l'exchanges sur le PNJ d'id : " + id);
             }
@@ -141,26 +141,26 @@ public class NpcTemplate {
             }
         }
 
-        if(!exchanges.equals("")) {
-            try	{
+        if (!exchanges.equals("")) {
+            try {
                 this.exchanges = new ArrayList<>();
-                for(String data : exchanges.split("~")) {
+                for (String data : exchanges.split("~")) {
                     String[] split = data.split("\\|");
                     String give = split[1], get = split[0];
                     ArrayList<Couple<Integer, Integer>> gives = new ArrayList<>(), gets = new ArrayList<>();
 
-                    for(String obj : give.split(",")) {
+                    for (String obj : give.split(",")) {
                         split = obj.split(":");
                         gives.add(new Couple<>(Integer.parseInt(split[0]), Integer.parseInt(split[1])));
                     }
 
-                    for(String obj : get.split(",")) {
+                    for (String obj : get.split(",")) {
                         split = obj.split(":");
                         gets.add(new Couple<>(Integer.parseInt(split[0]), Integer.parseInt(split[1])));
                     }
                     this.exchanges.add(new Couple<>(gets, gives));
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 World.world.logger.error("#3# Erreur sur l'exchanges sur le PNJ d'id : " + id);
             }
@@ -260,9 +260,9 @@ public class NpcTemplate {
     public boolean removeItemVendor(int id) {
         Iterator<ObjectTemplate> iterator = this.sales.iterator();
 
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             ObjectTemplate template = iterator.next();
-            if(template.getId() == id) iterator.remove();
+            if (template.getId() == id) iterator.remove();
         }
 
         return true;
@@ -275,23 +275,23 @@ public class NpcTemplate {
         return false;
     }
 
-    public ArrayList<Couple<Integer,Integer>> checkGetObjects(ArrayList<Couple<Integer,Integer>> objects) {
-        if(this.exchanges == null) return null;
+    public ArrayList<Couple<Integer, Integer>> checkGetObjects(ArrayList<Couple<Integer, Integer>> objects) {
+        if (this.exchanges == null) return null;
         boolean ok;
         int multiple = 0, newMultiple = 0;
 
-        for(Couple<ArrayList<Couple<Integer, Integer>>, ArrayList<Couple<Integer, Integer>>> entry0 : this.exchanges) {
+        for (Couple<ArrayList<Couple<Integer, Integer>>, ArrayList<Couple<Integer, Integer>>> entry0 : this.exchanges) {
             ok = true;
-            for(Couple<Integer, Integer> entry1 : entry0.first) {
+            for (Couple<Integer, Integer> entry1 : entry0.first) {
                 boolean ok1 = false;
 
-                for(Couple<Integer, Integer> entry2 : objects) {
+                for (Couple<Integer, Integer> entry2 : objects) {
                     if (entry1.first == World.world.getGameObject(entry2.first).getTemplate().getId() && (int) (entry2.second) % entry1.second == 0) {
                         ok1 = true;
                         newMultiple = entry2.second / entry1.second;
 
 
-                        if(multiple == 0 || newMultiple == multiple) {
+                        if (multiple == 0 || newMultiple == multiple) {
                             multiple = newMultiple;
                         } else {
                             ok1 = false;
@@ -299,7 +299,7 @@ public class NpcTemplate {
                     }
                 }
 
-                if(!ok1) {
+                if (!ok1) {
                     ok = false;
                     break;
                 }
@@ -307,7 +307,7 @@ public class NpcTemplate {
 
             final int fMultiple = multiple;
 
-            if(ok && objects.size() == entry0.first.size()) {
+            if (ok && objects.size() == entry0.first.size()) {
                 if (fMultiple != 1) {
                     return entry0.second.stream().map(give -> new Couple<>(give.first, give.second * fMultiple))
                             .collect(Collectors.toCollection(ArrayList::new));
@@ -319,8 +319,7 @@ public class NpcTemplate {
         return null;
     }
 
-    public void ModifyNPC(Byte sex, Short sizeX, Short sizeY, int gfxId, int color1, int color2, int color3)
-    {
+    public void ModifyNPC(Byte sex, Short sizeX, Short sizeY, int gfxId, int color1, int color2, int color3) {
         this.sex = sex;
         this.scaleX = sizeX;
         this.scaleY = sizeY;
@@ -329,6 +328,7 @@ public class NpcTemplate {
         this.color2 = color2;
         this.color3 = color3;
     }
+
     public void setAccesories(int weapon, int coiffe, int cape, int pet, int bouclier) {
         accessories =
                 (Integer.toHexString(weapon) + "," + Integer.toHexString(coiffe) + "," + Integer.toHexString(cape)

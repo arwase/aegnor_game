@@ -179,7 +179,7 @@ public class Trunk {
 
         House house = World.world.getHouse(getHouseId());
 
-        if(house.getOwnerId() == player.getAccID() && this.getOwnerId() != player.getAccID())
+        if (house.getOwnerId() == player.getAccID() && this.getOwnerId() != player.getAccID())
             this.setOwnerId(player.getAccID());
         if (this.getOwnerId() == player.getAccID() || (player.getGuild() != null && player.getGuild().getId() == house.getGuildId() && house.canDo(Constant.C_GNOCODE))) {
             player.setExchangeAction(new ExchangeAction<>(ExchangeAction.IN_TRUNK, this));
@@ -220,7 +220,7 @@ public class Trunk {
         GameObject PersoObj = World.world.getGameObject(guid);
         if (PersoObj == null)
             return;
-        if(PersoObj.isAttach()) return;
+        if (PersoObj.isAttach()) return;
         //Si le joueur n'a pas l'item dans son sac ...
         if (P.getItems().get(guid) == null)
             return;
@@ -387,7 +387,7 @@ public class Trunk {
 
     private GameObject getSimilarTrunkItem(GameObject obj) {
         for (GameObject object : this.object.values())
-            if(World.world.getConditionManager().stackIfSimilar(object, obj, true))
+            if (World.world.getConditionManager().stackIfSimilar(object, obj, true))
                 return object;
         return null;
     }

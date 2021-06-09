@@ -50,7 +50,7 @@ public class EventData extends AbstractDAO<Account> {
                     }
                 }
             }
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             super.sendError("EventData load", e);
         } finally {
             close(result);
@@ -70,7 +70,7 @@ public class EventData extends AbstractDAO<Account> {
                 RS.next();
                 numbers = RS.getByte("numbers");
             }
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             super.sendError("EventData getNumberOfEvent", e);
         } finally {
             close(result);
@@ -87,12 +87,12 @@ public class EventData extends AbstractDAO<Account> {
 
             if (result != null) {
                 ResultSet RS = result.resultSet;
-                while(RS.next()) {
+                while (RS.next()) {
                     EventFindMe.FindMeRow row = new EventFindMe.FindMeRow(RS.getShort("map"), RS.getShort("cell"), RS.getString("indices").split("\\|"));
                 }
                 numbers = RS.getByte("numbers");
             }
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             super.sendError("EventData getNumberOfEvent", e);
         } finally {
             close(result);
@@ -101,7 +101,7 @@ public class EventData extends AbstractDAO<Account> {
     }
 
     private Event getEventById(byte id, ResultSet result) throws SQLException {
-        switch(id) {
+        switch (id) {
             case 1:
                 return new EventSmiley(id, result.getByte("maxPlayers"), result.getString("name"), result.getString("description"), EventReward.parse(result.getString("firstWinner")));
             default:

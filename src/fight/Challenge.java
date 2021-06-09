@@ -404,7 +404,7 @@ public class Challenge {
             case 3: // D�sign� Volontaire
                 if (_cible == null)
                     return;
-                if(mob.isInvocation()) return;
+                if (mob.isInvocation()) return;
 
                 if (mob.getInvocator() != null)
                     if (mob.getInvocator().getId() == _cible.getId())
@@ -718,7 +718,7 @@ public class Challenge {
 
                     for (Fighter target : this.fight.getFighters(1))
                         if (target.getId() == id)
-                            if(fighter.getPdv() != fighter.getPdvMax())
+                            if (fighter.getPdv() != fighter.getPdvMax())
                                 challengeLoose(target);
                 }
                 break;
@@ -774,7 +774,7 @@ public class Challenge {
 
             case 14: // Casino Royal (sort #101)
                 if (fighter.getPlayer() != null)
-                    if(Args.equals("ok"))
+                    if (Args.equals("ok"))
                         challengeLoose(fighter);
                 break;
 

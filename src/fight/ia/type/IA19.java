@@ -9,7 +9,7 @@ import fight.ia.util.Function;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA19 extends AbstractIA  {
+public class IA19 extends AbstractIA {
 
     private boolean tp = false;
 
@@ -38,21 +38,21 @@ public class IA19 extends AbstractIA  {
 
             boolean needTp = dist2 > dist1;
 
-            if(dist2 <= 3) {
+            if (dist2 <= 3) {
                 needTp = false;
                 this.tp = true;
             }
 
             if (needTp && !this.tp && Function.getInstance().tpIfPossibleTynril(this.fight, this.fighter, friend) == 0) {
                 this.tp = true;
-            } else if(!needTp) {
+            } else if (!needTp) {
                 Function.getInstance().moveNearIfPossible(this.fight, this.fighter, ennemy);
                 dist1 = -5;
             }
 
             if (this.fighter.getCurPm(this.fight) > 0 && dist1 != -5) {
                 int dist = PathFinding.getDirBetweenTwoCase(this.fighter.getCell().getId(), ennemy.getCell().getId(), this.fight.getMap(), true);
-                if(dist > 1) {
+                if (dist > 1) {
                     Function.getInstance().moveNearIfPossible(this.fight, this.fighter, ennemy);
                 }
             }

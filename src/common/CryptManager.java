@@ -91,8 +91,7 @@ public class CryptManager {
                 cells.add(new GameCase(map, (short) (f / 10), (walkable != 0 && !mapData.equalsIgnoreCase("bhGaeaaaaa") && !mapData.equalsIgnoreCase("Hhaaeaaaaa")), los, object));
             }
             return cells;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Logger logger = (Logger) LoggerFactory.getLogger(AbstractDAO.class + " - [D]");
             logger.error("Error dynamics database " + " : " + e.getMessage());
         }
@@ -124,7 +123,7 @@ public class CryptManager {
         StringBuilder str = new StringBuilder();
         int j = 0, keyLength = key.length();
 
-        for(int i = 2; i < message.length(); i = i + 2)
+        for (int i = 2; i < message.length(); i = i + 2)
             str.append((char) (Integer.parseInt(message.substring(i, i + 2), 16) ^ key.charAt((j++ + c) % keyLength)));
 
         try {
@@ -140,7 +139,7 @@ public class CryptManager {
 
     public String prepareKey(String key) {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < key.length(); i += 2)
+        for (int i = 0; i < key.length(); i += 2)
             sb.append((char) Integer.parseInt(key.substring(i, i + 2), 16));
 
         try {
@@ -152,13 +151,13 @@ public class CryptManager {
 
     private int checksum(String data) {
         int result = 0;
-        for(char c : data.toCharArray())
+        for (char c : data.toCharArray())
             result += c % 16;
         return result % 16;
     }
 
     private String decimalToHexadecimal(int c) {
-        if(c > 255) c = 255;
+        if (c > 255) c = 255;
         return HEX_CHARS[c / 16] + "" + HEX_CHARS[c % 16];
     }
 

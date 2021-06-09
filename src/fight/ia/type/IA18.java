@@ -9,7 +9,7 @@ import fight.ia.util.Function;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA18 extends AbstractIA  {
+public class IA18 extends AbstractIA {
 
     public IA18(Fight fight, Fighter fighter, byte count) {
         super(fight, fighter, count);
@@ -21,19 +21,19 @@ public class IA18 extends AbstractIA  {
             Fighter kimbo = null;
             boolean kPair = false, kImpair = false, dPair = false, dImpair = false;
 
-            if(this.fighter.haveState(29)) dImpair = true;
-            if(this.fighter.haveState(30)) dPair = true;
+            if (this.fighter.haveState(29)) dImpair = true;
+            if (this.fighter.haveState(30)) dPair = true;
 
-            for(Fighter fighter : this.fight.getTeam1().values()) {
-                if(fighter.getMob() !=  null) {
+            for (Fighter fighter : this.fight.getTeam1().values()) {
+                if (fighter.getMob() != null) {
                     System.out.println(fighter.getMob().getTemplate().getId());
-                    if(fighter.getMob().getTemplate().getId() == 1045) {
-                        if(fighter.haveState(30)) {
+                    if (fighter.getMob().getTemplate().getId() == 1045) {
+                        if (fighter.haveState(30)) {
                             fighter.setState(30, 0);
                             kPair = true;
                             this.fighter.setState(30, 1);
                         }
-                        if(fighter.haveState(29)) {
+                        if (fighter.haveState(29)) {
                             fighter.setState(29, 0);
                             kImpair = true;
                             this.fighter.setState(29, 1);
@@ -43,7 +43,7 @@ public class IA18 extends AbstractIA  {
                 }
             }
 
-            if(kimbo == null) {
+            if (kimbo == null) {
                 for (Fighter fighter : this.fight.getTeam0().values()) {
                     if (fighter.getMob() != null) {
                         System.out.println(fighter.getMob().getTemplate().getId());
@@ -64,7 +64,7 @@ public class IA18 extends AbstractIA  {
                 }
             }
 
-            if(kImpair && dImpair) {
+            if (kImpair && dImpair) {
                 this.fighter.setState(29, 0);
                 int attack = Function.getInstance().attackIfPossibleDisciplepair(this.fight, this.fighter, kimbo);
 
@@ -75,7 +75,7 @@ public class IA18 extends AbstractIA  {
                     });
                     Function.getInstance().moveFarIfPossible(this.fight, this.fighter);
                 }
-            } else if(kPair && dPair) {
+            } else if (kPair && dPair) {
                 this.fighter.setState(30, 0);
                 int attack = Function.getInstance().attackIfPossibleDiscipleimpair(this.fight, this.fighter, kimbo);
 
@@ -86,7 +86,7 @@ public class IA18 extends AbstractIA  {
                     });
                     Function.getInstance().moveFarIfPossible(this.fight, this.fighter);
                 }
-            } else if(kPair) {
+            } else if (kPair) {
                 int attack = Function.getInstance().attackIfPossibleDisciplepair(this.fight, this.fighter, kimbo);
 
                 if (attack != 0) {
@@ -96,7 +96,7 @@ public class IA18 extends AbstractIA  {
                     });
                     Function.getInstance().moveFarIfPossible(this.fight, this.fighter);
                 }
-            } else if(kImpair) {
+            } else if (kImpair) {
                 int attack = Function.getInstance().attackIfPossibleDiscipleimpair(this.fight, this.fighter, kimbo);
 
                 if (attack != 0) {
@@ -106,7 +106,7 @@ public class IA18 extends AbstractIA  {
                     });
                     Function.getInstance().moveFarIfPossible(this.fight, this.fighter);
                 }
-            }else {
+            } else {
                 this.stop = true;
             }
 

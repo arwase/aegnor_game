@@ -143,8 +143,8 @@ public class Guild {
     }
 
     public GuildMember getMember(int id) {
-        for(GuildMember guildMember : this.members)
-            if(guildMember.getPlayerId() == id)
+        for (GuildMember guildMember : this.members)
+            if (guildMember.getPlayerId() == id)
                 return guildMember;
         return null;
     }

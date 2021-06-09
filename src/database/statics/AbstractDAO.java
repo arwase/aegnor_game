@@ -93,7 +93,7 @@ public abstract class AbstractDAO<T> implements DAO<T> {
         if (statement == null)
             return;
         try {
-            if(!statement.isClosed()) {
+            if (!statement.isClosed()) {
                 statement.clearParameters();
                 statement.close();
             }
@@ -106,7 +106,7 @@ public abstract class AbstractDAO<T> implements DAO<T> {
         if (connection == null)
             return;
         try {
-            if(!connection.isClosed()) {
+            if (!connection.isClosed()) {
                 connection.close();
                 logger.trace("{} released", connection);
             }
@@ -119,7 +119,7 @@ public abstract class AbstractDAO<T> implements DAO<T> {
         if (statement == null)
             return;
         try {
-            if(!statement.isClosed())
+            if (!statement.isClosed())
                 statement.close();
         } catch (Exception e) {
             logger.error("Can't stop statement", e);
@@ -130,7 +130,7 @@ public abstract class AbstractDAO<T> implements DAO<T> {
         if (resultSet == null)
             return;
         try {
-            if(!resultSet.isClosed())
+            if (!resultSet.isClosed())
                 resultSet.close();
         } catch (Exception e) {
             logger.error("Can't stop resultSet", e);

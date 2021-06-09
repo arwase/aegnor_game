@@ -331,7 +331,8 @@ public class Quest {
     }
 
     private void applyButinOfQuest(Player player, QuestObjectif questObjectif) {
-        long xp; int kamas;
+        long xp;
+        int kamas;
 
         if ((xp = questObjectif.getXp()) > 0) { //Xp a donner
             player.addXp(xp * ((int) Config.INSTANCE.getRATE_XP()));
@@ -343,7 +344,7 @@ public class Quest {
             for (Entry<Integer, Integer> entry : questObjectif.getObjects().entrySet()) {
                 ObjectTemplate template = World.world.getObjTemplate(entry.getKey());
                 int quantity = entry.getValue();
-                GameObject object = template.createNewItem(quantity, false,0);
+                GameObject object = template.createNewItem(quantity, false, 0);
 
                 if (player.addObjet(object, true)) {
                     World.world.addGameObject(object, true);

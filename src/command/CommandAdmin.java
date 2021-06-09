@@ -138,7 +138,7 @@ public class CommandAdmin extends AdminUser {
         } else if (command.equalsIgnoreCase("ANAME")) {
             infos = msg.split(" ", 2);
             String prefix = "<b><a href='asfunction:onHref,ShowPlayerPopupMenu," + this.getPlayer().getName() + "'>[" + this.getPlayer().getGroupe().getName() + "] " + this.getPlayer().getName() + "</a></b>";
-            if(infos.length > 1) {
+            if (infos.length > 1) {
                 String suffix = infos[1];
                 if (suffix.contains("<") && (!suffix.contains(">") || !suffix.contains("</"))) // S'il n'y a pas de balise fermante
                     suffix = suffix.replace("<", "").replace(">", "");
@@ -365,8 +365,7 @@ public class CommandAdmin extends AdminUser {
             } catch (Exception e) {
                 // ok
             }
-            if(cellID <= -1)
-            {
+            if (cellID <= -1) {
                 cellID = World.world.getMap(mapID).getRandomFreeCellId();
             }
             if (mapID == -1 || cellID == -1 || World.world.getMap(mapID) == null) {
@@ -392,7 +391,7 @@ public class CommandAdmin extends AdminUser {
                     this.sendMessage(str);
                     return;
                 }
-                if(!perso.isOnline()) {
+                if (!perso.isOnline()) {
                     perso.setCurMap(World.world.getMap(mapID));
                     perso.setCurCell(World.world.getMap(mapID).getCase(cellID));
                 }
@@ -472,11 +471,11 @@ public class CommandAdmin extends AdminUser {
             }
             if (i == 0) {
                 Main.INSTANCE.setFightAsBlocked(false);
-                for(Player player : World.world.getOnlinePlayers())
+                for (Player player : World.world.getOnlinePlayers())
                     player.sendServerMessage(Lang.get(player, 15));
                 this.sendMessage("Les combats ont etes debloques.");
             } else if (i == 1) {
-                for(Player player : World.world.getOnlinePlayers())
+                for (Player player : World.world.getOnlinePlayers())
                     player.sendServerMessage(Lang.get(player, 14));
                 this.sendMessage("Les combats ont etes bloques.");
             } else {
@@ -491,7 +490,7 @@ public class CommandAdmin extends AdminUser {
             try {
                 name = infos[1];
 
-                if(name.equals("*")) {
+                if (name.equals("*")) {
                     CommandPlayer.canalMute = !CommandPlayer.canalMute;
                     this.sendSuccessMessage("The main channel has been " + (CommandPlayer.canalMute ? "closed." : "opened."));
                     return;
@@ -663,7 +662,8 @@ public class CommandAdmin extends AdminUser {
 
             try {
                 reason = msg.substring(infos[0].length() + infos[1].length() + 1);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             player = World.world.getPlayerByName(name);
 
@@ -751,7 +751,7 @@ public class CommandAdmin extends AdminUser {
 
             try {
                 days = Short.parseShort(infos[2]);
-            } catch(Exception ignored) {
+            } catch (Exception ignored) {
                 this.sendMessage("You've not enter a day value (the time while the account is banned), the default value is unlimited.");
             }
 
@@ -1037,7 +1037,7 @@ public class CommandAdmin extends AdminUser {
             }
             String mess = "==========\n" + "Liste d'items dans la banque :";
             this.sendMessage(mess);
-            if(perso.getMount() != null) {
+            if (perso.getMount() != null) {
                 for (Entry<Integer, GameObject> entry : perso.getMount().getObjects().entrySet()) {
                     mess = entry.getValue().getGuid() + " || "
                             + entry.getValue().getTemplate().getName() + " || "
@@ -1499,18 +1499,30 @@ public class CommandAdmin extends AdminUser {
             message += "\n\n<u>Available processor :</u> " + instance.availableProcessors();
             Set<Thread> list = Thread.getAllStackTraces().keySet();
             int news = 0, running = 0, blocked = 0, waiting = 0, sleeping = 0, terminated = 0;
-            for(Thread thread : list) {
-                switch(thread.getState()) {
-                    case NEW: news++; break;
-                    case RUNNABLE: running++; break;
-                    case BLOCKED: blocked++; break;
-                    case WAITING: waiting++; break;
-                    case TIMED_WAITING: sleeping++; break;
-                    case TERMINATED: news++; break;
+            for (Thread thread : list) {
+                switch (thread.getState()) {
+                    case NEW:
+                        news++;
+                        break;
+                    case RUNNABLE:
+                        running++;
+                        break;
+                    case BLOCKED:
+                        blocked++;
+                        break;
+                    case WAITING:
+                        waiting++;
+                        break;
+                    case TIMED_WAITING:
+                        sleeping++;
+                        break;
+                    case TERMINATED:
+                        news++;
+                        break;
                 }
             }
 
-            message +="\n\n<u>Informations of " + list.size() + " threads :</u> ";
+            message += "\n\n<u>Informations of " + list.size() + " threads :</u> ";
             message += "\nNEW           : " + news;
             message += "\nRUNNABLE      : " + running;
             message += "\nBLOCKED       : " + blocked;
@@ -1520,9 +1532,9 @@ public class CommandAdmin extends AdminUser {
 
             this.sendMessage(message + "\n");
 
-            if(infos.length > 1) {
+            if (infos.length > 1) {
                 message = "List of all threads :\n";
-                for(Thread thread : list)
+                for (Thread thread : list)
                     message += "- " + thread.getId() + " -> " + thread.getName() + " -> " + thread.getState().name().toUpperCase() + "" + (thread.isDaemon() ? " (Daemon)" : "") + ".\n";
                 this.sendMessage(message);
             }
@@ -1648,7 +1660,7 @@ public class CommandAdmin extends AdminUser {
             this.sendMessage("Lancement du reboot.");
             Main.INSTANCE.getRunnables().add(() -> Main.INSTANCE.stop("Exit by administrator"));
             return;
-        } else  if (command.equalsIgnoreCase("SETMAX")) {
+        } else if (command.equalsIgnoreCase("SETMAX")) {
             short i = Short.parseShort(infos[1]);
             this.sendMessage("Le maximum de joueur a été fixer à : " + i);
             GameServer.MAX_PLAYERS = i;
@@ -1741,10 +1753,10 @@ public class CommandAdmin extends AdminUser {
             int rarity = 0;
             if (infos.length == 3)
                 useMax = infos[2].equals("MAX");//Si un jet est specifie
-                rarity = Integer.parseInt(infos[3]);
+            rarity = Integer.parseInt(infos[3]);
 
             for (ObjectTemplate t : IS.getItemTemplates()) {
-                GameObject obj = t.createNewItem(1, useMax,rarity);
+                GameObject obj = t.createNewItem(1, useMax, rarity);
                 if (this.getPlayer().addObjet(obj, true))//Si le joueur n'avait pas d'item similaire
                     World.world.addGameObject(obj, true);
             }
@@ -1804,13 +1816,13 @@ public class CommandAdmin extends AdminUser {
             }
             if (qua < 1)
                 qua = 1;
-            GameObject obj = t.createNewItem(qua, useMax,rarity);
+            GameObject obj = t.createNewItem(qua, useMax, rarity);
 
-            if(t.getType() == Constant.ITEM_TYPE_CERTIF_MONTURE) {
+            if (t.getType() == Constant.ITEM_TYPE_CERTIF_MONTURE) {
                 //obj.setMountStats(this.getPlayer(), null);
                 Mount mount = new Mount(Constant.getMountColorByParchoTemplate(obj.getTemplate().getId()), this.getPlayer().getId(), false);
                 obj.clearStats();
-                obj.getStats().addOneStat(995, - (mount.getId()));
+                obj.getStats().addOneStat(995, -(mount.getId()));
                 obj.getTxtStat().put(996, this.getPlayer().getName());
                 obj.getTxtStat().put(997, mount.getName());
                 mount.setToMax();
@@ -1821,7 +1833,7 @@ public class CommandAdmin extends AdminUser {
             if (useMax)
                 str += " avec des stats maximums";
 
-            str += " de rarete "+rarity;
+            str += " de rarete " + rarity;
 
             str += ".";
             this.sendMessage(str);
@@ -1856,10 +1868,10 @@ public class CommandAdmin extends AdminUser {
                     + perso.getName() + ".";
             this.sendMessage(str);
             return;
-        } else if(command.equalsIgnoreCase("UTILITY")) {
-            switch(infos[1].toUpperCase()) {
+        } else if (command.equalsIgnoreCase("UTILITY")) {
+            switch (infos[1].toUpperCase()) {
                 case "COLLECTOR":
-                    switch(infos[2].toUpperCase()) {
+                    switch (infos[2].toUpperCase()) {
                         case "GET":
                             Collector collector = World.world.getCollector(Integer.parseInt(infos[3]));
                             if (collector == null || collector.getInFight() > 0 || collector.getExchange() || collector.getMap() != this.getPlayer().getCurMap().getId())
@@ -2128,7 +2140,7 @@ public class CommandAdmin extends AdminUser {
                 this.sendMessage("Un reboot est déjà programmé.");
             } else if (OffOn == 1 && !this.isTimerStart()) {
                 if (time <= 15) {
-                    for(Player player : World.world.getOnlinePlayers()) {
+                    for (Player player : World.world.getOnlinePlayers()) {
                         player.sendServerMessage(Lang.get(player, 14));
                         player.send("M13");
                     }
@@ -2145,7 +2157,7 @@ public class CommandAdmin extends AdminUser {
             } else if (OffOn == 0 && this.isTimerStart()) {
                 this.getTimer().stop();
                 this.setTimerStart(false);
-                for(Player player : World.world.getOnlinePlayers())
+                for (Player player : World.world.getOnlinePlayers())
                     player.sendServerMessage(Lang.get(player, 15));
                 Main.INSTANCE.setFightAsBlocked(true);
                 this.sendMessage("Reboot arrêté.");
@@ -2155,7 +2167,7 @@ public class CommandAdmin extends AdminUser {
             return;
         } else if (command.equalsIgnoreCase("LINEM")) {
             String line = "|";
-            for(String split : infos[1].split(",")) {
+            for (String split : infos[1].split(",")) {
                 int id = Integer.parseInt(split);
                 Monster monster = World.world.getMonstre(id);
 
@@ -2228,8 +2240,8 @@ public class CommandAdmin extends AdminUser {
             this.sendMessage("Vous avez restat "
                     + perso.getName() + ".");
             return;
-        }else if (command.equalsIgnoreCase("RESETALL")) {
-            for (Player perso: World.world.getPlayers()) {
+        } else if (command.equalsIgnoreCase("RESETALL")) {
+            for (Player perso : World.world.getPlayers()) {
                 perso.getStats().addOneStat(125, -perso.getStats().getEffect(125));
                 perso.getStats().addOneStat(124, -perso.getStats().getEffect(124));
                 perso.getStats().addOneStat(118, -perso.getStats().getEffect(118));
@@ -2252,7 +2264,7 @@ public class CommandAdmin extends AdminUser {
                 this.sendMessage(mess);
                 return;
             }
-            if(World.world.getPlayerByName(infos[2]) != null) {
+            if (World.world.getPlayerByName(infos[2]) != null) {
                 String mess = "Le personnage " + infos[2] + " existe déjà.";
                 this.sendMessage(mess);
                 return;
@@ -2518,7 +2530,7 @@ public class CommandAdmin extends AdminUser {
         } else if (command.equalsIgnoreCase("RELOADNPC")) {
             try {
                 World.world.reloadNpcs();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 this.sendMessage(e.getMessage());
             }
@@ -2767,7 +2779,7 @@ public class CommandAdmin extends AdminUser {
 
             for (ObjectTemplate obj : World.world.getObjTemplates()) {
                 if (obj.getType() == type) {
-                    GameObject addObj = obj.createNewItem(1, true,0);
+                    GameObject addObj = obj.createNewItem(1, true, 0);
                     if (this.getPlayer().addObjet(addObj, true))//Si le joueur n'avait pas d'item similaire
                         World.world.addGameObject(addObj, true);
                 }
@@ -2821,7 +2833,7 @@ public class CommandAdmin extends AdminUser {
 
             Group group = Group.getGroupeById(id);
 
-            if(id == -1) {
+            if (id == -1) {
                 if (infos.length > 2) {
                     Player player = World.world.getPlayerByName(infos[2]);
                     if (player != null) {
@@ -2833,10 +2845,9 @@ public class CommandAdmin extends AdminUser {
                 } else {
                     this.sendMessage("No player specified, can't change anything.");
                 }
-            } else
-            if(group == null) {
+            } else if (group == null) {
                 this.sendErrorMessage("The group you've specified is invalid :");
-                for(Group gp : Group.getGroups()) {
+                for (Group gp : Group.getGroups()) {
                     this.sendMessage("-> " + gp.getId() + " - " + gp.getName());
                 }
             } else {
@@ -2853,7 +2864,7 @@ public class CommandAdmin extends AdminUser {
                 }
             }
             return;
-        } else  if (command.equalsIgnoreCase("SETFREEPLACE")) {
+        } else if (command.equalsIgnoreCase("SETFREEPLACE")) {
             //GameServer.freePlace = Integer.parseInt(infos[1]);
             this.sendMessage("");
             return;
@@ -3093,7 +3104,7 @@ public class CommandAdmin extends AdminUser {
                 for (Entry<Integer, Integer> entry : e.getItemNecessaryList().entrySet()) {
                     ObjectTemplate objT = World.world.getObjTemplate(entry.getKey());
                     int qua = entry.getValue();
-                    GameObject obj = objT.createNewItem(qua, false,0);
+                    GameObject obj = objT.createNewItem(qua, false, 0);
                     if (this.getPlayer().addObjet(obj, true))
                         World.world.addGameObject(obj, true);
                     SocketManager.GAME_SEND_Im_PACKET(this.getPlayer(), "021;"
@@ -3157,7 +3168,7 @@ public class CommandAdmin extends AdminUser {
                 this.sendMessage(str);
                 return;
             }
-            if(team == 2) {
+            if (team == 2) {
                 team = 0;
             }
             if (cell < 0
@@ -3199,14 +3210,11 @@ public class CommandAdmin extends AdminUser {
             this.getPlayer().getCurMap().setPlaces(newPlaces);
             if (!Database.getDynamics().getMapData().update(this.getPlayer().getCurMap()))
                 return;
-            SocketManager.send(getPlayer(), "GDZ|-"+ cell + ";0;4|-$celdaID;0;11");
+            SocketManager.send(getPlayer(), "GDZ|-" + cell + ";0;4|-$celdaID;0;11");
             int numb = 0;
-            if(team == 1)
-            {
+            if (team == 1) {
                 numb = 4;
-            }
-            else
-            {
+            } else {
                 numb = 11;
             }
             SocketManager.send(getPlayer(), "GDZ|+" + cell + ";0;" + numb);
@@ -3369,14 +3377,14 @@ public class CommandAdmin extends AdminUser {
                 GameMap mapa2 = this.getPlayer().getCurMap();
                 StringBuilder packet = new StringBuilder();
                 packet.append("ÑP").append(mapa2.capabilitiesCompilado()).append("|").append(mapa2.getMaxGroupNumb()).append("|").append(mapa2.getMaxSize()).append("|").append(mapa2.getMaxMerchant());
-                        SocketManager.send(getPlayer().getGameClient(), packet.toString());
+                SocketManager.send(getPlayer().getGameClient(), packet.toString());
             } catch (Exception e) {
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception a été relevée");
             }
         } else if (command.equalsIgnoreCase("MAPA_PARAMETROS")) {
             String cantShort = "";
             try {
-                    cantShort = infos[1];
+                cantShort = infos[1];
             } catch (Exception ignored) {
             }
 
@@ -3386,19 +3394,17 @@ public class CommandAdmin extends AdminUser {
         } else if (command.equalsIgnoreCase("ELIMINAR_POSICIONES")) {
             getPlayer().getCurMap().SuppFightCell();
             if (!Database.getDynamics().getMapData().updateFightCells(getPlayer().getCurMap())) {
-                    SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une erreur est survenue lors de la sauvegarde en BDD!");
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une erreur est survenue lors de la sauvegarde en BDD!");
             } else {
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Les positions de combat ont ete supprimees.");
             }
-        } else if (command.equalsIgnoreCase("BORRAR_MOBS"))
-        {
+        } else if (command.equalsIgnoreCase("BORRAR_MOBS")) {
             getPlayer().getCurMap().deleteMobsOnMap();
             SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Suppression des Groupes de Monstres Normaux Réussi.");
-        } else if(command.equalsIgnoreCase("BORRAR_MOBS_FIJOS"))
-        {
+        } else if (command.equalsIgnoreCase("BORRAR_MOBS_FIJOS")) {
             getPlayer().getCurMap().deleteMobsFixOnMap();
             SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Suppression des Groupes de Monstres Fix Réussi.");
-        }else if(command.equalsIgnoreCase("MAX_GRUPO_MOBS"))
+        } else if (command.equalsIgnoreCase("MAX_GRUPO_MOBS"))
             try {
                 Byte limite = 0;
                 try {
@@ -3417,8 +3423,9 @@ public class CommandAdmin extends AdminUser {
                 }
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "La map " + getPlayer().getCurMap().getId() + " a désormais une limite de groupe de monstre de " + limite);
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une execption est survenue dans la commande");
-        } else if(command.equalsIgnoreCase("MAX_MOBS_POR_GRUPO"))
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une execption est survenue dans la commande");
+            }
+        else if (command.equalsIgnoreCase("MAX_MOBS_POR_GRUPO"))
             try {
                 Byte limite = 0;
                 try {
@@ -3437,8 +3444,9 @@ public class CommandAdmin extends AdminUser {
                 }
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "La map " + getPlayer().getCurMap().getId() + " a désormais une limite de taille de groupe de monstre de " + limite);
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une execption est survenue dans la commande");
-        } else if(command.equalsIgnoreCase("ADD_ACTION_END_FIGHT"))
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une execption est survenue dans la commande");
+            }
+        else if (command.equalsIgnoreCase("ADD_ACTION_END_FIGHT"))
             try {
                 var tipo = 0;
                 var accionID = 0;
@@ -3481,8 +3489,9 @@ public class CommandAdmin extends AdminUser {
                 }
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), strB.toString());
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception a été relévé.");
-        } else if(command.equalsIgnoreCase("MODIFICAR_NPC"))
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception a été relévé.");
+            }
+        else if (command.equalsIgnoreCase("MODIFICAR_NPC"))
             try {
                 int id = 0;
                 Byte sexo = 1;
@@ -3572,8 +3581,9 @@ public class CommandAdmin extends AdminUser {
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "La modification du NPC " + id + " a réussi. caracteristics, GFX: " + gfxID + " SEX: " + sexo + " TAILLE X: " + escalaX + " TAILLE Y: " + escalaY + " COLOR1: " + color1 + " COLOR2: " + color2 + " COLOR3: " + color3 + " ACCES: " + npcMod.getAccessories());
                 SocketManager.ENVIAR_M145_MENSAJE_PANEL_INFORMACION(getPlayer(), "NPC MODIFIER !! :D");
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une erreur est survenu lors de la commande");
-        } else if(command.equalsIgnoreCase("MODIFICAR_STATS_MOB"))
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une erreur est survenu lors de la commande");
+            }
+        else if (command.equalsIgnoreCase("MODIFICAR_STATS_MOB"))
             try {
                 int id = 0;
                 Byte grado = 0;
@@ -3601,9 +3611,9 @@ public class CommandAdmin extends AdminUser {
                     SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Le monstre ID  " + mobModelo.getId() + "  g: " + grado + " lvl: " + mobModelo.getGradeByLevel(grado).getLevel() + " a été modifié avec les stats " + stats);
                 }
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est apparu dans la commande");
-        } else if(command.equalsIgnoreCase("ADD_GRUPO_MOB_SQL"))
-        {
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est apparu dans la commande");
+            }
+        else if (command.equalsIgnoreCase("ADD_GRUPO_MOB_SQL")) {
             Boolean sql = true;
             try {
                 String condUnirse = "";
@@ -3653,13 +3663,13 @@ public class CommandAdmin extends AdminUser {
                 /*grupoMob.condUnirsePelea = condUnirse*/
                 grupoMob.setCondition(String.valueOf(segundosRespawn));
                 if (sql) {
-                    Database.getDynamics().getMapData().replaceMobFix((int)getPlayer().getCurMap().getId(), getPlayer().getCurCell().getId(), grupoData, segundosRespawn);
+                    Database.getDynamics().getMapData().replaceMobFix((int) getPlayer().getCurMap().getId(), getPlayer().getCurCell().getId(), grupoData, segundosRespawn);
                 }
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Le groupe monstre a ete spawn.");
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est survenue dans la commande");
-        }
-        } else if(command.equalsIgnoreCase("INFO_DROP_MOB_OBJETO"))
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est survenue dans la commande");
+            }
+        } else if (command.equalsIgnoreCase("INFO_DROP_MOB_OBJETO"))
             try {
                 int mobID = 0;
                 int objModID = 0;
@@ -3680,13 +3690,14 @@ public class CommandAdmin extends AdminUser {
                 for (World.Drop drop : mobModelo.getDrops()) {
                     if (drop.getObjectId() == objModID) {
                         SocketManager.send(getPlayer(), "Ñd" + drop.getCeil() + ";" + drop.getLocalPercent() * 1000 + ";"
-                                        + drop.getAction());
+                                + drop.getAction());
                         break;
                     }
                 }
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est survenue");
-        } else if(command.equalsIgnoreCase("BORRAR_DROP"))
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est survenue");
+            }
+        else if (command.equalsIgnoreCase("BORRAR_DROP"))
             try {
                 int mobID = 0;
                 int objModID = 0;
@@ -3708,8 +3719,9 @@ public class CommandAdmin extends AdminUser {
                 Database.getDynamics().getDropData().deleteDrop(objModID, mobID);
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "L'item " + objModelo.getName() + " a été supprimé du drop du monstre " + mobModelo.getId());
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est survenue");
-        } else if(command.equalsIgnoreCase("ADD_DROP"))
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est survenue");
+            }
+        else if (command.equalsIgnoreCase("ADD_DROP"))
             try {
                 var mobID = 0;
                 var objModID = 0;
@@ -3742,8 +3754,9 @@ public class CommandAdmin extends AdminUser {
                 Database.getDynamics().getDropData().insertDrop(mobID, objModID, prospecc, porcentaje, max, objModelo.getName());
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Ajout du drop sur le monstre (" + mobModelo.getId() + ") de l'item " + objModelo.getName() + " (" + objModelo.getId() + ") Seuil: " + prospecc + ", " + porcentaje + "%, Action: " + max);
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une erreur est survenue");
-        } else if(command.equalsIgnoreCase("ADD_TRIGGER"))
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une erreur est survenue");
+            }
+        else if (command.equalsIgnoreCase("ADD_TRIGGER"))
             try {
                 int accionID = 0;
                 String args = "";
@@ -3780,7 +3793,7 @@ public class CommandAdmin extends AdminUser {
                 } catch (Exception ignored) {
                 }
 
-                if (Database.getDynamics().getScriptedCellData().update((int)mapa.getId(), (int)celda.getId(), accionID, 1, args, condicion)) {
+                if (Database.getDynamics().getScriptedCellData().update((int) mapa.getId(), (int) celda.getId(), accionID, 1, args, condicion)) {
                     if (mapa.getId() == getPlayer().getCurCell().getId()) {
                         SocketManager.send(getPlayer(), "GDZ|+" + celda.getId() + ";0;11");// color
                         // azul
@@ -3792,11 +3805,10 @@ public class CommandAdmin extends AdminUser {
                 }
             } catch (Exception e) {
                 SocketManager.send(getPlayer(), "Une exception et survenue");
-        } else if(command.equalsIgnoreCase("HIDE_POSITIONS"))
-        {
+            }
+        else if (command.equalsIgnoreCase("HIDE_POSITIONS")) {
             getPlayer().getCurMap().panelPosiciones(getPlayer(), false);
-        } else if(command.equalsIgnoreCase("SHOW_FIGHTPOS"))
-        {
+        } else if (command.equalsIgnoreCase("SHOW_FIGHTPOS")) {
             getPlayer().getCurMap().panelPosiciones(getPlayer(), true);
         } else if (command.equalsIgnoreCase("INFO_NPC"))
             try {
@@ -3807,8 +3819,9 @@ public class CommandAdmin extends AdminUser {
                     SocketManager.send(getPlayer(), "bp" + npcMod.getSex() + "," + npcMod.getScaleX() + "," + npcMod.getScaleY() + "," + npcMod.getGfxId() + "," + npcMod.getColor1() + "," + npcMod.getColor2() + "," + npcMod.getColor3() + "," + npcMod.getAccessories());
                 }
             } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Arguments incomplets");
-        } else if(command.equalsIgnoreCase("STATS_DEFECTO_MOB"))
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Arguments incomplets");
+            }
+        else if (command.equalsIgnoreCase("STATS_DEFECTO_MOB"))
             try {
                 int id = 0;
                 try {
@@ -3826,13 +3839,13 @@ public class CommandAdmin extends AdminUser {
                 SocketManager.ENVIAR_ÑJ_STATS_DEFECTO_MOB(getPlayer(), mobModelo.strStatsTodosMobs());
             } catch (Exception e) {
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est survenue");
-        } else if(command.equalsIgnoreCase("DEL_FIGHT_POS"))
-        {
+            }
+        else if (command.equalsIgnoreCase("DEL_FIGHT_POS")) {
             int celdaID = -1;
             try {
                 celdaID = java.lang.Short.parseShort(infos[1]);
             } catch (Exception ignored) {
-        }
+            }
 
             if (getPlayer().getCurMap().getCase(celdaID) == null) {
                 celdaID = getPlayer().getCurCell().getId();
@@ -3840,42 +3853,39 @@ public class CommandAdmin extends AdminUser {
             // if (mapa.getCercado() != null) {
             // mapa.getCercado().getCeldasObj().remove((Object) celdaID);
             // }
-            SocketManager.send(getPlayer(), "GDZ|-"+ celdaID +";0;4|-"+ celdaID +";0;11|-"+ celdaID +";0;5");
+            SocketManager.send(getPlayer(), "GDZ|-" + celdaID + ";0;4|-" + celdaID + ";0;11|-" + celdaID + ";0;5");
             getPlayer().getCurMap().deleteFightCell(celdaID);
             if (Database.getDynamics().getMapData().updateFightCells(getPlayer().getCurMap())) {
                 SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une erreur est survenue lors de la sauvegarde en BDD!");
             }
-        } else if(command.equalsIgnoreCase("HIDE_TRIGGERS"))
-        {
+        } else if (command.equalsIgnoreCase("HIDE_TRIGGERS")) {
             getPlayer().getCurMap().panelTriggers(getPlayer(), false);
-        } else if(command.equalsIgnoreCase("SHOW_TRIGGERS"))
-        {
+        } else if (command.equalsIgnoreCase("SHOW_TRIGGERS")) {
             getPlayer().getCurMap().panelTriggers(getPlayer(), true);
-        } else if(command.equalsIgnoreCase("DEL_TRIGGER"))
-        try{
-            int celdaID = -1;
+        } else if (command.equalsIgnoreCase("DEL_TRIGGER"))
             try {
-                celdaID = Integer.parseInt(infos[1]);
-            }
-            catch (Exception ignored) {
-            }
+                int celdaID = -1;
+                try {
+                    celdaID = Integer.parseInt(infos[1]);
+                } catch (Exception ignored) {
+                }
 
-            GameCase celda = getPlayer().getCurMap().getCase(celdaID);
-            if (celda == null) {
-                celda = getPlayer().getCurCell();
+                GameCase celda = getPlayer().getCurMap().getCase(celdaID);
+                if (celda == null) {
+                    celda = getPlayer().getCurCell();
+                }
+                SocketManager.send(getPlayer(), "GDZ|-" + celdaID + ";0;11");
+                celda.deleteOnCellStopAction(0);
+                Boolean exito = Database.getDynamics().getScriptedCellData().delete(getPlayer().getCurMap().getId(), celdaID);
+                if (exito) {
+                    SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Le Trigger de la cellule " + celdaID + " a été supprimé");
+                } else {
+                    SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Le Trigger n'a pas pu être retiré");
+                }
+            } catch (Exception e) {
+                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est survenue");
             }
-            SocketManager.send(getPlayer(), "GDZ|-"+ celdaID +";0;11");
-            celda.deleteOnCellStopAction(0);
-            Boolean exito = Database.getDynamics().getScriptedCellData().delete(getPlayer().getCurMap().getId(), celdaID);
-            if (exito) {
-                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Le Trigger de la cellule "+ celdaID +" a été supprimé");
-            } else {
-                SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Le Trigger n'a pas pu être retiré");
-            }
-        } catch (Exception e) {
-            SocketManager.GAME_SEND_MESSAGE_CONSOLE(getPlayer(), "Une exception est survenue");
-        } else
-        {
+        else {
             this.sendMessage("Commande invalide !");
         }
     }

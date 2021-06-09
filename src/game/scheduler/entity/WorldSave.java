@@ -24,7 +24,7 @@ public class WorldSave extends Updatable {
 
     @Override
     public void update() {
-        if(this.verify())
+        if (this.verify())
             if (!Config.INSTANCE.isSaving()) {
                 thread = new Thread(() -> WorldSave.cast(1));
                 thread.setName(WorldSave.class.getName());
@@ -34,7 +34,7 @@ public class WorldSave extends Updatable {
     }
 
     public static void cast(int trys) {
-        if(trys != 0) GameServer.INSTANCE.setState(2);
+        if (trys != 0) GameServer.INSTANCE.setState(2);
 
         try {
             World.world.logger.debug("Starting the save of the world..");
@@ -92,7 +92,7 @@ public class WorldSave extends Updatable {
                         Database.getStatics().getObjectData().update(object);
                     object.modification = -1;
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -121,9 +121,9 @@ public class WorldSave extends Updatable {
             Config.INSTANCE.setSaving(false);
         }
 
-        if(trys != 0) GameServer.INSTANCE.setState(1);
+        if (trys != 0) GameServer.INSTANCE.setState(1);
 
-        if(thread != null) {
+        if (thread != null) {
             World.world.getMaps().stream().filter(map -> map != null && map.getMobGroups() != null)
                     .forEach(map -> map.getMobGroups().values()
                             .stream().filter(group -> group != null).forEach(Monster.MobGroup::addStarBonus));

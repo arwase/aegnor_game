@@ -16,18 +16,30 @@ public class French extends AbstractLang {
 
     public void initialize() {
         int index = 0;
-        this.sentences.add(index, "Votre canal général est désactivé."); index++;
-        this.sentences.add(index, "Les caractères point virgule, chevrons et tildé sont désactivé."); index++;
-        this.sentences.add(index, "Tu dois attendre encore #1 seconde(s)."); index++;
-        this.sentences.add(index, "Vous avez activé le canal général."); index++;
-        this.sentences.add(index, "Vous avez désactivé le canal général."); index++;
-        this.sentences.add(index, "Liste des membres du staff connectés :"); index++;
-        this.sentences.add(index, "Il n'y a aucun membre du staff connecté."); index++;
-        this.sentences.add(index, "Vous n'êtes pas bloquer.."); index++;
-        this.sentences.add(index, "<b>" + Config.INSTANCE.getNAME() + " - <a href='" + Config.INSTANCE.getUrl() + "'>Site</a></b>\nEn ligne depuis : #1j #2h #3m #4s."); index++;
-        this.sentences.add(index, "\nJoueurs en ligne : #1"); index++;
-        this.sentences.add(index, "\nJoueurs uniques en ligne : #1"); index++;
-        this.sentences.add(index, "\nRecord de connexion : #1"); index++;
+        this.sentences.add(index, "Votre canal général est désactivé.");
+        index++;
+        this.sentences.add(index, "Les caractères point virgule, chevrons et tildé sont désactivé.");
+        index++;
+        this.sentences.add(index, "Tu dois attendre encore #1 seconde(s).");
+        index++;
+        this.sentences.add(index, "Vous avez activé le canal général.");
+        index++;
+        this.sentences.add(index, "Vous avez désactivé le canal général.");
+        index++;
+        this.sentences.add(index, "Liste des membres du staff connectés :");
+        index++;
+        this.sentences.add(index, "Il n'y a aucun membre du staff connecté.");
+        index++;
+        this.sentences.add(index, "Vous n'êtes pas bloquer..");
+        index++;
+        this.sentences.add(index, "<b>" + Config.INSTANCE.getNAME() + " - <a href='" + Config.INSTANCE.getUrl() + "'>Site</a></b>\nEn ligne depuis : #1j #2h #3m #4s.");
+        index++;
+        this.sentences.add(index, "\nJoueurs en ligne : #1");
+        index++;
+        this.sentences.add(index, "\nJoueurs uniques en ligne : #1");
+        index++;
+        this.sentences.add(index, "\nRecord de connexion : #1");
+        index++;
         this.sentences.add(index, "Les commandes disponnibles sont :\n"
                 + "<b>.infos</b> - Permet d'obtenir des informations sur le serveur.\n"
                 + "<b>.deblo</b> - Permet de vous débloquer en vous téléportant à une cellule libre.\n"
@@ -39,9 +51,12 @@ public class French extends AbstractLang {
                 (Config.INSTANCE.getDEATH_MATCH() ? "<b>.deathmatch</b> - Vous inscrit/désincrit de la liste d'attente de DeathMatch.\n" : "") +
                 "<b>.banque</b> - Ouvre votre banque.\n" +
                 "<b>.transfert</b> - Nécessite d'être dans sa banque et permet de transférer toutes vos ressources.\n" +
-                "<b>.groupe</b> - Groupe vos mules.\n"); index++;
-        this.sentences.add(index, "Vous pouvez dès à présent voter, <b><a href='" + Config.INSTANCE.getUrl() + "'>clique ici</a></b> !"); index++;
-        this.sentences.add(index, "Vous ne pouvez plus combattre jusqu'à nouvelle ordre."); index++;//14
+                "<b>.groupe</b> - Groupe vos mules.\n");
+        index++;
+        this.sentences.add(index, "Vous pouvez dès à présent voter, <b><a href='" + Config.INSTANCE.getUrl() + "'>clique ici</a></b> !");
+        index++;
+        this.sentences.add(index, "Vous ne pouvez plus combattre jusqu'à nouvelle ordre.");
+        index++;//14
         this.sentences.add(index, "Vous pouvez désormais combattre.");
     }
 }

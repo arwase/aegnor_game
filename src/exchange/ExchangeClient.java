@@ -32,14 +32,14 @@ public class ExchangeClient {
         this.ioSession = ioSession;
     }
 
-    private void init(){
+    private void init() {
         ioConnector = new NioSocketConnector();
         ioConnector.setHandler(new ExchangeHandler());
         ioConnector.setConnectTimeoutMillis(1000);
     }
 
     public boolean start() {
-        if(!Config.INSTANCE.isRunning()) return true;
+        if (!Config.INSTANCE.isRunning()) return true;
         try {
             connectFuture = ioConnector.connect(new InetSocketAddress(Config.INSTANCE.getExchangeIp(), Config.INSTANCE.getExchangePort()));
         } catch (Exception e) {
@@ -52,11 +52,10 @@ public class ExchangeClient {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if(connectFuture == null)
-        {
+        if (connectFuture == null) {
             logger.error("La variable connectFuture est null");
         }
-        if(!connectFuture.isConnected()) {
+        if (!connectFuture.isConnected()) {
             logger.error("Can't connect to login server");
             return false;
         }
@@ -66,7 +65,7 @@ public class ExchangeClient {
     }
 
     public void stop() {
-        if(ioSession != null)
+        if (ioSession != null)
             ioSession.close(true);
         if (connectFuture != null)
             connectFuture.cancel();
@@ -76,10 +75,10 @@ public class ExchangeClient {
     }
 
     void restart() {
-        if(Config.INSTANCE.isRunning()) {
+        if (Config.INSTANCE.isRunning()) {
             stop();
             init();
-            while(!INSTANCE.start()){
+            while (!INSTANCE.start()) {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException ignored) {
@@ -89,7 +88,7 @@ public class ExchangeClient {
     }
 
     public void send(String packet) {
-        if(ioSession != null && !ioSession.isClosing() && ioSession.isConnected())
+        if (ioSession != null && !ioSession.isClosing() && ioSession.isConnected())
             ioSession.write(StringToIoBuffer(packet));
     }
 

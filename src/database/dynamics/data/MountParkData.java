@@ -86,7 +86,7 @@ public class MountParkData extends AbstractDAO<MountPark> {
         try {
             result = getData("SELECT * FROM `mountpark_data` WHERE `mapid` = '" + mountPark.getMap().getId() + "';");
             ResultSet RS = result.resultSet;
-            if(!RS.next()) {
+            if (!RS.next()) {
                 this.insert(mountPark);
             }
         } catch (SQLException e) {

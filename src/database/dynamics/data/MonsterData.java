@@ -16,7 +16,8 @@ public class MonsterData extends AbstractDAO<Monster> {
     }
 
     @Override
-    public void load(Object obj) {}
+    public void load(Object obj) {
+    }
 
     @Override
     public boolean update(Monster obj) {

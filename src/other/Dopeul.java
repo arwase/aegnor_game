@@ -55,7 +55,7 @@ public class Dopeul {
                     SocketManager.GAME_SEND_Im_PACKET(player, "14");
                     return;
                 }
-                GameObject obj = World.world.getObjTemplate(10207).createNewItem(1, true,0);
+                GameObject obj = World.world.getObjTemplate(10207).createNewItem(1, true, 0);
                 if (player.addObjet(obj, false))
                     World.world.addGameObject(obj, true);
                 removeObject(player, doplon, 1);
@@ -64,11 +64,11 @@ public class Dopeul {
             case 3://Reset spell
                 ArrayList<Integer> doplons = hasQuaDoplon(player, 7);
 
-                if(doplons.contains(Dopeul.getDoplonByClasse(player.getClasse()))) {
+                if (doplons.contains(Dopeul.getDoplonByClasse(player.getClasse()))) {
                     removeObject(player, Dopeul.getDoplonByClasse(player.getClasse()), 7);
                 } else {
                     doplons = Dopeul.hasQuaDoplon(player, 1);
-                    if(doplons.size() == 12) {
+                    if (doplons.size() == 12) {
                         for (int id : doplons) removeObject(player, id, 1);
                     } else {
                         SocketManager.GAME_SEND_Im_PACKET(player, "14");
@@ -102,7 +102,7 @@ public class Dopeul {
                         - player.get_capital());
 
                 ObjectTemplate OT = World.world.getObjTemplate(10601); // On lui donne un certificat de restat
-                GameObject obj2 = OT.createNewItem(1, false,0);
+                GameObject obj2 = OT.createNewItem(1, false, 0);
                 if (player.addObjet(obj2, true)) //Si le joueur n'avait pas d'item similaire
                     World.world.addGameObject(obj2, true);
                 obj2.refreshStatsObjet("325" + System.currentTimeMillis());
@@ -116,7 +116,7 @@ public class Dopeul {
                     SocketManager.GAME_SEND_Im_PACKET(player, "14");
                     return;
                 }
-                obj = World.world.getObjTemplate(1575).createNewItem(1, true,0);
+                obj = World.world.getObjTemplate(1575).createNewItem(1, true, 0);
                 if (player.addObjet(obj, false))
                     World.world.addGameObject(obj, true);
                 for (int id : doplons)

@@ -55,6 +55,7 @@ public class MapData extends AbstractDAO<GameMap> {
         }
         return false;
     }
+
     public boolean updateForbidden(GameMap map) {
         PreparedStatement p = null;
         try {
@@ -71,8 +72,7 @@ public class MapData extends AbstractDAO<GameMap> {
         return false;
     }
 
-    public boolean updateFightCells(GameMap map)
-    {
+    public boolean updateFightCells(GameMap map) {
         PreparedStatement p = null;
         try {
             p = getPreparedStatement("UPDATE `maps` SET `places` = ? WHERE id = ?");
@@ -87,8 +87,8 @@ public class MapData extends AbstractDAO<GameMap> {
         }
         return false;
     }
-    public boolean updateMobsNormal(GameMap map, String monsters)
-    {
+
+    public boolean updateMobsNormal(GameMap map, String monsters) {
         PreparedStatement p = null;
         try {
             p = getPreparedStatement("UPDATE `maps` SET `monsters` = ? WHERE id = ?");
@@ -119,8 +119,8 @@ public class MapData extends AbstractDAO<GameMap> {
         }
         return false;
     }
-    public boolean updateMaxNumGroup(GameMap map, byte limite)
-    {
+
+    public boolean updateMaxNumGroup(GameMap map, byte limite) {
         PreparedStatement p = null;
         try {
             p = getPreparedStatement("UPDATE `maps` SET `numgroup` = ? WHERE id = ?");
@@ -135,8 +135,8 @@ public class MapData extends AbstractDAO<GameMap> {
         }
         return false;
     }
-    public boolean updateMaxSizeGroup(GameMap map, byte limite)
-    {
+
+    public boolean updateMaxSizeGroup(GameMap map, byte limite) {
         PreparedStatement p = null;
         try {
             p = getPreparedStatement("UPDATE `maps` SET `maxSize` = ? WHERE id = ?");
@@ -151,8 +151,8 @@ public class MapData extends AbstractDAO<GameMap> {
         }
         return false;
     }
-    public boolean replaceMobFix(int mapid, int cellid, String groupdata, int timer)
-    {
+
+    public boolean replaceMobFix(int mapid, int cellid, String groupdata, int timer) {
         PreparedStatement p = null;
         try {
             p = getPreparedStatement("REPLACE INTO `mobgroups_fix` (mapid,cellid,groupData,Donjon,Salle,Timer) VALUES(?,?,?,'','0',?)");
@@ -169,8 +169,8 @@ public class MapData extends AbstractDAO<GameMap> {
         }
         return false;
     }
-    public boolean deleteMobGroupFix(GameMap map)
-    {
+
+    public boolean deleteMobGroupFix(GameMap map) {
         PreparedStatement p = null;
         try {
             p = getPreparedStatement("DELETE `mobgroups_fix` WHERE id = ?");

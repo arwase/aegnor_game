@@ -30,7 +30,9 @@ public class EventManager extends Updatable {
         WAITING, INITIALIZE, PROCESSED, STARTED, FINISHED
     }
 
-    /** EvenetManager **/
+    /**
+     * EvenetManager
+     **/
 
     private final Event[] events;
     private State state = State.WAITING;
@@ -58,8 +60,8 @@ public class EventManager extends Updatable {
     public void startNewEvent() {
         Event event = this.events[Formulas.random.nextInt(this.events.length)];
 
-        if(event != null) {
-            if(this.events.length > 1 && this.lastest != null && event.getEventId() == this.lastest.getEventId()) {
+        if (event != null) {
+            if (this.events.length > 1 && this.lastest != null && event.getEventId() == this.lastest.getEventId()) {
                 this.startNewEvent();
                 return;
             }
@@ -75,15 +77,15 @@ public class EventManager extends Updatable {
     }
 
     private synchronized void startCurrentEvent() {
-        if(this.state == State.STARTED)
+        if (this.state == State.STARTED)
             return;
         this.state = State.STARTED;
 
-        if(!this.hasEnoughPlayers()) {
+        if (!this.hasEnoughPlayers()) {
             this.count = 0;
             this.lastTime = System.currentTimeMillis();
             this.state = State.PROCESSED;
-        } else if(this.moveAllPlayersToEventMap(true)) {
+        } else if (this.moveAllPlayersToEventMap(true)) {
             this.lastTime = System.currentTimeMillis();
             TimerWaiter.addNext(() -> this.current.perform(), 0, TimeUnit.SECONDS, TimerWaiter.DataType.CLIENT);
         }
@@ -104,10 +106,10 @@ public class EventManager extends Updatable {
     }
 
     public synchronized byte subscribe(final Player player) {
-        if(this.current == null || this.state == State.WAITING) {
+        if (this.current == null || this.state == State.WAITING) {
             return 0;
         } else {
-            if(this.state == State.PROCESSED) {
+            if (this.state == State.PROCESSED) {
                 for (Player p : this.getParticipants()) {
                     if (player.getAccount() != null && p != null && p.getAccount() != null) {
                         if (player.getAccount().getCurrentIp().compareTo(p.getAccount().getCurrentIp()) == 0) {
@@ -144,10 +146,10 @@ public class EventManager extends Updatable {
     }
 
     private boolean hasSameIP(Player player) {
-        if(player != null && player.getAccount() != null) {
+        if (player != null && player.getAccount() != null) {
             final String ip = player.getAccount().getCurrentIp();
 
-            if(ip.equals("127.0.0.1"))
+            if (ip.equals("127.0.0.1"))
                 return false;
             for (Player target : this.participants) {
                 if (target != null && target.getAccount() != null) {
@@ -160,7 +162,7 @@ public class EventManager extends Updatable {
     }
 
     private boolean hasEnoughPlayers() {
-        if(this.current == null)
+        if (this.current == null)
             return false;
         short percent = (short) ((100 * this.participants.size()) / this.current.getMaxPlayers());
         return percent >= 30;
@@ -168,7 +170,7 @@ public class EventManager extends Updatable {
 
     @Override
     public void update() {
-        if(Config.INSTANCE.getAUTO_EVENT() && this.verify()) {
+        if (Config.INSTANCE.getAUTO_EVENT() && this.verify()) {
             if (this.state == State.WAITING) {
                 short result = (short) (Config.INSTANCE.getTIME_PER_EVENT() - (++count));
                 if (result == 0) {
@@ -185,8 +187,8 @@ public class EventManager extends Updatable {
 
                 if (result <= 0) {
                     this.startCurrentEvent();
-                } else if(result == 1 && this.hasEnoughPlayers()) {
-                    for(Player player : this.participants) {
+                } else if (result == 1 && this.hasEnoughPlayers()) {
+                    for (Player player : this.participants) {
                         player.sendMessage("(<b>Infos</b>) : L'événement va commencer dans 1 minute.");
                     }
                 }
@@ -203,21 +205,21 @@ public class EventManager extends Updatable {
         boolean ok = true;
         final StringBuilder afk = teleport ? new StringBuilder("") : null;
 
-        for(final Player player : this.participants) {
-            if(player.getFight() != null || !player.isOnline() || player.isGhost() || player.getDoAction()) {
+        for (final Player player : this.participants) {
+            if (player.getFight() != null || !player.isOnline() || player.isGhost() || player.getDoAction()) {
                 ok = false;
                 this.participants.remove(player);
                 player.sendMessage("La prochaine fois tâchez d'être disponible !");
                 player.sendMessage("(<b>Infos</b>) : Vous venez d'être expulsé du jeu pour indisponibilité.");
 
-                if(teleport) {
+                if (teleport) {
                     afk.append(afk.length() == 0 ? ("<b>" + player.getName() + "</b>") : (", <b>" + player.getName() + "</b>"));
                 }
             }
         }
 
-        if(!ok || !teleport) {
-            if(teleport) {
+        if (!ok || !teleport) {
+            if (teleport) {
                 this.participants.forEach(player -> player.sendMessage("(<b>Infos</b> : Merci à " + afk.toString() + " expulsé pour inactivité."));
                 World.world.getOnlinePlayers().stream().filter(target -> !afk.toString().contains(target.getName()))
                         .forEach(target -> target.sendMessage("(<b>Infos</b> : Il vous reste 30 secondes pour vous inscrire à l'événement '<b>" + this.current.getEventName() + "</b>' (<b>.event</b>)."));
@@ -225,8 +227,8 @@ public class EventManager extends Updatable {
             return false;
         }
 
-        for(final Player player : this.participants) {
-            if(player.getFight() == null && player.isOnline() && !player.isGhost() && !player.getDoAction()) {
+        for (final Player player : this.participants) {
+            if (player.getFight() == null && player.isOnline() && !player.isGhost() && !player.getDoAction()) {
                 player.setOldPosition();
                 player.setBlockMovement(true);
                 player.teleport(this.current.getMap().getId(), this.current.getEmptyCellForPlayer(player).getId());
@@ -243,9 +245,9 @@ public class EventManager extends Updatable {
     }
 
     public static boolean isInEvent(Player player) {
-        if(Config.INSTANCE.getAUTO_EVENT() && EventManager.getInstance().getState() == State.STARTED)
-            for(Player target : EventManager.getInstance().getParticipants())
-                if(target.getId() == player.getId())
+        if (Config.INSTANCE.getAUTO_EVENT() && EventManager.getInstance().getState() == State.STARTED)
+            for (Player target : EventManager.getInstance().getParticipants())
+                if (target.getId() == player.getId())
                     return true;
         return false;
     }

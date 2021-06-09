@@ -20,8 +20,7 @@ public class ClasseData extends AbstractDAO<Classe> {
     }
 
     @Override
-    public boolean update(Classe classe)
-    {
+    public boolean update(Classe classe) {
         return false;
     }
 

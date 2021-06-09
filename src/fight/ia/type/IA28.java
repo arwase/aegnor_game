@@ -9,7 +9,7 @@ import fight.ia.util.Function;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA28 extends AbstractIA  {
+public class IA28 extends AbstractIA {
 
     private boolean tp = false, invoc = false;
 
@@ -23,7 +23,7 @@ public class IA28 extends AbstractIA  {
             Fighter target = Function.getInstance().getNearestEnnemynbrcasemax(this.fight, this.fighter, 0, 11);
             int time = 1000, dist = 1000;
 
-            if(target == null) {
+            if (target == null) {
                 for (Fighter t : Function.getInstance().getLowHpEnnemyList(this.fight, this.fighter).values()) {
                     if (t != null && !t.isHide()) {
                         int tDist = PathFinding.getDistanceBetweenTwoCase(this.fight.getMap(), this.fighter.getCell(), t.getCell());
@@ -35,7 +35,7 @@ public class IA28 extends AbstractIA  {
                 }
             }
 
-            if(dist == 1000) {
+            if (dist == 1000) {
                 if (target != null) {
                     dist = PathFinding.getDistanceBetweenTwoCase(this.fight.getMap(), this.fighter.getCell(), target.getCell());
                 } else {
@@ -49,19 +49,19 @@ public class IA28 extends AbstractIA  {
                 this.invoc = true;
             }
 
-            if(!this.tp && Function.getInstance().TPIfPossiblesphinctercell(this.fight, this.fighter, target)) {
+            if (!this.tp && Function.getInstance().TPIfPossiblesphinctercell(this.fight, this.fighter, target)) {
                 this.tp = true;
                 time = 400;
             }
-            if(dist <= 5 && this.fighter.getCurPm(this.fight) >= dist && Function.getInstance().moveNearIfPossible(this.fight, this.fighter, target)) {
+            if (dist <= 5 && this.fighter.getCurPm(this.fight) >= dist && Function.getInstance().moveNearIfPossible(this.fight, this.fighter, target)) {
                 time = 600;
             }
-            if(!this.tp && Function.getInstance().TPIfPossiblesphinctercell(this.fight, this.fighter, target)) {
+            if (!this.tp && Function.getInstance().TPIfPossiblesphinctercell(this.fight, this.fighter, target)) {
                 this.tp = true;
                 time = 400;
             }
 
-            if(Function.getInstance().attackIfPossiblesphinctercell(this.fight, this.fighter, target) == 0) {
+            if (Function.getInstance().attackIfPossiblesphinctercell(this.fight, this.fighter, target) == 0) {
                 time = 800;
             }
 

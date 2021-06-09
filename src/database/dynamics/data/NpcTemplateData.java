@@ -46,6 +46,7 @@ public class NpcTemplateData extends AbstractDAO<NpcTemplate> {
         }
         return false;
     }
+
     public boolean updateNPCSkin(NpcTemplate npc) {
         PreparedStatement p = null;
         try {

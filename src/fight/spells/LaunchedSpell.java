@@ -54,12 +54,12 @@ public class LaunchedSpell {
     public static int haveEffectTarget(Map<Integer, Fighter> f, Fighter target, int id) {
         if (target == null) return 0;
         int nb = 0;
-        for(Fighter m : f.values())
-            if(m != null)
+        for (Fighter m : f.values())
+            if (m != null)
                 for (LaunchedSpell S : m.getLaunchedSorts())
                     if (S.target != null && S.target.getId() == target.getId())
-                        for(SpellEffect e : S.spellStats.getEffects())
-                            if(e.getEffectID() == id)
+                        for (SpellEffect e : S.spellStats.getEffects())
+                            if (e.getEffectID() == id)
                                 nb++;
         return nb;
     }

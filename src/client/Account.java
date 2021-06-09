@@ -59,7 +59,7 @@ public class Account {
         else this.heureVote = Long.parseLong(heureVote);
 
         //Chargement de la liste d'amie
-        if(!friends.equalsIgnoreCase("")) {
+        if (!friends.equalsIgnoreCase("")) {
             for (String f : friends.split(";")) {
                 try {
                     this.friends.add(Integer.parseInt(f));
@@ -362,8 +362,8 @@ public class Account {
     public void removeFriend(int id) {
         if (this.friends.contains(id)) {
             Iterator<Integer> iterator = this.friends.iterator();
-            while(iterator.hasNext())
-                if(iterator.next() == id)
+            while (iterator.hasNext())
+                if (iterator.next() == id)
                     iterator.remove();
             Database.getStatics().getAccountData().update(this);
         }
@@ -421,8 +421,8 @@ public class Account {
     public void removeEnemy(int id) {
         if (this.enemys.contains(id)) {
             Iterator<Integer> iterator = this.enemys.iterator();
-            while(iterator.hasNext())
-                if(iterator.next() == id)
+            while (iterator.hasNext())
+                if (iterator.next() == id)
                     iterator.remove();
             Database.getStatics().getAccountData().update(this);
         }
@@ -489,7 +489,7 @@ public class Account {
 
         if (entry == null)//Si entry == null cela veut dire que la boucle s'est effectu� sans trouver d'item avec le meme cheapestID
             return false;
-        if(entry.buy)
+        if (entry.buy)
             return false;
 
         this.hdvsItems.get(hdvID).remove(entry);//Retire l'item de la liste des objets a vendre du compte

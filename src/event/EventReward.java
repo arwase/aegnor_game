@@ -14,9 +14,7 @@ public class EventReward {
     }
 
 
-
-
     public static EventReward[] parse(String rewards) {
-        return new EventReward[] {};
+        return new EventReward[]{};
     }
 }

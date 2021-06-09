@@ -74,7 +74,7 @@ public class ObjectAction {
                         if (player0.getFight() != null) return;
                         short mapId = Short.parseShort(arg.split(",", 2)[0]);
                         int cellId = Integer.parseInt(arg.split(",", 2)[1]);
-                        if(mapId == 8978) {
+                        if (mapId == 8978) {
                             isOk = false;
                             send = false;
                             return;
@@ -104,7 +104,7 @@ public class ObjectAction {
                         break;
 
                     case 3://Don de vie.
-                        if(this.type.split(";").length > 1 && player.getFight() != null) return;
+                        if (this.type.split(";").length > 1 && player.getFight() != null) return;
                         boolean isOk1 = true,
                                 isOk2 = true;
                         for (String arg0 : arg.split(",")) {
@@ -125,7 +125,7 @@ public class ObjectAction {
                                     if (player.getCurPdv() + val > player.getMaxPdv())
                                         val = player.getMaxPdv() - player.getCurPdv();
                                     player.setPdv(player.getCurPdv() + val);
-                                    if(player.getFight() != null)
+                                    if (player.getFight() != null)
                                         player.getFight().getFighterByPerso(player).setPdv(player.getCurPdv());
                                     SocketManager.GAME_SEND_STATS_PACKET(player);
                                     SocketManager.GAME_SEND_Im_PACKET(player, "01;" + val);
@@ -258,10 +258,10 @@ public class ObjectAction {
 
                         GameObject obj = World.world.getGameObject(objet);
 
-                        if(obj != null) {
+                        if (obj != null) {
                             int spell = obj.getStats().get(Constant.STATS_FORGET_ONE_LEVEL_SPELL);
 
-                            if(spell != 0) {
+                            if (spell != 0) {
                                 if (spell <= 4) {
                                     int quantity = -1;
                                     switch (spell) {
@@ -442,7 +442,7 @@ public class ObjectAction {
                                 break;
                             }
                         }
-                        if(!tp) {
+                        if (!tp) {
                             player.send("Im161");
                             return;
                         }
@@ -610,7 +610,7 @@ public class ObjectAction {
                     case 26://Ajout d'objet.
                         if (player0.getFight() != null) return;
                         for (String i : arg.split(";")) {
-                            obj = World.world.getObjTemplate(Integer.parseInt(i.split(",")[0])).createNewItem(Integer.parseInt(i.split(",")[1]), false,0);
+                            obj = World.world.getObjTemplate(Integer.parseInt(i.split(",")[0])).createNewItem(Integer.parseInt(i.split(",")[1]), false, 0);
                             if (player.addObjet(obj, true))
                                 World.world.addGameObject(obj, true);
                         }
@@ -666,7 +666,7 @@ public class ObjectAction {
                     case 34://Fm cac
                         GameObject gameObject = player.getObjetByPos(Constant.ITEM_POS_ARME);
 
-                        if(gameObject == null) {
+                        if (gameObject == null) {
                             player.sendMessage("Vous ne portez pas de corps-à-corps.");
                             isOk = false;
                             send = false;
@@ -675,26 +675,42 @@ public class ObjectAction {
 
                         boolean containNeutre = false;
 
-                        for(SpellEffect effect : gameObject.getEffects())
-                            if(effect.getEffectID() == 100 || effect.getEffectID() == 95)
+                        for (SpellEffect effect : gameObject.getEffects())
+                            if (effect.getEffectID() == 100 || effect.getEffectID() == 95)
                                 containNeutre = true;
 
-                        if(containNeutre) {
-                            for(int i = 0; i < gameObject.getEffects().size(); i++) {
-                                if(gameObject.getEffects().get(i).getEffectID() == 100) {
-                                    switch(this.args.toUpperCase()) {
-                                        case "EAU": gameObject.getEffects().get(i).setEffectID(96); break;
-                                        case "TERRE": gameObject.getEffects().get(i).setEffectID(97); break;
-                                        case "AIR": gameObject.getEffects().get(i).setEffectID(98); break;
-                                        case "FEU": gameObject.getEffects().get(i).setEffectID(99); break;
+                        if (containNeutre) {
+                            for (int i = 0; i < gameObject.getEffects().size(); i++) {
+                                if (gameObject.getEffects().get(i).getEffectID() == 100) {
+                                    switch (this.args.toUpperCase()) {
+                                        case "EAU":
+                                            gameObject.getEffects().get(i).setEffectID(96);
+                                            break;
+                                        case "TERRE":
+                                            gameObject.getEffects().get(i).setEffectID(97);
+                                            break;
+                                        case "AIR":
+                                            gameObject.getEffects().get(i).setEffectID(98);
+                                            break;
+                                        case "FEU":
+                                            gameObject.getEffects().get(i).setEffectID(99);
+                                            break;
                                     }
                                 }
-                                if(gameObject.getEffects().get(i).getEffectID() == 95) {
-                                    switch(this.args.toUpperCase()) {
-                                        case "EAU": gameObject.getEffects().get(i).setEffectID(91); break;
-                                        case "TERRE": gameObject.getEffects().get(i).setEffectID(92); break;
-                                        case "AIR": gameObject.getEffects().get(i).setEffectID(93); break;
-                                        case "FEU": gameObject.getEffects().get(i).setEffectID(94); break;
+                                if (gameObject.getEffects().get(i).getEffectID() == 95) {
+                                    switch (this.args.toUpperCase()) {
+                                        case "EAU":
+                                            gameObject.getEffects().get(i).setEffectID(91);
+                                            break;
+                                        case "TERRE":
+                                            gameObject.getEffects().get(i).setEffectID(92);
+                                            break;
+                                        case "AIR":
+                                            gameObject.getEffects().get(i).setEffectID(93);
+                                            break;
+                                        case "FEU":
+                                            gameObject.getEffects().get(i).setEffectID(94);
+                                            break;
                                     }
                                 }
                             }
@@ -710,9 +726,9 @@ public class ObjectAction {
                         break;
 
                     case 35: // Mount cameleon
-                        if(player.getMount() != null) {
+                        if (player.getMount() != null) {
                             player.getMount().getCapacitys().add(9);
-                            if(player.isOnMount()) {
+                            if (player.isOnMount()) {
                                 SocketManager.GAME_SEND_ALTER_GM_PACKET(player.getCurMap(), player);
                             }
                             SocketManager.GAME_SEND_MOUNT_DESCRIPTION_PACKET(player, player.getMount());
@@ -759,7 +775,7 @@ public class ObjectAction {
                     if (objectTemplate == null)
                         continue;
 
-                    GameObject newGameObject = objectTemplate.createNewItem(couple.second, true,0);
+                    GameObject newGameObject = objectTemplate.createNewItem(couple.second, true, 0);
 
                     if (newGameObject == null)
                         continue;

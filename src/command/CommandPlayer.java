@@ -33,7 +33,7 @@ public class CommandPlayer {
             if (command(msg, "all") && msg.length() > 5) {
                 if (player.isInPrison())
                     return true;
-                if(canalMute && player.getGroupe() == null) {
+                if (canalMute && player.getGroupe() == null) {
                     player.sendMessage("Le canal est indisponible pour une durée indéterminée.");
                     return true;
                 }
@@ -148,7 +148,7 @@ public class CommandPlayer {
                     return true;
 
                 World.world.getOnlinePlayers().stream().filter(p -> !p.equals(player) && p.getParty() == null && p.getAccount().getCurrentIp().equals(player.getAccount().getCurrentIp()) && p.getFight() == null && !p.isInPrison()).forEach(p -> {
-                    if(player.getParty() == null) {
+                    if (player.getParty() == null) {
                         Party party = new Party(player, p);
                         SocketManager.GAME_SEND_GROUP_CREATE(player.getGameClient(), party);
                         SocketManager.GAME_SEND_PL_PACKET(player.getGameClient(), party);
@@ -162,7 +162,8 @@ public class CommandPlayer {
                         SocketManager.GAME_SEND_GROUP_CREATE(p.getGameClient(), player.getParty());
                         SocketManager.GAME_SEND_PL_PACKET(p.getGameClient(), player.getParty());
                         SocketManager.GAME_SEND_PM_ADD_PACKET_TO_GROUP(player.getParty(), p);
-                        player.getParty().addPlayer(p);;
+                        player.getParty().addPlayer(p);
+                        ;
                         p.setParty(player.getParty());
                         SocketManager.GAME_SEND_ALL_PM_ADD_PACKET(p.getGameClient(), player.getParty());
                         SocketManager.GAME_SEND_PR_PACKET(p);
@@ -180,14 +181,14 @@ public class CommandPlayer {
 
                 player.openBank();
                 return true;
-            }else if (command(msg, "transfert")) {
+            } else if (command(msg, "transfert")) {
                 if (!player.getAccount().isSubscribeWithoutCondition()) {
                     player.sendMessage("Tu n'es pas abonné.");
                     return true;
                 }
-                if (player.isInPrison() || player.getFight() != null )
+                if (player.isInPrison() || player.getFight() != null)
                     return true;
-                if(player.getExchangeAction() == null || player.getExchangeAction().getType() != ExchangeAction.IN_BANK) {
+                if (player.getExchangeAction() == null || player.getExchangeAction().getType() != ExchangeAction.IN_BANK) {
                     player.sendMessage("Tu n'es pas dans ta banque.");
                     return true;
                 }
@@ -199,19 +200,32 @@ public class CommandPlayer {
                     if (object == null || object.getTemplate() == null || !object.getTemplate().getStrTemplate().isEmpty())
                         continue;
                     switch (object.getTemplate().getType()) {
-                        case Constant.ITEM_TYPE_OBJET_VIVANT:case Constant.ITEM_TYPE_PRISME:
-                        case Constant.ITEM_TYPE_FILET_CAPTURE:case Constant.ITEM_TYPE_CERTIF_MONTURE:
-                        case Constant.ITEM_TYPE_OBJET_UTILISABLE:case Constant.ITEM_TYPE_OBJET_ELEVAGE:
-                        case Constant.ITEM_TYPE_CADEAUX:case Constant.ITEM_TYPE_PARCHO_RECHERCHE:
-                        case Constant.ITEM_TYPE_PIERRE_AME:case Constant.ITEM_TYPE_BOUCLIER:
-                        case Constant.ITEM_TYPE_SAC_DOS:case Constant.ITEM_TYPE_OBJET_MISSION:
-                        case Constant.ITEM_TYPE_BOISSON:case Constant.ITEM_TYPE_CERTIFICAT_CHANIL:
-                        case Constant.ITEM_TYPE_FEE_ARTIFICE:case Constant.ITEM_TYPE_MAITRISE:
-                        case Constant.ITEM_TYPE_POTION_SORT:case Constant.ITEM_TYPE_POTION_METIER:
-                        case Constant.ITEM_TYPE_POTION_OUBLIE:case Constant.ITEM_TYPE_BONBON:
-                        case Constant.ITEM_TYPE_PERSO_SUIVEUR:case Constant.ITEM_TYPE_RP_BUFF:
-                        case Constant.ITEM_TYPE_MALEDICTION:case Constant.ITEM_TYPE_BENEDICTION:
-                        case Constant.ITEM_TYPE_TRANSFORM:case Constant.ITEM_TYPE_DOCUMENT:
+                        case Constant.ITEM_TYPE_OBJET_VIVANT:
+                        case Constant.ITEM_TYPE_PRISME:
+                        case Constant.ITEM_TYPE_FILET_CAPTURE:
+                        case Constant.ITEM_TYPE_CERTIF_MONTURE:
+                        case Constant.ITEM_TYPE_OBJET_UTILISABLE:
+                        case Constant.ITEM_TYPE_OBJET_ELEVAGE:
+                        case Constant.ITEM_TYPE_CADEAUX:
+                        case Constant.ITEM_TYPE_PARCHO_RECHERCHE:
+                        case Constant.ITEM_TYPE_PIERRE_AME:
+                        case Constant.ITEM_TYPE_BOUCLIER:
+                        case Constant.ITEM_TYPE_SAC_DOS:
+                        case Constant.ITEM_TYPE_OBJET_MISSION:
+                        case Constant.ITEM_TYPE_BOISSON:
+                        case Constant.ITEM_TYPE_CERTIFICAT_CHANIL:
+                        case Constant.ITEM_TYPE_FEE_ARTIFICE:
+                        case Constant.ITEM_TYPE_MAITRISE:
+                        case Constant.ITEM_TYPE_POTION_SORT:
+                        case Constant.ITEM_TYPE_POTION_METIER:
+                        case Constant.ITEM_TYPE_POTION_OUBLIE:
+                        case Constant.ITEM_TYPE_BONBON:
+                        case Constant.ITEM_TYPE_PERSO_SUIVEUR:
+                        case Constant.ITEM_TYPE_RP_BUFF:
+                        case Constant.ITEM_TYPE_MALEDICTION:
+                        case Constant.ITEM_TYPE_BENEDICTION:
+                        case Constant.ITEM_TYPE_TRANSFORM:
+                        case Constant.ITEM_TYPE_DOCUMENT:
                         case Constant.ITEM_TYPE_QUETES:
                             break;
                         default:
@@ -223,7 +237,7 @@ public class CommandPlayer {
 
                 player.sendTypeMessage("Bank", "Le transfert a été effectué, " + count + " objet(s) ont été déplacés.");
                 return true;
-            }else if (Config.INSTANCE.getTEAM_MATCH() && command(msg, "kolizeum")) {
+            } else if (Config.INSTANCE.getTEAM_MATCH() && command(msg, "kolizeum")) {
                 if (player.kolizeum != null) {
                     if (player.getParty() != null) {
                         if (player.getParty().isChief(player.getId())) {
@@ -259,14 +273,14 @@ public class CommandPlayer {
                     }
                 }
                 return true;
-            } else  if (Config.INSTANCE.getDEATH_MATCH() && command(msg, "deathmatch")) {
-                if(player.cantTP()) return true;
+            } else if (Config.INSTANCE.getDEATH_MATCH() && command(msg, "deathmatch")) {
+                if (player.cantTP()) return true;
                 if (player.deathMatch != null) {
                     FightManager.removeDeathMatch(player.deathMatch);
                     player.deathMatch = null;
                     player.sendMessage("Vous venez de vous désincrire de la file d'attente.");
                 } else {
-                    if(player.getEquippedObjects().size() == 0) {
+                    if (player.getEquippedObjects().size() == 0) {
                         player.sendMessage("Vous devez avoir des objets équipés.");
                     } else {
                         FightManager.subscribeDeathMatch(player);
@@ -274,7 +288,7 @@ public class CommandPlayer {
                 }
                 return true;
             } else if (command(msg, "master") || command(msg, "maitre") || command(msg, "maître")) {
-                if(player.cantTP()) return true;
+                if (player.cantTP()) return true;
                 if (!player.getAccount().isSubscribeWithoutCondition()) {
                     player.sendMessage("Tu n'es pas abonné.");
                     return true;
@@ -322,14 +336,14 @@ public class CommandPlayer {
 
                 final String message = "Vous suivez désormais " + target.getName() + ".";
                 for (Player follower : players)
-                    if(follower != target)
+                    if (follower != target)
                         SocketManager.GAME_SEND_MESSAGE(follower, message);
 
                 party.moveAllPlayersToMaster(null);
                 SocketManager.GAME_SEND_MESSAGE(target, "Vous êtes désormais le maitre.");
                 return true;
-            } else if(command(msg, "event")) {
-                if(player.cantTP()) return true;
+            } else if (command(msg, "event")) {
+                if (player.cantTP()) return true;
                 return EventManager.getInstance().subscribe(player) == 1;
             } else {
                 player.sendMessage(Lang.get(player, 12));
@@ -345,7 +359,7 @@ public class CommandPlayer {
 
     private static String getNameServerById(int id) {
         switch (id) {
-            case 2 :
+            case 2:
             case 1:
                 return "Aegnor";
             case 13:

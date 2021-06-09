@@ -94,10 +94,10 @@ public class PetEntry {
 
     public int getCurrentStatsPoids() {
         /*
-		 * d6,d5,d4,d3,d2 = 4U de poids 8a = 2U de poids 7c = 2U de poids POUR
-		 * PETIT WABBIT = 3U de poids b2 = 8U de poids 70 = 8U de poids le reste
-		 * a 1U de poids
-		 */
+         * d6,d5,d4,d3,d2 = 4U de poids 8a = 2U de poids 7c = 2U de poids POUR
+         * PETIT WABBIT = 3U de poids b2 = 8U de poids 70 = 8U de poids le reste
+         * a 1U de poids
+         */
         GameObject obj = World.world.getGameObject(this.objectId);
         if (obj == null)
             return 0;
@@ -105,14 +105,11 @@ public class PetEntry {
         for (Entry<Integer, Integer> entry : obj.getStats().getEffects().entrySet()) {
             if (entry.getKey() == Integer.parseInt("320", 16)) // Vita du familier
             {
-            }
-            else if (entry.getKey() == Integer.parseInt("326", 16)) // Poids du familier
+            } else if (entry.getKey() == Integer.parseInt("326", 16)) // Poids du familier
             {
-            }
-            else if (entry.getKey() == Integer.parseInt("328", 16)) // Date du familier
+            } else if (entry.getKey() == Integer.parseInt("328", 16)) // Date du familier
             {
-            }
-            else if (entry.getKey() == Integer.parseInt("8a", 16)) // %dom
+            } else if (entry.getKey() == Integer.parseInt("8a", 16)) // %dom
                 cumul = cumul + (2 * entry.getValue());
             else if (entry.getKey() == Integer.parseInt("7c", 16)) // sagesse
                 cumul = cumul + (3 * entry.getValue());
@@ -340,7 +337,7 @@ public class PetEntry {
                                     pts = this.getMaxStat();
                                 if (obj.getStats().getEffects().containsKey(ent.getKey())) {
                                     int nbr = obj.getStats().getEffects().get(ent.getKey());
-                                    if(nbr - pts > 0)
+                                    if (nbr - pts > 0)
                                         pts += (nbr - pts);
                                     obj.getStats().getEffects().remove(ent.getKey());
                                 }
@@ -350,7 +347,7 @@ public class PetEntry {
                     }
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error : " + e.getMessage());
         }

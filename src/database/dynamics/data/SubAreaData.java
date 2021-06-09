@@ -16,7 +16,8 @@ public class SubAreaData extends AbstractDAO<SubArea> {
     }
 
     @Override
-    public void load(Object obj) {}
+    public void load(Object obj) {
+    }
 
     @Override
     public boolean update(SubArea subarea) {
@@ -49,7 +50,7 @@ public class SubAreaData extends AbstractDAO<SubArea> {
                 int prisme = RS.getInt("Prisme");
                 SubArea SA = World.world.getSubArea(id);
 
-                if(SA == null) {
+                if (SA == null) {
                     System.out.println("Error null subarea" + id);
                     continue;
                 }

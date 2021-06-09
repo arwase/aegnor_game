@@ -101,7 +101,7 @@ public class CraftSecure extends PlayerExchange {
 
     @SafeVarargs
     private final void giveObjects(ArrayList<Couple<Integer, Integer>>... arrays) {
-        for(ArrayList<Couple<Integer, Integer>> array : arrays) {
+        for (ArrayList<Couple<Integer, Integer>> array : arrays) {
             for (Couple<Integer, Integer> couple : array) {
                 if (couple.second == 0)
                     continue;
@@ -207,7 +207,7 @@ public class CraftSecure extends PlayerExchange {
         ArrayList<Couple<Integer, Integer>> items = (type == 1 ? this.payItems : this.payItemsIfSuccess);
         Couple<Integer, Integer> couple = getCoupleInList(items, object.getGuid());
 
-        if(couple == null) return;
+        if (couple == null) return;
         int newQua = couple.second - quantity;
 
         if (newQua < 1) {

@@ -520,10 +520,14 @@ public class PigDragon {
 
     private static GameCase randomCase(GameMap map, int c1, int c2, int c3, int c4) {
         switch (Formulas.getRandomValue(0, 3)) {
-            case 0:return map.getCase(c1);
-            case 1:return map.getCase(c2);
-            case 2:return map.getCase(c3);
-            case 3:return map.getCase(c4);
+            case 0:
+                return map.getCase(c1);
+            case 1:
+                return map.getCase(c2);
+            case 2:
+                return map.getCase(c3);
+            case 3:
+                return map.getCase(c4);
         }
         return map.getCase(c1);
     }
@@ -571,25 +575,46 @@ public class PigDragon {
         GameMap map = perso.getCurMap();
         GameCase c1 = null, c2 = null, c3 = null, c4 = null;
         switch (map.getId()) {
-            case 9371:case 9375:case 9376:case 9377:case 9378:case 9379:
+            case 9371:
+            case 9375:
+            case 9376:
+            case 9377:
+            case 9378:
+            case 9379:
                 c1 = map.getCase(returnCell(map, 413));
                 c2 = map.getCase(returnCell(map, 274));
                 c3 = map.getCase(returnCell(map, 262));
                 c4 = map.getCase(returnCell(map, 36));
                 break;
-            case 9372:case 9380:case 9381:case 9382:case 9383:case 9384:
+            case 9372:
+            case 9380:
+            case 9381:
+            case 9382:
+            case 9383:
+            case 9384:
                 c1 = map.getCase(returnCell(map, 442));
                 c2 = map.getCase(returnCell(map, 320));
                 c3 = map.getCase(returnCell(map, 216));
                 c4 = map.getCase(returnCell(map, 22));
                 break;
-            case 9373:case 9385:case 9386:case 9387:case 9388:case 9389:
+            case 9373:
+            case 9385:
+            case 9386:
+            case 9387:
+            case 9388:
+            case 9389:
                 c1 = map.getCase(returnCell(map, 414));
                 c2 = map.getCase(returnCell(map, 262));
                 c3 = map.getCase(returnCell(map, 144));
                 c4 = map.getCase(returnCell(map, 48));
                 break;
-            case 9374:case 9390:case 9391:case 9392:case 9393:case 9394:case 9395:
+            case 9374:
+            case 9390:
+            case 9391:
+            case 9392:
+            case 9393:
+            case 9394:
+            case 9395:
                 c1 = map.getCase(returnCell(map, 417));
                 c2 = map.getCase(returnCell(map, 262));
                 c3 = map.getCase(returnCell(map, 231));
@@ -597,19 +622,19 @@ public class PigDragon {
                 break;
         }
 
-        if(c1 != null) {
+        if (c1 != null) {
             if (c1.isLoS()) sendOpen(perso, c1.getId());
             else sendClose(perso, c1.getId());
         }
-        if(c2 != null) {
+        if (c2 != null) {
             if (c2.isLoS()) sendOpen(perso, c2.getId());
             else sendClose(perso, c2.getId());
         }
-        if(c3 != null) {
+        if (c3 != null) {
             if (c3.isLoS()) sendOpen(perso, c3.getId());
             else sendClose(perso, c3.getId());
         }
-        if(c4 != null) {
+        if (c4 != null) {
             if (c4.isLoS()) sendOpen(perso, c4.getId());
             else sendClose(perso, c4.getId());
         }

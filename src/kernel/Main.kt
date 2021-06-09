@@ -29,7 +29,8 @@ object Main {
     private val shutdownThread = Thread { closeServer() }
 
     @Throws(SQLException::class)
-    @JvmStatic fun main(args: Array<String>) {
+    @JvmStatic
+    fun main(args: Array<String>) {
         Runtime.getRuntime().addShutdownHook(shutdownThread)
         Main.start()
     }
@@ -46,14 +47,14 @@ object Main {
         }
 
         Config.isRunning = true
-        if(!ExchangeClient.INSTANCE.start()) {
-            stop("Can't init discussion with login",3)
+        if (!ExchangeClient.INSTANCE.start()) {
+            stop("Can't init discussion with login", 3)
             return
         }
 
         World.world.createWorld()
-        if(!GameServer.INSTANCE.start()) {
-            stop("Can't init game server",2)
+        if (!GameServer.INSTANCE.start()) {
+            stop("Can't init game server", 2)
             return
         }
 
@@ -112,7 +113,7 @@ object Main {
     }
 
     @JvmOverloads
-    fun stop(reason: String, exitCode : Int = 0) {
+    fun stop(reason: String, exitCode: Int = 0) {
         logger.error("Start closing server : {}", reason)
         Runtime.getRuntime().removeShutdownHook(shutdownThread);
         closeServer()

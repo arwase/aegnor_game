@@ -13,41 +13,38 @@ import java.sql.SQLException;
 
 public class TrunkData extends AbstractDAO<Trunk> {
 
-    public TrunkData(HikariDataSource dataSource)
-	{
-		super(dataSource);
-	}
-
-	@Override
-	public void load(Object obj)
-	{
+    public TrunkData(HikariDataSource dataSource) {
+        super(dataSource);
     }
 
-	@Override
-	public boolean update(Trunk t)
-	{
-		return false;
-	}
+    @Override
+    public void load(Object obj) {
+    }
 
-	public int load() {
-		Result result = null;
-		int nbr = 0;
-		try {
-			result = getData("SELECT * from coffres");
-			ResultSet RS = result.resultSet;
-			while (RS.next()) {
+    @Override
+    public boolean update(Trunk t) {
+        return false;
+    }
+
+    public int load() {
+        Result result = null;
+        int nbr = 0;
+        try {
+            result = getData("SELECT * from coffres");
+            ResultSet RS = result.resultSet;
+            while (RS.next()) {
                 Trunk trunk = new Trunk(RS.getInt("id"), RS.getInt("id_house"), RS.getShort("mapid"), RS.getInt("cellid"));
-				World.world.addTrunk(trunk);
+                World.world.addTrunk(trunk);
                 Database.getDynamics().getTrunkData().exist(trunk);
-				nbr++;
-			}
-		} catch (SQLException e) {
-			super.sendError("CoffreData load", e);
-		} finally {
-			close(result);
-		}
-		return nbr;
-	}
+                nbr++;
+            }
+        } catch (SQLException e) {
+            super.sendError("CoffreData load", e);
+        } finally {
+            close(result);
+        }
+        return nbr;
+    }
 
     public void insert(Trunk trunk) {
         PreparedStatement p = null;

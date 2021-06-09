@@ -15,8 +15,8 @@ import java.util.Date;
 public class ExchangePacketHandler {
 
     public static void parser(String recv) {
-        for(String packet : recv.split("#")) {
-            if(packet.isEmpty()) continue;
+        for (String packet : recv.split("#")) {
+            if (packet.isEmpty()) continue;
             try {
                 switch (packet.charAt(0)) {
                     case 'F': //Free places
@@ -116,7 +116,7 @@ public class ExchangePacketHandler {
 
                             case 'M': // Message
                                 String[] split = packet.substring(2).split("\\|");
-                                if(split.length > 1) {
+                                if (split.length > 1) {
                                     String prefix = "<font color='#C35617'>[" + (new SimpleDateFormat("HH:mm").format(new Date(System.currentTimeMillis()))) + "] (" + CommandPlayer.canal + ") (" + split[1] + ") <b>" + split[0] + "</b>";
                                     final String message = "Im116;" + prefix + "~" + split[2] + "</font>";
 

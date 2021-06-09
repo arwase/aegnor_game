@@ -15,7 +15,8 @@ public class ObvejivanData extends AbstractDAO<GameObject> {
     }
 
     @Override
-    public void load(Object obj) {}
+    public void load(Object obj) {
+    }
 
     @Override
     public boolean update(GameObject obj) {

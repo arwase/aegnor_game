@@ -8,9 +8,10 @@ public final class BoostStat {
     private int puntos;
 
     private static int _inicio = 0;
-    private  static int _cost = 1;
-    private  static int _puntos = 1;
+    private static int _cost = 1;
+    private static int _puntos = 1;
     public static final BoostStat BoostDefecto = new BoostStat(_inicio, _cost, _puntos);
+
     /*public BoostDefecto getBoostDefecto()
     {
         return client.other.BoostStat.BoostDefecto;
@@ -19,14 +20,15 @@ public final class BoostStat {
         private int inicio;
         private int cost;
         private int puntos;
+
         public BoostDefecto(int inicio, int cost, int puntos) {
             this.inicio = inicio;
             this.cost = cost;
             this.puntos = puntos;
         }
     }
-    public BoostStat(int inicio, int cost, int puntos)
-    {
+
+    public BoostStat(int inicio, int cost, int puntos) {
         this.inicio = inicio;
         this.cost = cost;
         this.puntos = puntos;

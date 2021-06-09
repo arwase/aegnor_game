@@ -93,7 +93,7 @@ public class PlayerData extends AbstractDAO<Player> {
                 Player oldPlayer = World.world.getPlayer((int) obj);
                 player = new Player(RS.getInt("id"), RS.getString("name"), RS.getInt("groupe"), RS.getInt("sexe"), RS.getInt("class"), RS.getInt("color1"), RS.getInt("color2"), RS.getInt("color3"), RS.getLong("kamas"), RS.getInt("spellboost"), RS.getInt("capital"), RS.getInt("energy"), RS.getInt("level"), RS.getLong("xp"), RS.getInt("size"), RS.getInt("gfx"), RS.getByte("alignement"), RS.getInt("account"), stats, RS.getByte("seeFriend"), RS.getByte("seeAlign"), RS.getByte("seeSeller"), RS.getString("canaux"), RS.getShort("map"), RS.getInt("cell"), RS.getString("objets"), RS.getString("storeObjets"), RS.getInt("pdvper"), RS.getString("spells"), RS.getString("savepos"), RS.getString("jobs"), RS.getInt("mountxpgive"), RS.getInt("mount"), RS.getInt("honor"), RS.getInt("deshonor"), RS.getInt("alvl"), RS.getString("zaaps"), RS.getByte("title"), RS.getInt("wife"), RS.getString("morphMode"), RS.getString("allTitle"), RS.getString("emotes"), RS.getLong("prison"), false, RS.getString("parcho"), RS.getLong("timeDeblo"), RS.getBoolean("noall"), RS.getString("deadInformation"), RS.getByte("deathCount"), RS.getLong("totalKills"));
 
-                if(oldPlayer != null)
+                if (oldPlayer != null)
                     player.setNeededEndFight(oldPlayer.needEndFight(), oldPlayer.hasMobGroup());
 
                 player.VerifAndChangeItemPlace();
@@ -148,8 +148,8 @@ public class PlayerData extends AbstractDAO<Player> {
                 stats.put(Constant.STATS_ADD_AGIL, RS.getInt("agilite"));
                 Player player = new Player(RS.getInt("id"), RS.getString("name"), RS.getInt("groupe"), RS.getInt("sexe"), RS.getInt("class"), RS.getInt("color1"), RS.getInt("color2"), RS.getInt("color3"), RS.getLong("kamas"), RS.getInt("spellboost"), RS.getInt("capital"), RS.getInt("energy"), RS.getInt("level"), RS.getLong("xp"), RS.getInt("size"), RS.getInt("gfx"), RS.getByte("alignement"), RS.getInt("account"), stats, RS.getByte("seeFriend"), RS.getByte("seeAlign"), RS.getByte("seeSeller"), RS.getString("canaux"), RS.getShort("map"), RS.getInt("cell"), RS.getString("objets"), RS.getString("storeObjets"), RS.getInt("pdvper"), RS.getString("spells"), RS.getString("savepos"), RS.getString("jobs"), RS.getInt("mountxpgive"), RS.getInt("mount"), RS.getInt("honor"), RS.getInt("deshonor"), RS.getInt("alvl"), RS.getString("zaaps"), RS.getByte("title"), RS.getInt("wife"), RS.getString("morphMode"), RS.getString("allTitle"), RS.getString("emotes"), RS.getLong("prison"), false, RS.getString("parcho"), RS.getLong("timeDeblo"), RS.getBoolean("noall"), RS.getString("deadInformation"), RS.getByte("deathCount"), RS.getLong("totalKills"));
 
-                if(p != null)
-                        player.setNeededEndFight(p.needEndFight(), p.hasMobGroup());
+                if (p != null)
+                    player.setNeededEndFight(p.needEndFight(), p.hasMobGroup());
                 player.VerifAndChangeItemPlace();
                 World.world.addPlayer(player);
                 int guild = Database.getDynamics().getGuildMemberData().isPersoInGuild(RS.getInt("id"));
@@ -223,10 +223,10 @@ public class PlayerData extends AbstractDAO<Player> {
             execute(p);
 
             if (!perso.getItemsIDSplitByChar(",").equals(""))
-                for(String id : perso.getItemsIDSplitByChar(",").split(","))
+                for (String id : perso.getItemsIDSplitByChar(",").split(","))
                     Database.getStatics().getObjectData().delete(Integer.parseInt(id));
             if (!perso.getStoreItemsIDSplitByChar(",").equals(""))
-                for(String id : perso.getStoreItemsIDSplitByChar(",").split(","))
+                for (String id : perso.getStoreItemsIDSplitByChar(",").split(","))
                     Database.getStatics().getObjectData().delete(Integer.parseInt(id));
             if (perso.getMount() != null)
                 Database.getStatics().getMountData().update(perso.getMount());
@@ -240,7 +240,8 @@ public class PlayerData extends AbstractDAO<Player> {
     }
 
     @Override
-    public void load(Object obj) {}
+    public void load(Object obj) {
+    }
 
     @Override
     public boolean update(Player player) {

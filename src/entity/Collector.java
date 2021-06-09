@@ -103,7 +103,7 @@ public class Collector {
     }
 
     public void moveOnMap() {
-        if(this.getInFight() > 0) return;
+        if (this.getInFight() > 0) return;
 
         GameMap map = World.world.getMap(this.map);
         int cell = map.getRandomNearFreeCellId(this.cell);
@@ -205,7 +205,7 @@ public class Collector {
                     } else {
                         final Fight fight = map.getFight(Collector.getValue().get_inFightID());
                         long start = System.currentTimeMillis() - fight.getLaunchTime();
-                        if(start > 45000) start = 45000;
+                        if (start > 45000) start = 45000;
                         packet.append(45000 - start);//TimerActuel si combat
                         packet.append(";");
                     }
@@ -272,7 +272,7 @@ public class Collector {
         str.append("+").append(id);
         GameMap gameMap = World.world.getMap(map);
 
-        if(gameMap != null) {
+        if (gameMap != null) {
             gameMap.getFights().stream().filter(fight -> fight.getId() == fightId).forEach(fight -> {
                 fight.getFighters(1).stream().filter(f -> f.getPlayer() != null).forEach(f -> {
                     str.append("|");
@@ -319,7 +319,7 @@ public class Collector {
     }
 
     public void reloadTimer() {
-        if(World.world.getGuild(getGuildId()) == null)
+        if (World.world.getGuild(getGuildId()) == null)
             return;
         Long time = World.world.getDelayCollectors().get(this.getMap());
         if (time != null)

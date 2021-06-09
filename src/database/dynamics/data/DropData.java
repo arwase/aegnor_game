@@ -50,7 +50,7 @@ public class DropData extends AbstractDAO<World.Drop> {
 
                     MT.addDrop(new World.Drop(RS.getInt("objectId"), percents, RS.getInt("ceil"), Integer.parseInt(action), RS.getInt("level"), condition));
                 } else {
-                    if(MT == null && RS.getInt("monsterId") == 0) {
+                    if (MT == null && RS.getInt("monsterId") == 0) {
                         String action = RS.getString("action");
                         String condition = "";
 
@@ -76,8 +76,8 @@ public class DropData extends AbstractDAO<World.Drop> {
             close(result);
         }
     }
-    public boolean insertDrop(int monsterID, int objID, int pp, double taux, int action, String objName)
-    {
+
+    public boolean insertDrop(int monsterID, int objID, int pp, double taux, int action, String objName) {
         PreparedStatement p = null;
         try {
             p = getPreparedStatement("DELETE `drops` WHERE monsterId = ? AND objectId = ?");
@@ -112,8 +112,8 @@ public class DropData extends AbstractDAO<World.Drop> {
         }
         return false;
     }
-    public boolean deleteDrop(int objID, int monsterID)
-    {
+
+    public boolean deleteDrop(int objID, int monsterID) {
         PreparedStatement p = null;
         try {
             p = getPreparedStatement("DELETE `drops` WHERE monsterId = ? AND objectId = ?");

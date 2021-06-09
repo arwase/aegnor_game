@@ -73,8 +73,8 @@ public class Constant {
     public static final int ITEM_POS_MALEDICTION = 22;
     public static final int ITEM_POS_BONBON = 25;
     //Types
-    public static final int[] ITEM_TYPE_OBJ_BLACK = {1,2,3,4,5,6,7,8,9,10,11,16,17,19,21,22,81};  // 1,2,3,4,5,6,7,8,9,10,11,16,17,19,21,22,81
-    public static final int[] ITEM_TYPE_WITH_RARITY = {1,2,3,4,5,6,7,8,9,10,11,16,17,19,21,22,23,81};
+    public static final int[] ITEM_TYPE_OBJ_BLACK = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 17, 19, 21, 22, 81};  // 1,2,3,4,5,6,7,8,9,10,11,16,17,19,21,22,81
+    public static final int[] ITEM_TYPE_WITH_RARITY = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 17, 19, 21, 22, 23, 81};
     public static final int ITEM_TYPE_AMULETTE = 1;
     public static final int ITEM_TYPE_ARC = 2;
     public static final int ITEM_TYPE_BAGUETTE = 3;
@@ -352,7 +352,7 @@ public class Constant {
     //ZAAP <mapID,cellID>
     public static Map<Integer, Integer> ZAAPS = new HashMap<Integer, Integer>();
     //Valeur des droits de guilde
-    public static int[] G_RIGHTS = new int[] {2, 4, 8, 16, 32, 64, 128, 256, 512, 4096, 8192, 16384};
+    public static int[] G_RIGHTS = new int[]{2, 4, 8, 16, 32, 64, 128, 256, 512, 4096, 8192, 16384};
     public static int G_BOOST = 2;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            //G�rer les boost
     public static int G_RIGHT = 4;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            //G�rer les droits
     public static int G_INVITE = 8;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            //Inviter de nouveaux membres
@@ -1214,13 +1214,18 @@ public class Constant {
 
     public static Monster.TipoGrupo getTipoGrupoMob(int id) {
         switch (id) {
-            case -1:  return Monster.TipoGrupo.FIJO;
-            case 0 : return Monster.TipoGrupo.NORMAL;
-            case 1 : return Monster.TipoGrupo.SOLO_UNA_PELEA;
-            case 2 : return Monster.TipoGrupo.HASTA_QUE_MUERA;
+            case -1:
+                return Monster.TipoGrupo.FIJO;
+            case 0:
+                return Monster.TipoGrupo.NORMAL;
+            case 1:
+                return Monster.TipoGrupo.SOLO_UNA_PELEA;
+            case 2:
+                return Monster.TipoGrupo.HASTA_QUE_MUERA;
         }
         return Monster.TipoGrupo.FIJO;
     }
+
     public static void onLevelUpSpells(Player perso, int lvl) {
         switch (perso.getClasse()) {
             case CLASS_FECA:
@@ -2482,10 +2487,10 @@ public class Constant {
         return false;
     }
 
-	/*
+    /*
      * public static boolean feedMount(int type) { for (Integer feed :
-	 * Main.itemFeedMount) { if (type == feed) return true; } return false; }
-	 */
+     * Main.itemFeedMount) { if (type == feed) return true; } return false; }
+     */
 
     public static void tpCim(int idArea, Player perso) {
         switch (idArea) {
@@ -2884,15 +2889,22 @@ public class Constant {
         RandomStats<Integer> random = new RandomStats<>();
 
         short i = 0;
-        for(String str : splitM) {
+        for (String str : splitM) {
             i++;
-            if(str.equals("?")) continue;
+            if (str.equals("?")) continue;
 
             int pct = 1;
 
-            switch(i) {
-                case 1: case 2: pct = 25; break;
-                case 3: case 4: case 5: case 6: pct = 10;
+            switch (i) {
+                case 1:
+                case 2:
+                    pct = 25;
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    pct = 10;
             }
 
             random.add(pct, Integer.parseInt(str));
@@ -2903,15 +2915,22 @@ public class Constant {
 
         random = new RandomStats<>();
         i = 0;
-        for(String str : splitF) {
+        for (String str : splitF) {
             i++;
-            if(str.equals("?")) continue;
+            if (str.equals("?")) continue;
 
             int pct = 1;
 
-            switch(i) {
-                case 1: case 2: pct = 25; break;
-                case 3: case 4: case 5: case 6: pct = 10;
+            switch (i) {
+                case 1:
+                case 2:
+                    pct = 25;
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    pct = 10;
             }
 
             random.add(pct, Integer.parseInt(str));
@@ -2920,9 +2939,9 @@ public class Constant {
         random.add(random.size() == 0 ? 100 : 33, father.getColor());
         color2 = random.get();
 
-        if(color1 == 75)
+        if (color1 == 75)
             color1 = 10;
-        if(color2 == 75)
+        if (color2 == 75)
             color2 = 10;
 
         if (color1 > color2) {
@@ -3061,33 +3080,47 @@ public class Constant {
         else if (A == B)
             C = A = B;
 
-        if(C == 0) {
+        if (C == 0) {
 
             random = new RandomStats<>();
             i = 0;
-            for(String str : splitF) {
+            for (String str : splitF) {
                 i++;
-                if(str.equals("?")) continue;
+                if (str.equals("?")) continue;
 
                 int pct = 1;
 
-                switch(i) {
-                    case 1: case 2: pct = 25; break;
-                    case 3: case 4: case 5: case 6: pct = 10;
+                switch (i) {
+                    case 1:
+                    case 2:
+                        pct = 25;
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                        pct = 10;
                 }
 
                 random.add(pct, Integer.parseInt(str));
             }
             i = 0;
-            for(String str : splitM) {
+            for (String str : splitM) {
                 i++;
-                if(str.equals("?")) continue;
+                if (str.equals("?")) continue;
 
                 int pct = 1;
 
-                switch(i) {
-                    case 1: case 2: pct = 25; break;
-                    case 3: case 4: case 5: case 6: pct = 10;
+                switch (i) {
+                    case 1:
+                    case 2:
+                        pct = 25;
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                        pct = 10;
                 }
 
                 random.add(pct, Integer.parseInt(str));
@@ -3681,10 +3714,10 @@ public class Constant {
         final GameMap map = player.getCurMap();
         final int width = map.getW();
         final int cell = player.getCurCell().getId();
-        final int[] cells = new int[] {cell - width, cell - width + 1, cell + width - 1, cell + width};
+        final int[] cells = new int[]{cell - width, cell - width + 1, cell + width - 1, cell + width};
         int cellPosition = -1;
 
-        for(int available : cells) {
+        for (int available : cells) {
             GameCase c = map.getCase(available);
             if (c != null && c.getDroppedItem(false) == null && c.getPlayers().isEmpty() && c.isWalkable(false) && c.getObject() == null) {
                 return available;

@@ -59,10 +59,10 @@ public class Glyph {
     }
 
     public void onTrapped(Fighter target) {
-        if(this.spell == 3500 || this.spell == 3501) {//glyph pair/impair
-            if(target.getMob() != null) {
-                if(target.getMob().getTemplate().getId() == 1045) {
-                    if(this.spell == 3500) {
+        if (this.spell == 3500 || this.spell == 3501) {//glyph pair/impair
+            if (target.getMob() != null) {
+                if (target.getMob().getTemplate().getId() == 1045) {
+                    if (this.spell == 3500) {
                         target.addBuff(217, 400, duration, 1, false, 1077, "", target, true);// - 400 air
                         target.addBuff(218, 400, duration, 1, false, 1077, "", target, true);// - 400 feu
                         SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 1077, caster.getId() + "", target.getId() + "," + "" + "," + 1);
@@ -92,8 +92,8 @@ public class Glyph {
         } else {
             Spell spell = World.world.getSort(this.spell);
 
-            for(Integer integer : spell.getEffectTargets())
-                if(integer == 2 && target == this.caster)
+            for (Integer integer : spell.getEffectTargets())
+                if (integer == 2 && target == this.caster)
                     return;
 
             String str = this.spell + "," + this.cell.getId() + ", 0, 1, 1," + this.caster.getId();

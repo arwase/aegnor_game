@@ -9,15 +9,15 @@ public class Rune {
     public final static List<Rune> runes = new ArrayList<>();
 
     public static Rune getRuneById(int id) {
-        for(Rune rune : runes)
-            if(rune.getId() == id)
+        for (Rune rune : runes)
+            if (rune.getId() == id)
                 return rune;
         return null;
     }
 
     public static Rune getRuneByCharacteristic(short stat) {
-        for(Rune rune : runes)
-            if(rune.getCharacteristic() == stat)
+        for (Rune rune : runes)
+            if (rune.getCharacteristic() == stat)
                 return rune;
         return null;
     }
@@ -25,7 +25,7 @@ public class Rune {
     public static Rune getRuneByCharacteristicAndByWeight(short stat) {
         Rune valid = null;
         float weight = 999;
-        for(Rune rune : runes) {
+        for (Rune rune : runes) {
             if (rune.getCharacteristic() == stat && weight > rune.getWeight()) {
                 weight = rune.getWeight();
                 valid = rune;
@@ -68,6 +68,6 @@ public class Rune {
     }
 
     public byte[] getChance() {
-        return this.weight <= 1 ? new byte[] {66, 34, 0} : new byte[] {43, 50, 7};
+        return this.weight <= 1 ? new byte[]{66, 34, 0} : new byte[]{43, 50, 7};
     }
 }

@@ -14,7 +14,7 @@ public class WorldPlayerOption extends Updatable {
 
     @Override
     public void update() {
-        if(this.verify()) {
+        if (this.verify()) {
             Database.getStatics().getAccountData().updateVoteAll();
             World.world.getOnlinePlayers().stream().filter(player -> player != null && player.isOnline()).forEach(client.Player::checkVote);
         }

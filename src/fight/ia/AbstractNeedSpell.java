@@ -29,35 +29,35 @@ public abstract class AbstractNeedSpell extends AbstractIA {
     private static List<SortStats> getListSpellOf(Fighter fighter, String type) {
         final List<SortStats> spells = new ArrayList<>();
 
-        for(SortStats spell : fighter.getMob().getSpells().values()) {
-            if(spells.contains(spell)) continue;
-            switch(type) {
+        for (SortStats spell : fighter.getMob().getSpells().values()) {
+            if (spells.contains(spell)) continue;
+            switch (type) {
                 case "BUFF":
-                    if(spell.getSpell().getType() == 1) spells.add(spell);
+                    if (spell.getSpell().getType() == 1) spells.add(spell);
                     break;
                 case "GLYPH":
-                    if(spell.getSpell().getType() == 4) spells.add(spell);
+                    if (spell.getSpell().getType() == 4) spells.add(spell);
                     break;
                 case "INVOCATION":
                     spells.addAll(spell.getEffects().stream().filter(spellEffect -> spellEffect.getEffectID() == 181).map(spellEffect -> spell).collect(Collectors.toList()));
                     break;
                 case "CAC":
-                    if(spell.getSpell().getType() == 0) {
+                    if (spell.getSpell().getType() == 0) {
                         boolean effect = false;
-                        for(SpellEffect spellEffect : spell.getEffects())
-                            if(spellEffect.getEffectID() == 4 || spellEffect.getEffectID() == 6)
+                        for (SpellEffect spellEffect : spell.getEffects())
+                            if (spellEffect.getEffectID() == 4 || spellEffect.getEffectID() == 6)
                                 effect = true;
-                        if(!effect && spell.getMaxPO() < 3) spells.add(spell);
+                        if (!effect && spell.getMaxPO() < 3) spells.add(spell);
                     }
                     break;
                 case "HIGHEST":
-                    if(spell.getSpell().getType() == 0) {
+                    if (spell.getSpell().getType() == 0) {
                         boolean effect = false;
-                        for(SpellEffect spellEffect : spell.getEffects())
-                            if(spellEffect.getEffectID() == 4 || spellEffect.getEffectID() == 6)
+                        for (SpellEffect spellEffect : spell.getEffects())
+                            if (spellEffect.getEffectID() == 4 || spellEffect.getEffectID() == 6)
                                 effect = true;
-                        if(effect && spell.getSpellID() != 805) continue;
-                        if(spell.getMaxPO() > 1) spells.add(spell);
+                        if (effect && spell.getSpellID() != 805) continue;
+                        if (spell.getMaxPO() > 1) spells.add(spell);
                     }
                     break;
             }

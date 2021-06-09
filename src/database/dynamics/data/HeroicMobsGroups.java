@@ -18,13 +18,18 @@ import java.util.Map;
  */
 public class HeroicMobsGroups extends AbstractDAO<Object> {
 
-    public HeroicMobsGroups(HikariDataSource dataSource) { super(dataSource); }
+    public HeroicMobsGroups(HikariDataSource dataSource) {
+        super(dataSource);
+    }
 
     @Override
-    public void load(Object obj) {}
+    public void load(Object obj) {
+    }
 
     @Override
-    public boolean update(Object obj) { return false; }
+    public boolean update(Object obj) {
+        return false;
+    }
 
     public void load() {
         Result result = null;
@@ -34,7 +39,7 @@ public class HeroicMobsGroups extends AbstractDAO<Object> {
             while (RS.next()) {
                 final Monster.MobGroup group = new Monster.MobGroup(RS.getInt("id"), RS.getInt("cell"), RS.getString("group"), RS.getString("objects"), RS.getShort("stars"));
                 final GameMap map = World.world.getMap(RS.getShort("map"));
-                if(map != null)
+                if (map != null)
                     map.respawnGroup(group);
             }
         } catch (SQLException e) {
@@ -49,7 +54,7 @@ public class HeroicMobsGroups extends AbstractDAO<Object> {
         try {
             final StringBuilder objects = new StringBuilder(), groups = new StringBuilder();
 
-            if(array != null) {
+            if (array != null) {
                 array.stream().filter(object -> object != null).forEach(object -> objects.append(objects.toString().isEmpty() ? "" : ",").append(object.getGuid()));
             }
             group.getMobs().values().stream().filter(monster -> monster != null).forEach(monster -> groups.append(groups.toString().isEmpty() ? "" : ";").append(monster.getTemplate().getId()).append(",").append(monster.getLevel()).append(",").append(monster.getLevel()));
@@ -126,9 +131,9 @@ public class HeroicMobsGroups extends AbstractDAO<Object> {
             ResultSet RS = result.resultSet;
             while (RS.next()) {
                 ArrayList<GameObject> objects = new ArrayList<>();
-                for(String value : RS.getString("objects").split(",")) {
+                for (String value : RS.getString("objects").split(",")) {
                     final GameObject object = World.world.getGameObject(Integer.parseInt(value));
-                    if(object != null)
+                    if (object != null)
                         objects.add(object);
                 }
                 GameMap.fixMobGroupObjects.put(RS.getInt("map") + "," + RS.getInt("cell"), objects);
@@ -162,7 +167,7 @@ public class HeroicMobsGroups extends AbstractDAO<Object> {
     public void updateFix() {
         PreparedStatement prepare = null;
         try {
-            for(Map.Entry<String, ArrayList<GameObject>> entry : GameMap.fixMobGroupObjects.entrySet()) {
+            for (Map.Entry<String, ArrayList<GameObject>> entry : GameMap.fixMobGroupObjects.entrySet()) {
                 String[] split = entry.getKey().split(",");
                 final StringBuilder objects = new StringBuilder();
                 entry.getValue().stream().filter(object -> object != null).forEach(object -> objects.append(objects.toString().isEmpty() ? "" : ",").append(object.getGuid()));

@@ -60,7 +60,9 @@ import java.util.concurrent.TimeUnit;
 public class Player {
 
 
-    /** special fight **/
+    /**
+     * special fight
+     **/
     public TeamMatch kolizeum;
     public DeathMatch deathMatch;
 
@@ -483,7 +485,7 @@ public class Player {
             return null;
         int startMap = Config.INSTANCE.getSTART_MAP();
         int startCell = Config.INSTANCE.getSTART_CELL();
-        
+
         Player perso = new Player(Database.getStatics().getPlayerData().getNextId(), name, -1, sexe, classe, color1, color2, color3, Config.INSTANCE.getStartKamas(), ((Config.INSTANCE.getStartLevel() - 1)), ((Config.INSTANCE.getStartLevel() - 1) * 5), 10000, Config.INSTANCE.getStartLevel(), World.world.getPersoXpMin(Config.INSTANCE.getStartLevel()), 100, Integer.parseInt(classe
                 + "" + sexe), (byte) 0, compte.getId(), new HashMap<Integer, Integer>(), (byte) 1, (byte) 0, (byte) 0, "*#%!pi$:?", (startMap != 0 ? (short) startMap : Constant.getStartMap(classe)), (startCell != 0 ? (short) startCell : Constant.getStartCell(classe)),
                 //(short)6824,
@@ -504,14 +506,14 @@ public class Player {
         World.world.addPlayer(perso);
         if (Config.INSTANCE.getSERVER_KEY().equals("aegnor")) {
             for (ObjectTemplate t : World.world.getItemSet(5).getItemTemplates()) {
-                GameObject obj = t.createNewItem(1, true,5);
+                GameObject obj = t.createNewItem(1, true, 5);
                 if (perso.addObjet(obj, true))
                     World.world.addGameObject(obj, true);
             }
             ObjectTemplate template = World.world.getObjTemplate(10207);
-            if(template != null) {
-                GameObject object = template.createNewItem(1, true,5);
-                if(object != null) {
+            if (template != null) {
+                GameObject object = template.createNewItem(1, true, 5);
+                if (object != null) {
                     object.getTxtStat().clear();
                     object.getTxtStat().putAll(Dopeul.generateStatsTrousseau());
                     if (perso.addObjet(object, true))
@@ -1737,10 +1739,10 @@ public class Player {
 
         if (Config.INSTANCE.getAUTO_REBOOT())
             this.send(Reboot.toStr());
-        if(Main.INSTANCE.getFightAsBlocked())
+        if (Main.INSTANCE.getFightAsBlocked())
             this.sendServerMessage("You can't fight until new order.");
         EventManager manager = EventManager.getInstance();
-        if(manager.getCurrentEvent() != null && manager.getState() == EventManager.State.PROCESSED)
+        if (manager.getCurrentEvent() != null && manager.getState() == EventManager.State.PROCESSED)
             this.sendMessage("(<b>Infos</b>) : L'événement '" + manager.getCurrentEvent().getName() + "' a démarrer, incrivez-vous à l'aide de <b>.event</b>.");
 
         this.checkVote();
@@ -1805,7 +1807,7 @@ public class Player {
     }
 
     public String parseToOa() {
-        return "Oa"  + this.getId() + "|"+ getGMStuffString() ;
+        return "Oa" + this.getId() + "|" + getGMStuffString();
     }
 
     public String parseToGM() {
@@ -2341,7 +2343,7 @@ public class Player {
 
     public void addObject(GameObject newObj, boolean display) {
         this.objects.put(newObj.getGuid(), newObj);
-        if(display) {
+        if (display) {
             SocketManager.GAME_SEND_OAKO_PACKET(this, newObj);
         }
     }
@@ -2426,7 +2428,7 @@ public class Player {
                            boolean deleteFromWorld) {
         GameObject obj = objects.get(guid);
 
-        if(obj == null) return;
+        if (obj == null) return;
 
         if (nombre > obj.getQuantity())
             nombre = obj.getQuantity();
@@ -2511,16 +2513,16 @@ public class Player {
         }
         return true;
     }
-    public boolean NerfSpell(int spellID)
-    {
-        if(getFight() != null)
+
+    public boolean NerfSpell(int spellID) {
+        if (getFight() != null)
             return false;
         int antNivel = getSortStatBySortIfHas(spellID).getLevel();
         if (antNivel <= 1)
             return false;
-        if (learnSpell(spellID, (antNivel-1), true, false, false)) {
+        if (learnSpell(spellID, (antNivel - 1), true, false, false)) {
             int total = 0;
-            for (int i = (antNivel-1); i < antNivel; i++)
+            for (int i = (antNivel - 1); i < antNivel; i++)
                 total += i;
             _spellPts += total;
             Database.getStatics().getPlayerData().update(this);
@@ -2538,8 +2540,9 @@ public class Player {
     }
 
     public String stringExperience(final String c) {
-        return World.world.getExpLevel(this.level).perso + c + this.exp + c + World.world.getExpLevel(level + 1).perso ;
+        return World.world.getExpLevel(this.level).perso + c + this.exp + c + World.world.getExpLevel(level + 1).perso;
     }
+
     public String stringStatsComplement() {
         final StringBuilder str = new StringBuilder();
         str.append(stringExperience(",")).append("|");
@@ -3095,7 +3098,7 @@ public class Player {
     }
 
     public void openBank() {
-        if(this.getExchangeAction() != null)
+        if (this.getExchangeAction() != null)
             return;
         if (this.getDeshonor() >= 1) {
             SocketManager.GAME_SEND_Im_PACKET(this, "183");
@@ -3186,8 +3189,7 @@ public class Player {
         _capital = pts;
     }
 
-    public void Restat_Stats(Boolean parcho)
-    {
+    public void Restat_Stats(Boolean parcho) {
         try {
             getStats().addOneStat(125, -getStats().getEffect(125));
             getStats().addOneStat(124, -getStats().getEffect(124));
@@ -3196,7 +3198,7 @@ public class Player {
             getStats().addOneStat(119, -getStats().getEffect(119));
             getStats().addOneStat(126, -getStats().getEffect(126));
             addCapital((getLevel() - 1) * 5 - get_capital());
-            if(parcho) {
+            if (parcho) {
                 getStatsParcho().getEffects().clear();
             }
             SocketManager.GAME_SEND_STATS_PACKET(this);
@@ -4468,7 +4470,9 @@ public class Player {
         }
     }
 
-    /** Heroic **/
+    /**
+     * Heroic
+     **/
     private byte dead = 0, deathCount = 0, deadType = 0;
     private long deadTime = 0, killByTypeId = 0, totalKills = 0;
 
@@ -4503,7 +4507,7 @@ public class Player {
     public void revive() {
         byte revive = Database.getStatics().getPlayerData().canRevive(this);
 
-        if(revive == 1) {
+        if (revive == 1) {
             this.curMap = World.world.getMap((short) 7411);
             this.curCell = World.world.getMap((short) 7411).getCase(311);
         } else {
@@ -4527,8 +4531,8 @@ public class Player {
         this._align = 0;
         this.kamas = 0;
         this._metiers.clear();
-        if(this._mount != null) {
-            for(GameObject gameObject : this._mount.getObjects().values())
+        if (this._mount != null) {
+            for (GameObject gameObject : this._mount.getObjects().values())
                 World.world.removeGameObject(gameObject.getGuid());
             this._mount.getObjects().clear();
 
@@ -4545,7 +4549,10 @@ public class Player {
 
         Database.getStatics().getPlayerData().setRevive(this);
     }
-    /** End heroic **/
+
+    /**
+     * End heroic
+     **/
 
     public boolean isGhost() {
         return this.isGhost;
@@ -4570,12 +4577,12 @@ public class Player {
     public void setGhost() {
         if (isOnMount())
             toogleOnMount();
-        if(Config.INSTANCE.getHEROIC()) {
+        if (Config.INSTANCE.getHEROIC()) {
             this.setGfxId(Integer.parseInt(this.getClasse() + "" + this.getSexe()));
             this.send("GO");
             return;
         }
-        if(this.getEnergy() != 0)
+        if (this.getEnergy() != 0)
             Constant.tpCim(this.getCurMap().getSubArea().getArea().getId(), this);
         this.dead = 0;
         this.isGhost = true;
@@ -4630,7 +4637,7 @@ public class Player {
     }
 
     public boolean castEndFightAction() {
-        if(this.endFightAction != null) {
+        if (this.endFightAction != null) {
             this.endFightAction.apply(this, null, -1, -1);
             this.endFightAction = null;
         } else
@@ -4680,12 +4687,12 @@ public class Player {
     public void addInStore(int ObjID, int price, int qua) {
         GameObject PersoObj = World.world.getGameObject(ObjID);
         //Si le joueur n'a pas l'item dans son sac ...
-        if(PersoObj.isAttach()) return;
+        if (PersoObj.isAttach()) return;
         if (_storeItems.get(ObjID) != null) {
-                _storeItems.remove(ObjID);
-                _storeItems.put(ObjID, price);
-                SocketManager.GAME_SEND_ITEM_LIST_PACKET_SELLER(this, this);
-                return;
+            _storeItems.remove(ObjID);
+            _storeItems.put(ObjID, price);
+            SocketManager.GAME_SEND_ITEM_LIST_PACKET_SELLER(this, this);
+            return;
         }
 
         if (objects.get(ObjID) == null) {
@@ -5353,7 +5360,7 @@ public class Player {
         for (int position = 2; position < 8; position++) {
             GameObject object = getObjetByPos(position);
 
-            if(object != null) {
+            if (object != null) {
                 ObjectTemplate template = object.getTemplate();
                 int set = object.getTemplate().getPanoId();
 
@@ -5363,7 +5370,7 @@ public class Player {
                         String[] split = stat.split("#");
                         int effect = Integer.parseInt(split[0], 16), spell = Integer.parseInt(split[1], 16);
                         int value = Integer.parseInt(split[3], 16);
-                        if(effect == 289)
+                        if (effect == 289)
                             value = 1;
                         SocketManager.SEND_SB_SPELL_BOOST(this, effect + ";" + spell + ";" + value);
                         addObjectClassSpell(spell, effect, value);
@@ -5379,7 +5386,7 @@ public class Player {
     public int getValueOfClassObject(int spell, int effect) {
         if (this.objectsClassSpell.containsKey(spell)) {
             if (this.objectsClassSpell.get(spell).first == effect) {
-               return this.objectsClassSpell.get(spell).second;
+                return this.objectsClassSpell.get(spell).second;
             }
         }
         return 0;
@@ -5633,7 +5640,7 @@ public class Player {
     }
 
     public synchronized void setExchangeAction(ExchangeAction<?> exchangeAction) {
-        if(exchangeAction == null) this.setAway(false);
+        if (exchangeAction == null) this.setAway(false);
         this.exchangeAction = exchangeAction;
     }
 
@@ -5646,7 +5653,7 @@ public class Player {
 
                 if (object == null) {
                     if (unequip) {
-                        for(Player target : this.getCurMap().getPlayers())
+                        for (Player target : this.getCurMap().getPlayers())
                             target.send("EW+" + player.getId() + "|");
                     }
                     continue;
@@ -5678,11 +5685,12 @@ public class Player {
                         break;*/
                 }
 
-                for(Player target : this.getCurMap().getPlayers())
+                for (Player target : this.getCurMap().getPlayers())
                     target.send(packet + data);
             }
         }
     }
+
     public void boostStat(int stat, boolean capital) {
         int value = 0;
         switch (stat) {
@@ -5733,8 +5741,8 @@ public class Player {
             Database.getStatics().getPlayerData().update(this);
         }
     }
-    public void boostStats2(final int type, int pointUsed)
-    {
+
+    public void boostStats2(final int type, int pointUsed) {
         if (_capital <= 0) {
             return;
         }
@@ -5790,14 +5798,14 @@ public class Player {
             this.sendMessage(mess);
             return;
         }
-        SocketManager.send(this, "GZ"+ places);
+        SocketManager.send(this, "GZ" + places);
     }
 
     public void cancelFightCells() {
-        SocketManager.send(this, "GZ"+ "");
+        SocketManager.send(this, "GZ" + "");
     }
 
-    public int getProspection () {
+    public int getProspection() {
         return (getTotalStats().getEffect(Constant.STATS_ADD_PROS) + Math.round(getTotalStats().getEffect(Constant.STATS_ADD_CHAN) / 10));
     }
 }

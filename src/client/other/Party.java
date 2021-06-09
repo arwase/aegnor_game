@@ -51,9 +51,9 @@ public class Party {
         player.setParty(null);
         this.players.remove(player);
 
-        for(Player member : this.players) {
-            if(member.follow == player) member.follow = null;
-            if(member.follower.containsKey(player.getId())) member.follower.remove(player.getId());
+        for (Player member : this.players) {
+            if (member.follow == player) member.follow = null;
+            if (member.follower.containsKey(player.getId())) member.follower.remove(player.getId());
         }
 
         if (this.players.size() == 1) {
@@ -67,7 +67,7 @@ public class Party {
     }
 
     public void moveAllPlayersToMaster(final GameCase cell) {
-        if(this.master != null) {
+        if (this.master != null) {
             this.players.stream().filter((follower1) -> isWithTheMaster(follower1, false)).forEach(follower -> follower.setBlockMovement(true));
             this.players.stream().filter((follower1) -> isWithTheMaster(follower1, false)).forEach(follower -> {
                 try {
@@ -80,14 +80,15 @@ public class Party {
 
                         SocketManager.GAME_SEND_GA_PACKET_TO_MAP(follower.getCurMap(), "0", 1, String.valueOf(follower.getId()), path);
                     }
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             });
             this.players.stream().filter((follower1) -> isWithTheMaster(follower1, false)).forEach(follower -> follower.setBlockMovement(false));
         }
     }
 
     public boolean isWithTheMaster(Player follower, boolean inFight) {
-        return follower != null && !follower.getName().equals(this.master.getName()) &&  this.players.contains(follower) && follower.getGameClient()
+        return follower != null && !follower.getName().equals(this.master.getName()) && this.players.contains(follower) && follower.getGameClient()
                 != null && this.master.getCurMap().getId() == follower.getCurMap().getId() && (inFight ? follower.getFight() == this.master.getFight() : follower.getFight() == null);
     }
 }

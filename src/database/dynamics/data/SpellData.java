@@ -96,7 +96,8 @@ public class SpellData extends AbstractDAO<Spell> {
 
             try {
                 PACOST = Integer.parseInt(stat[2].trim());
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
 
             int POm = Integer.parseInt(stat[3].trim());
             int POM = Integer.parseInt(stat[4].trim());

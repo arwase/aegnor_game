@@ -13,7 +13,7 @@ public abstract class Updatable implements IUpdatable {
     }
 
     protected boolean verify() {
-        if(System.currentTimeMillis() - this.lastTime > this.wait) {
+        if (System.currentTimeMillis() - this.lastTime > this.wait) {
             this.lastTime = System.currentTimeMillis();
             return true;
         }

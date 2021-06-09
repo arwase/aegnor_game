@@ -52,7 +52,7 @@ public class TrunkData extends AbstractDAO<Trunk> {
                 int owner_id = RS.getInt("owner_id");
                 String key = RS.getString("key");
                 Trunk t = World.world.getTrunk(id);
-                if(t == null) continue;
+                if (t == null) continue;
                 t.setObjects(objects);
                 t.setKamas(kamas);
                 t.setOwnerId(owner_id);
@@ -72,7 +72,7 @@ public class TrunkData extends AbstractDAO<Trunk> {
         try {
             result = getData("SELECT * FROM `coffres` WHERE `id` = '" + trunk.getId() + "';");
             ResultSet RS = result.resultSet;
-            if(!RS.next()) {
+            if (!RS.next()) {
                 this.insert(trunk);
             }
         } catch (SQLException e) {
@@ -86,7 +86,7 @@ public class TrunkData extends AbstractDAO<Trunk> {
         PreparedStatement p = null;
 
         for (Trunk trunk : Trunk.getTrunksByHouse(house)) {
-            if(trunk.getOwnerId() != player.getAccID()) {
+            if (trunk.getOwnerId() != player.getAccID()) {
                 trunk.setOwnerId(player.getAccID());
                 trunk.setKey("-");
 

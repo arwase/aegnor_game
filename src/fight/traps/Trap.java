@@ -107,7 +107,7 @@ public class Trap {
             ArrayList<GameCase> cases2 = new ArrayList<GameCase>();//on �vite les modifications concurrentes
             cases2.addAll(cells);
             for (GameCase aCell : cases2) {
-                if(aCell == null) continue;
+                if (aCell == null) continue;
                 for (char d : dirs) {
                     GameCase cell = this.fight.getMap().getCase(PathFinding.GetCaseIDFromDirrection(aCell.getId(), d, this.fight.getMap(), true));
                     if (cell == null)

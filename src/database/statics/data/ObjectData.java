@@ -30,8 +30,8 @@ public class ObjectData extends AbstractDAO<GameObject> {
                 String stats = RS.getString("stats");
                 int puit = RS.getInt("puit");
                 int rarity = RS.getInt("rarity");
-                if(quantity == 0) continue;
-                World.world.addGameObject(World.world.newObjet(id, template, quantity, position, stats, puit,rarity), false);
+                if (quantity == 0) continue;
+                World.world.addGameObject(World.world.newObjet(id, template, quantity, position, stats, puit, rarity), false);
             }
         } catch (SQLException e) {
             super.sendError("ObjectData load", e);
@@ -56,7 +56,7 @@ public class ObjectData extends AbstractDAO<GameObject> {
                 int puit = RS.getInt("puit");
                 int rarity = RS.getInt("rarity");
 
-                if(quantity == 0) continue;
+                if (quantity == 0) continue;
                 World.world.addGameObject(World.world.newObjet(id, template, quantity, position, stats, puit, rarity), false);
             }
         } catch (SQLException e) {

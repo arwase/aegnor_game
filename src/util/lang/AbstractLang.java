@@ -20,5 +20,6 @@ public class AbstractLang implements Lang {
     }
 
     @Override
-    public void initialize() {}
+    public void initialize() {
+    }
 }

@@ -49,7 +49,7 @@ public class Stats {
     }
 
     public Stats(Guild guild) { // Stats collector in fight
-        if(guild != null) {
+        if (guild != null) {
             this.effects.put(Constant.STATS_ADD_SAGE, guild.getStats(Constant.STATS_ADD_SAGE));
             this.effects.put(Constant.STATS_ADD_FORC, guild.getLvl());
             this.effects.put(Constant.STATS_ADD_INTE, guild.getLvl());
@@ -75,7 +75,7 @@ public class Stats {
     }
 
     public int addOneStat(int id, int val) {
-        if(val > 0) {
+        if (val > 0) {
             if (id == 112) id = Constant.STATS_ADD_DOMA;
             if (this.effects.get(id) == null || this.effects.get(id) == 0) {
                 this.effects.put(id, val);
@@ -115,7 +115,7 @@ public class Stats {
         if (this.effects.isEmpty())
             return "";
         for (Entry<Integer, Integer> entry : this.effects.entrySet()) {
-            if(entry.getValue() > 0) {
+            if (entry.getValue() > 0) {
                 if (str.length() > 0)
                     str.append(",");
                 str.append(Integer.toHexString(entry.getKey())).append("#").append(Integer.toHexString(entry.getValue())).append("#0#0");

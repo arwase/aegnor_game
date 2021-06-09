@@ -232,7 +232,9 @@ public class DynamicsDatabase {
         return houseData;
     }
 
-    public InteractiveDoorData getInteractiveDoorData() { return interactiveDoorData; }
+    public InteractiveDoorData getInteractiveDoorData() {
+        return interactiveDoorData;
+    }
 
     public InteractiveObjectData getInteractiveObjectData() {
         return interactiveObjectData;
@@ -326,5 +328,7 @@ public class DynamicsDatabase {
         return zaapiData;
     }
 
-    public HeroicMobsGroups getHeroicMobsGroups() { return heroicMobsGroups; }
+    public HeroicMobsGroups getHeroicMobsGroups() {
+        return heroicMobsGroups;
+    }
 }

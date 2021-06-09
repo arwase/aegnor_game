@@ -36,7 +36,7 @@ public class GuildMemberData extends AbstractDAO<Object> {
                     Guild g = World.world.getGuild(RS.getInt("guild"));
                     if (g != null)
                         g.addMember(RS.getInt("guid"), RS.getInt("rank"), RS.getByte("pxp"), RS.getLong("xpdone"), RS.getInt("rights"), RS.getString("lastConnection").replaceAll("-", "~"));
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -79,7 +79,7 @@ public class GuildMemberData extends AbstractDAO<Object> {
         try {
             p = getPreparedStatement("REPLACE INTO `guild_members` VALUES(?,?,?,?,?,?,?,?,?,?,?)");
             GuildMember gm = player.getGuildMember();
-            if(gm == null) return;
+            if (gm == null) return;
             p.setInt(1, gm.getPlayerId());
             p.setInt(2, gm.getGuild().getId());
             p.setString(3, player.getName());

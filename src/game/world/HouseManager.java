@@ -274,7 +274,7 @@ public class HouseManager {
         SocketManager.GAME_SEND_Im_PACKET(Target, "018;" + player.getName());
     }
 
-    public House getHouseByPerso(Player player)  {
+    public House getHouseByPerso(Player player) {
         for (Map.Entry<Integer, House> house : World.world.getHouses().entrySet())
             if (house.getValue().getOwnerId() == player.getAccID())
                 return house.getValue();

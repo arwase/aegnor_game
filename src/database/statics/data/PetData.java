@@ -17,7 +17,8 @@ public class PetData extends AbstractDAO<PetEntry> {
     }
 
     @Override
-    public void load(Object obj) {}
+    public void load(Object obj) {
+    }
 
     @Override
     public boolean update(PetEntry pets) {

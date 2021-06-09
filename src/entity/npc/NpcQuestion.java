@@ -57,7 +57,7 @@ public class NpcQuestion {
 
                     NpcAnswer answer = World.world.getAnswers().get(Integer.parseInt(loc1));
 
-                     if (answer == null)
+                    if (answer == null)
                         continue;
 
                     boolean ok = true;
@@ -497,7 +497,7 @@ public class NpcQuestion {
 
                 if (Dopeul.parseConditionTrousseau(i.replace(" ", ""), template.getId(), map.getId())) {
                     for (String rep : this.getAnwsers().split(";")) {
-                        if(rep.isEmpty()) continue;
+                        if (rep.isEmpty()) continue;
                         NpcAnswer answer = World.world.getNpcAnswer(Integer.parseInt(rep));
                         if (answer == null) continue;
 
@@ -512,7 +512,7 @@ public class NpcQuestion {
                             }
                         }
 
-                        if(str.contains("6604") || str.contains("6605")) break;
+                        if (str.contains("6604") || str.contains("6605")) break;
                     }
                 }
             }

@@ -58,10 +58,10 @@ public class World {
 
     public Logger logger = (Logger) LoggerFactory.getLogger(World.class);
 
-    private Map<Integer, Account>    accounts    = new HashMap<>();
-    private Map<Integer, Player>     players     = new HashMap<>();
-    private Map<Short, GameMap>    maps        = new HashMap<>();
-    private Map<Integer, GameObject> objects     = new ConcurrentHashMap<>();
+    private Map<Integer, Account> accounts = new HashMap<>();
+    private Map<Integer, Player> players = new HashMap<>();
+    private Map<Short, GameMap> maps = new HashMap<>();
+    private Map<Integer, GameObject> objects = new ConcurrentHashMap<>();
 
     private Map<Integer, ExpLevel> experiences = new HashMap<>();
     private Map<Integer, Spell> spells = new HashMap<>();
@@ -202,7 +202,7 @@ public class World {
     }
 
     public void addMap(GameMap map) {
-        if(map.getSubArea() != null && map.getSubArea().getArea().getId() == 42 && !Config.INSTANCE.getNOEL())
+        if (map.getSubArea() != null && map.getSubArea().getArea().getId() == 42 && !Config.INSTANCE.getNOEL())
             return;
         maps.put(map.getId(), map);
     }
@@ -226,7 +226,7 @@ public class World {
     }
 
     public void removeGameObject(int id) {
-        if(objects.containsKey(id))
+        if (objects.containsKey(id))
             objects.remove(id);
         Database.getStatics().getObjectData().delete(id);
     }
@@ -283,6 +283,7 @@ public class World {
     public Map<Integer, Map<String, Map<String, Integer>>> getExtraMonsters() {
         return extraMonstre;
     }
+
     /**
      * end region *
      */
@@ -473,14 +474,14 @@ public class World {
 
         Database.getStatics().getServerData().updateTime(time);
         logger.info("All data was loaded successfully at "
-        + new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss", Locale.FRANCE).format(new Date()) + " in "
+                + new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss", Locale.FRANCE).format(new Date()) + " in "
                 + new SimpleDateFormat("mm", Locale.FRANCE).format((System.currentTimeMillis() - time)) + " min "
                 + new SimpleDateFormat("ss", Locale.FRANCE).format((System.currentTimeMillis() - time)) + " s.");
         logger.setLevel(Level.ALL);
     }
 
     public void addExtraMonster(int idMob, String superArea,
-                                       String subArea, int chances) {
+                                String subArea, int chances) {
         Map<String, Map<String, Integer>> map = new HashMap<>();
         Map<String, Integer> _map = new HashMap<>();
         _map.put(subArea, chances);
@@ -554,7 +555,7 @@ public class World {
                     }
                 }
                 if (mapPossible.size() <= 0) {
-                    throw new Exception(" no maps was found for the extra monster " + i.getKey() +".");
+                    throw new Exception(" no maps was found for the extra monster " + i.getKey() + ".");
                 } else {
                     GameMap randomMap;
                     if (mapPossible.size() == 1)
@@ -572,7 +573,7 @@ public class World {
                 }
 
                 mapPossible.clear();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 mapPossible.clear();
                 logger.error("An error occurred when the server try to put extra-monster caused by : " + e.getMessage());
@@ -613,6 +614,7 @@ public class World {
     public void addArea(Area area) {
         areas.put(area.getId(), area);
     }
+
     public void addClasse(Classe classe) {
         Classes.put(classe.getId(), classe);
     }
@@ -668,10 +670,10 @@ public class World {
     }
 
     public double getConquestBonus(Player player) {
-        if(player == null) return 1;
-        if(player.get_align() == 0) return 1;
+        if (player == null) return 1;
+        if (player.get_align() == 0) return 1;
         final double factor = 1 + (getBalanceWorld(player.get_align()) * Math.rint((player.getGrade() / 2.5) + 1)) / 100;
-        if(factor < 1) return 1;
+        if (factor < 1) return 1;
         return factor;
     }
 
@@ -682,7 +684,6 @@ public class World {
     public void addExpLevel(int lvl, ExpLevel exp) {
         experiences.put(lvl, exp);
     }
-
 
 
     public void addNPCQuestion(NpcQuestion quest) {
@@ -702,7 +703,6 @@ public class World {
     }
 
 
-
     public void removePlayer(Player player) {
         if (player.getGuild() != null) {
             if (player.getGuild().getPlayers().size() <= 1) {
@@ -716,16 +716,16 @@ public class World {
                         leader = newLeader;
 
                 player.getGuild().removeMember(player);
-                if(leader != null)
+                if (leader != null)
                     leader.getGuildMember().setRank(1);
             } else {
                 player.getGuild().removeMember(player);
             }
         }
-        if(player.getWife() != 0) {
+        if (player.getWife() != 0) {
             Player wife = getPlayer(player.getWife());
 
-            if(wife != null) {
+            if (wife != null) {
                 wife.setWife(0);
             }
         }
@@ -841,9 +841,6 @@ public class World {
     }
 
 
-
-
-
     public void addIOTemplate(InteractiveObjectTemplate IOT) {
         IOTemplate.put(IOT.getId(), IOT);
     }
@@ -851,7 +848,7 @@ public class World {
     public Mount getMountById(int id) {
 
         Mount mount = Dragodindes.get(id);
-        if(mount == null) {
+        if (mount == null) {
             Database.getStatics().getMountData().load(id);
             mount = Dragodindes.get(id);
         }
@@ -899,7 +896,7 @@ public class World {
     }
 
     public void addFullMorph(int morphID, String name, int gfxID,
-                                    String spells, String[] args) {
+                             String spells, String[] args) {
         if (fullmorphs.get(morphID) != null)
             return;
 
@@ -929,7 +926,7 @@ public class World {
     }
 
     public int getObjectByIngredientForJob(ArrayList<Integer> list,
-                                                  Map<Integer, Integer> ingredients) {
+                                           Map<Integer, Integer> ingredients) {
         if (list == null)
             return -1;
         for (int tID : list) {
@@ -948,7 +945,6 @@ public class World {
         }
         return -1;
     }
-
 
 
     public void addItemSet(ObjectSet itemSet) {
@@ -998,7 +994,7 @@ public class World {
 
     public Guild getGuild(int i) {
         Guild guild = Guildes.get(i);
-        if(guild == null) {
+        if (guild == null) {
             Database.getStatics().getGuildData().load(i);
             guild = Guildes.get(i);
         }
@@ -1036,7 +1032,7 @@ public class World {
 
     public int getEncloCellIdByMapId(short i) {
         GameMap map = getMap(i);
-        if(map != null && map.getMountPark() != null && map.getMountPark().getCell() > 0)
+        if (map != null && map.getMountPark() != null && map.getMountPark().getCell() > 0)
             return map.getMountPark().getCell();
         return -1;
     }
@@ -1078,10 +1074,10 @@ public class World {
                 return new GameObject(id, template, qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), txtStat, puit, rarity);
             } catch (Exception e) {
                 e.printStackTrace();
-                return new GameObject(id, template, qua, pos, stats, 0,rarity);
+                return new GameObject(id, template, qua, pos, stats, 0, rarity);
             }
         } else {
-            return new GameObject(id, template, qua, pos, stats, 0,rarity);
+            return new GameObject(id, template, qua, pos, stats, 0, rarity);
         }
     }
 
@@ -1118,7 +1114,12 @@ public class World {
     }
 
     public Hdv getHdv(int map) {
-        return Hdvs.get(changeHdv(map));
+        if(Hdvs.get(changeHdv(map)) != null){
+            return Hdvs.get(changeHdv(map));
+        }
+        else{
+            return Hdvs.get(-1);
+        }
     }
 
     public synchronized int getNextObjectHdvId() {
@@ -1163,7 +1164,7 @@ public class World {
     }
 
     public void priestRequest(Player boy, Player girl, Player asked) {
-        if(boy.getSexe() == 0 && girl.getSexe() == 1) {
+        if (boy.getSexe() == 0 && girl.getSexe() == 1) {
             final GameMap map = boy.getCurMap();
             if (boy.getWife() != 0) {// 0 : femme | 1 = homme
                 boy.setBlockMovement(false);
@@ -1285,10 +1286,11 @@ public class World {
     public synchronized void addPrisme(Prism Prisme) {
         Prismes.put(Prisme.getId(), Prisme);
     }
-    public Classe getClasse(int id)
-    {
+
+    public Classe getClasse(int id) {
         return Classes.get(id);
     }
+
     public Prism getPrisme(int id) {
         return Prismes.get(id);
     }
@@ -1401,10 +1403,10 @@ public class World {
     }
 
     public String getChallengeFromConditions(boolean sevEnn,
-                                                    boolean sevAll, boolean bothSex, boolean EvenEnn, boolean MoreEnn,
-                                                    boolean hasCaw, boolean hasChaf, boolean hasRoul, boolean hasArak,
-                                                    int isBoss, boolean ecartLvlPlayer, boolean hasArround,
-                                                    boolean hasDisciple, boolean isSolo) {
+                                             boolean sevAll, boolean bothSex, boolean EvenEnn, boolean MoreEnn,
+                                             boolean hasCaw, boolean hasChaf, boolean hasRoul, boolean hasArak,
+                                             int isBoss, boolean ecartLvlPlayer, boolean hasArround,
+                                             boolean hasDisciple, boolean isSolo) {
         StringBuilder toReturn = new StringBuilder();
         boolean isFirst = true, isGood = false;
         int cond;
@@ -1577,7 +1579,7 @@ public class World {
     }
 
     public ArrayList<String> getRandomChallenge(int nombreChal,
-                                                       String challenges) {
+                                                String challenges) {
         String MovingChals = ";1;2;8;36;37;39;40;";// Challenges de d�placements incompatibles
         boolean hasMovingChal = false;
         String TargetChals = ";3;4;10;25;31;32;34;35;38;42;";// ceux qui ciblent
@@ -1738,7 +1740,7 @@ public class World {
     }
 
     public void removeSeller(int player, short map) {
-        if(getSeller(map) != null)
+        if (getSeller(map) != null)
             Seller.get(map).remove(player);
     }
 
@@ -2170,6 +2172,7 @@ public class World {
             this.level = -1;
             this.condition = "";
         }
+
         public int getObjectId() {
             return objectId;
         }
@@ -2196,17 +2199,19 @@ public class World {
 
         public Drop copy(int grade) {
             Drop drop = new Drop(this.objectId, null, this.ceil, this.action, this.level, this.condition);
-            if(this.percents == null) return null;
-            if(this.percents.isEmpty()) return null;
+            if (this.percents == null) return null;
+            if (this.percents.isEmpty()) return null;
             try {
                 if (this.percents.get(grade - 1) == null) return null;
                 drop.localPercent = this.percents.get(grade - 1);
-            } catch(IndexOutOfBoundsException ignored) { return null; }
+            } catch (IndexOutOfBoundsException ignored) {
+                return null;
+            }
             return drop;
         }
 
         public double getPercentbyGrade(int Grade) {
-            double percent = percents.get(Grade -1);
+            double percent = percents.get(Grade - 1);
             return percent;
         }
     }

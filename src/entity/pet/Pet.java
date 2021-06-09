@@ -228,7 +228,7 @@ public class Pet {
     }
 
     public String getJet() {
-        if(!this.jet.contains("\\|")) return jet;
+        if (!this.jet.contains("\\|")) return jet;
         String[] split = this.jet.split("\\|");
         return split[Formulas.getRandomValue(1, split.length) - 1];
     }

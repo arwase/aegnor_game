@@ -8,7 +8,7 @@ import fight.ia.util.Function;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA21 extends AbstractIA  {
+public class IA21 extends AbstractIA {
 
     public IA21(Fight fight, Fighter fighter, byte count) {
         super(fight, fighter, count);

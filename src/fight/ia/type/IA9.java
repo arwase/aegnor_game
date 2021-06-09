@@ -9,7 +9,7 @@ import fight.spells.Spell.SortStats;
 /**
  * Created by Locos on 04/10/2015.
  */
-public class IA9 extends AbstractIA  {
+public class IA9 extends AbstractIA {
 
     public IA9(Fight fight, Fighter fighter, byte count) {
         super(fight, fighter, count);

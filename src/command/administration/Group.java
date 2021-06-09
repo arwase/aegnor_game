@@ -62,8 +62,8 @@ public class Group {
     }
 
     public static Group getGroupeById(int id) {
-        for(Group group : Group.groups)
-            if(group.id == id)
+        for (Group group : Group.groups)
+            if (group.id == id)
                 return group;
         return null;
     }

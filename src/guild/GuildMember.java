@@ -126,9 +126,8 @@ public class GuildMember {
     }
 
 
-
     private void initRights() {
-        for(int right : Constant.G_RIGHTS) {
+        for (int right : Constant.G_RIGHTS) {
             this.haveRights.put(right, false);
         }
     }

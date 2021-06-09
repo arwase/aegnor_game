@@ -32,9 +32,9 @@ public class IA70 extends AbstractNeedSpell {
             Spell.SortStats invocation = this.fighter.getMob().getSpells().get(629);
             Spell.SortStats carapce = this.fighter.getMob().getSpells().get(630);
 
-            if(!this.fighter.haveInvocation()) {
+            if (!this.fighter.haveInvocation()) {
                 int cell = PathFinding.getAvailableCellArround(this.fight, this.fighter.getCell().getId(), null);
-                if(this.fight.canCastSpell1(this.fighter, invocation, this.fighter.getCell(), cell)) {
+                if (this.fight.canCastSpell1(this.fighter, invocation, this.fighter.getCell(), cell)) {
                     this.fight.tryCastSpell(this.fighter, invocation, cell);
                     time = 1500;
                     action = true;
@@ -56,39 +56,39 @@ public class IA70 extends AbstractNeedSpell {
             Fighter ennemy = Function.getInstance().getNearestEnnemy(this.fight, this.fighter);
             Fighter nearestEnnemy = Function.getInstance().getNearestEnnemynbrcasemax(this.fight, this.fighter, 0, 3);//2 = po min 1 + 1;
 
-            if(nearestEnnemy != null) if(nearestEnnemy.isHide()) nearestEnnemy = null;
-            if(ennemy != null) if(ennemy.isHide()) ennemy = null;
+            if (nearestEnnemy != null) if (nearestEnnemy.isHide()) nearestEnnemy = null;
+            if (ennemy != null) if (ennemy.isHide()) ennemy = null;
 
-            if(this.fighter.getCurPm(this.fight) > 0 && nearestEnnemy != null && !action) {
+            if (this.fighter.getCurPm(this.fight) > 0 && nearestEnnemy != null && !action) {
                 Function.getInstance().moveNearIfPossible(this.fight, this.fighter, nearestEnnemy);
                 time = 1000;
-            } else if(this.fighter.getCurPm(this.fight) > 0 && nearestEnnemy == null && !action) {
+            } else if (this.fighter.getCurPm(this.fight) > 0 && nearestEnnemy == null && !action) {
                 Function.getInstance().moveNearIfPossible(this.fight, this.fighter, ennemy);
                 time = 1000;
             }
 
-            if(this.fighter.getCurPa(this.fight) > 0 && nearestEnnemy != null && !action) {
+            if (this.fighter.getCurPa(this.fight) > 0 && nearestEnnemy != null && !action) {
                 int value = Function.getInstance().attackIfPossible(this.fight, this.fighter, this.cacs);
-                if(value != 0) {
+                if (value != 0) {
                     time = value;
                     action = true;
                 }
             }
-            if(this.fighter.getCurPa(this.fight) > 0 && ennemy != null && !action) {
+            if (this.fighter.getCurPa(this.fight) > 0 && ennemy != null && !action) {
                 int value = Function.getInstance().attackIfPossible(this.fight, this.fighter, this.cacs);
-                if(value != 0) {
+                if (value != 0) {
                     time = value;
                     action = true;
                 }
             }
 
-            if(this.fighter.getCurPm(this.fight) > 0 && !action) {
+            if (this.fighter.getCurPm(this.fight) > 0 && !action) {
                 nearestEnnemy = Function.getInstance().getNearestEnnemynbrcasemax(this.fight, this.fighter, 0, 20);//2 = po min 1 + 1;
                 Function.getInstance().moveNearIfPossible(this.fight, this.fighter, nearestEnnemy);
                 time = 1000;
             }
 
-            if(this.fighter.getCurPa(this.fight) == 0 && this.fighter.getCurPm(this.fight) == 0) this.stop = true;
+            if (this.fighter.getCurPa(this.fight) == 0 && this.fighter.getCurPm(this.fight) == 0) this.stop = true;
             addNext(this::decrementCount, time);
         } else {
             this.stop = true;

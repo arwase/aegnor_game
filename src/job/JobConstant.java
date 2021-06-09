@@ -148,7 +148,7 @@ public class JobConstant {
     }
 
     public static int getChanceForMaxCase(int lvl) {
-        if(lvl == 100)
+        if (lvl == 100)
             return 99;
         if (lvl < 10)
             return 50;
@@ -229,7 +229,7 @@ public class JobConstant {
     public static ArrayList<JobAction> getPosActionsToJob(int tID, int lvl) {
         ArrayList<JobAction> list = new ArrayList<>();
         int timeWin = lvl * 100, dropWin = lvl / 5, bonus = lvl == 100 ? 5 : 0, min = 1 + bonus;
-        
+
         switch (tID) {
             case JOB_BIJOUTIER:
                 //Faire Anneau

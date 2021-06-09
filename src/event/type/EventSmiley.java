@@ -89,12 +89,12 @@ public class EventSmiley extends Event {
         List<Player> participants = new ArrayList<>(EventManager.getInstance().getParticipants());
         int nbPlayers = participants.size();
 
-        for(Player player : participants)
-            if(player != null && player.isOnline())
+        for (Player player : participants)
+            if (player != null && player.isOnline())
                 this.answers.add(new World.Couple<>(player, new ArrayList<>()));
 
         //239 cell emote pnj, 179 cell non emote
-        while(nbPlayers > 1) {
+        while (nbPlayers > 1) {
             this.count++;
 
             this.moveAnimatorToCellId(134);
@@ -102,7 +102,7 @@ public class EventSmiley extends Event {
 
             this.emotes.add((byte) (Formulas.random.nextInt(14) + 1));
 
-            for(byte e : this.emotes) {
+            for (byte e : this.emotes) {
                 SocketManager.GAME_SEND_EMOTICONE_TO_MAP(this.map, this.animator.getId(), e);
                 wait(1500 - 100);
             }
@@ -122,22 +122,22 @@ public class EventSmiley extends Event {
             SocketManager.GAME_SEND_cMK_PACKET_TO_MAP(this.map, "", this.animator.getId(), "Event", "Les jeux sont faits !");
             this.state = 0;
 
-            for(World.Couple<Player, List<Byte>> pair : new ArrayList<>(this.answers)) {
-                if(pair.second.size() == this.count) {
+            for (World.Couple<Player, List<Byte>> pair : new ArrayList<>(this.answers)) {
+                if (pair.second.size() == this.count) {
                     byte c = 0;
                     boolean kick = false;
-                    for(Byte b1 : pair.second) {
+                    for (Byte b1 : pair.second) {
                         Byte b2 = this.emotes.get(c);
-                        if(b2 == null) {
+                        if (b2 == null) {
                             kick = true;
                             break;
-                        } else if(b1.byteValue() != b2.byteValue()) {
+                        } else if (b1.byteValue() != b2.byteValue()) {
                             kick = true;
                             break;
                         }
                         c++;
                     }
-                    if(kick) {
+                    if (kick) {
                         this.kickPlayer(pair.first);
                         nbPlayers--;
                     } else {
@@ -151,7 +151,7 @@ public class EventSmiley extends Event {
             }
 
             wait(1000);
-            if(EventManager.getInstance().getParticipants().size() > 1) {
+            if (EventManager.getInstance().getParticipants().size() > 1) {
                 SocketManager.GAME_SEND_cMK_PACKET_TO_MAP(this.map, "", this.animator.getId(), "Event", "C'est parti pour le " + (this.count + 1) + "éme tours !");
             }
             wait(2000);
@@ -162,15 +162,15 @@ public class EventSmiley extends Event {
 
     @Override
     public void close() {
-        if(!EventManager.getInstance().getParticipants().isEmpty()) {
+        if (!EventManager.getInstance().getParticipants().isEmpty()) {
             Player winner = EventManager.getInstance().getParticipants().get(0);
 
             SocketManager.GAME_SEND_cMK_PACKET_TO_MAP(this.map, "", this.animator.getId(), "Event", "Félicitations à " + winner.getName() + " pour ça victoire !");
             winner.sendMessage("(<b>Infos</b>) : Vous venez de remporter 1 jeton !");
             ObjectTemplate template = World.world.getObjTemplate(EventManager.TOKEN);
 
-            if(template != null) {
-                GameObject object = template.createNewItem(1, false,0);
+            if (template != null) {
+                GameObject object = template.createNewItem(1, false, 0);
 
                 if (object != null && winner.addObjet(object, true)) {
                     World.world.addGameObject(object, true);
@@ -198,10 +198,10 @@ public class EventSmiley extends Event {
         EventManager.getInstance().getParticipants().remove(player);
         Iterator<World.Couple<Player, List<Byte>>> iterator = this.answers.iterator();
 
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             World.Couple<Player, List<Byte>> pair = iterator.next();
 
-            if(pair.first.getId() == player.getId()) {
+            if (pair.first.getId() == player.getId()) {
                 this.map.send("GA;208;" + player.getId() + ";" + player.getCurCell().getId() + ",2916,11,8,1");
                 player.sendMessage("(<b>Infos</b>) : Vous avez perdu.. Peut-être une autre fois !");
                 player.teleportOldMap();
@@ -214,12 +214,12 @@ public class EventSmiley extends Event {
 
     @Override
     public boolean onReceivePacket(EventManager manager, Player player, String packet) throws Exception {
-        if(packet.startsWith("BS") && this.state == 1) {
+        if (packet.startsWith("BS") && this.state == 1) {
             byte emote = Byte.parseByte(packet.substring(2));
-            for(World.Couple<Player, List<Byte>> pair : this.answers) {
-                if(pair.first.getId() == player.getId()) {
+            for (World.Couple<Player, List<Byte>> pair : this.answers) {
+                if (pair.first.getId() == player.getId()) {
                     pair.second.add(emote);
-                    if(pair.second.size() == this.count)
+                    if (pair.second.size() == this.count)
                         player.sendMessage("(<b>Infos</b>) : Le compte est bon !");
                     break;
                 }
@@ -241,12 +241,12 @@ public class EventSmiley extends Event {
 
         try {
             path = PathFinding.getShortestStringPathBetween(this.map, this.animator.getCellId(), cellId, 20);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
 
-        if(path != null) {
+        if (path != null) {
             this.animator.setCellId(cellId);
             SocketManager.GAME_SEND_GA_PACKET_TO_MAP(this.map, "0", 1, String.valueOf(this.animator.getId()), path);
         }

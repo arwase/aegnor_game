@@ -38,14 +38,14 @@ public class InteractiveDoor {
     private boolean state = false;
 
     public InteractiveDoor(String maps, String doorsEnable, String doorsDisable, String cellsEnable, String cellsDisable, String requiredCells, String button, short time) {
-        for(String map : maps.split(",")) this.maps.add(Short.parseShort(map));
+        for (String map : maps.split(",")) this.maps.add(Short.parseShort(map));
 
-        if(!doorsEnable.isEmpty()) this.stock(this.doorsEnable, doorsEnable);
-        if(!doorsDisable.isEmpty()) this.stock(this.doorsDisable, doorsDisable);
-        if(!cellsEnable.isEmpty()) this.stock(this.cellsEnable, cellsEnable);
-        if(!cellsDisable.isEmpty()) this.stock(this.cellsDisable, cellsDisable);
+        if (!doorsEnable.isEmpty()) this.stock(this.doorsEnable, doorsEnable);
+        if (!doorsDisable.isEmpty()) this.stock(this.doorsDisable, doorsDisable);
+        if (!cellsEnable.isEmpty()) this.stock(this.cellsEnable, cellsEnable);
+        if (!cellsDisable.isEmpty()) this.stock(this.cellsDisable, cellsDisable);
 
-        if(!requiredCells.isEmpty()) {
+        if (!requiredCells.isEmpty()) {
             for (String data : requiredCells.split("@")) {
                 String[] split = data.split(":");
                 short map = Short.parseShort(split[0]);
@@ -60,7 +60,7 @@ public class InteractiveDoor {
             }
         }
 
-        if(!button.equals("-1")) {
+        if (!button.equals("-1")) {
             String[] split = button.split(",");
             this.button = new Couple<>(Short.parseShort(split[0]), Short.parseShort(split[1]));
         }
@@ -70,13 +70,13 @@ public class InteractiveDoor {
     }
 
     private void stock(Map<Short, ArrayList<Short>> arrayListMap, String value) {
-        for(String data : value.split("@")) {
+        for (String data : value.split("@")) {
             String[] split = data.split(":");
             short map = Short.parseShort(split[0]);
             String cells = split[1];
 
-            for(String cell : cells.split(",")) {
-                if(!arrayListMap.containsKey(map))
+            for (String cell : cells.split(",")) {
+                if (!arrayListMap.containsKey(map))
                     arrayListMap.put(map, new ArrayList<>());
                 arrayListMap.get(map).add(Short.parseShort(cell));
             }
@@ -84,7 +84,7 @@ public class InteractiveDoor {
     }
 
     public static boolean tryActivate(Player player, GameCase gameCase) {
-        for(InteractiveDoor interactiveDoor : InteractiveDoor.interactiveDoors) {
+        for (InteractiveDoor interactiveDoor : InteractiveDoor.interactiveDoors) {
             if (interactiveDoor.button != null && player.getCurMap().getId() == interactiveDoor.button.first && gameCase.getId() == interactiveDoor.button.second) {
                 interactiveDoor.check(player);
                 return true;
@@ -108,30 +108,32 @@ public class InteractiveDoor {
                 if (interactiveDoor.maps.contains(gameMap.getId()))
                     if (interactiveDoor.button == null && interactiveDoor.check(player))
                         break;
-        } catch(Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized boolean check(Player player) {
-        if(this.state) return false;
+        if (this.state) return false;
         boolean ok = true;
 
-        for(Entry<Short, ArrayList<Couple<Short, String>>> requiredCells : this.requiredCells.entrySet()) {
+        for (Entry<Short, ArrayList<Couple<Short, String>>> requiredCells : this.requiredCells.entrySet()) {
             final GameMap gameMap = World.world.getMap(requiredCells.getKey());
-            if(gameMap == null) continue;
+            if (gameMap == null) continue;
             boolean loc = false;
-            for(Couple<Short, String> couple : requiredCells.getValue()) {
+            for (Couple<Short, String> couple : requiredCells.getValue()) {
                 GameCase gameCase = gameMap.getCase(couple.first);
                 if (gameCase == null) continue;
 
-                switch(player.getCurMap().getId()) {
+                switch (player.getCurMap().getId()) {
                     case 1884:
-                        if(gameCase.getPlayers().size() > 0) {
+                        if (gameCase.getPlayers().size() > 0) {
                             loc = true;
                             ok = true;
                         }
                         break;
                 }
-                if(loc) break;
+                if (loc) break;
 
                 if (couple.second != null) {
                     if (!Condition.isValid(player, gameCase, couple.second)) {
@@ -144,10 +146,10 @@ public class InteractiveDoor {
                 }
             }
 
-            if(!ok) break;
+            if (!ok) break;
         }
 
-        if(ok) {
+        if (ok) {
             this.open();
             TimerWaiter.addNext(this::close, this.time, TimeUnit.SECONDS, TimerWaiter.DataType.MAP);
         }
@@ -155,7 +157,7 @@ public class InteractiveDoor {
     }
 
     private void open() {
-        if(this.state) return;
+        if (this.state) return;
 
         this.setState(this.cellsEnable, true, false, null);
         this.setState(this.cellsDisable, false, false, null);
@@ -165,7 +167,7 @@ public class InteractiveDoor {
     }
 
     private void close() {
-        if(!this.state) return;
+        if (!this.state) return;
 
         this.setState(this.cellsEnable, false, false, null);
         this.setState(this.cellsDisable, true, false, null);
@@ -177,19 +179,19 @@ public class InteractiveDoor {
     private void setState(Map<Short, ArrayList<Short>> arrayListMap, boolean active, boolean doors, Player player) {
         String packet = "GDF";
 
-        for(Entry<Short, ArrayList<Short>> entry : arrayListMap.entrySet()) {
+        for (Entry<Short, ArrayList<Short>> entry : arrayListMap.entrySet()) {
             GameMap gameMap = World.world.getMap(entry.getKey());
-            if(gameMap == null) continue;
-            if(player != null && player.getCurMap() != null && player.getCurMap().getId() != gameMap.getId()) continue;
+            if (gameMap == null) continue;
+            if (player != null && player.getCurMap() != null && player.getCurMap().getId() != gameMap.getId()) continue;
 
-            for(short cell : entry.getValue()) {
-                if(doors)
+            for (short cell : entry.getValue()) {
+                if (doors)
                     packet += this.setStateDoor(cell, active, player != null);
                 else
                     this.setStateCell(gameMap, cell, active, player);
             }
 
-            if(player != null)
+            if (player != null)
                 player.send(packet);
             else for (Player target : gameMap.getPlayers())
                 target.send(packet);
@@ -205,7 +207,7 @@ public class InteractiveDoor {
         GameCase gameCase = gameMap.getCase(cell), temporaryCell;
         gameMap.removeCase(cell);
 
-        if(active) {
+        if (active) {
             temporaryCell = new GameCase(gameMap, cell, true, true, -1);
             temporaryCell.setOnCellStop(gameCase.getOnCellStop());
             gameMap.getCases().add(temporaryCell);
@@ -217,7 +219,7 @@ public class InteractiveDoor {
             packet += ";aaaaaaaaaa801;1";
         }
 
-        if(player != null)
+        if (player != null)
             player.send(packet);
         else for (Player target : gameMap.getPlayers())
             target.send(packet);
@@ -234,7 +236,7 @@ public class InteractiveDoor {
                 jep.addVariable("ITC", object != null ? object.getTemplate().getId() : -1);
 
                 //Mob Group Cell
-                if(request.contains("MGC")) request = Condition.parseMGC(player, request);
+                if (request.contains("MGC")) request = Condition.parseMGC(player, request);
                 //Parse request..
                 Node node = jep.parse(request);
                 Object result = jep.evaluate(node);
@@ -247,8 +249,8 @@ public class InteractiveDoor {
 
         private static String parseMGC(Player player, String request) {
             String[] data = request.split("==")[1].split("-");
-            for(Monster.MobGroup mobGroup : player.getCurMap().getMobGroups().values())
-                for(String id : data)
+            for (Monster.MobGroup mobGroup : player.getCurMap().getMobGroups().values())
+                for (String id : data)
                     if (mobGroup.getCellId() == Short.parseShort(id))
                         return "1==1";
             return "1==0";
