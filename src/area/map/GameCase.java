@@ -22,6 +22,8 @@ import util.TimerWaiter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.floor;
+
 public class GameCase {
 
     private int id;
@@ -32,18 +34,49 @@ public class GameCase {
     private ArrayList<Action> onCellStop;
     private InteractiveObject object;
     private GameObject droppedItem;
+    private Byte coordX;
+    private Byte coordY;
+    public Byte level;
+    private Boolean _esCaminableLevel;
+    public Byte slope;
+    public Float height;
+    private Boolean activate;
 
-    public GameCase(GameMap map, int id, boolean walkable, boolean loS, int objId) {
+    public GameCase(GameMap map, int id, boolean walkable, boolean loS, Byte level, Byte slope,Boolean activate, int objId) {
         this.id = id;
         this.walkable = walkable;
         this.loS = loS;
+        this.level = level;
+        this.slope = slope;
+        this.activate = activate;
         if (objId != -1)
             this.object = new InteractiveObject(objId, map, this);
+        var ancho = map.getH();
+        var _loc5 = (int)(floor((double)(this.id / (ancho * 2 - 1))));
+        var _loc6 = this.id - _loc5 * (ancho * 2 - 1);
+        var _loc7 = _loc6 % ancho;
+        coordY = Byte.parseByte(String.valueOf(_loc5 - _loc7));
+        // es en plano inclinado, solo Y es negativo partiendo del 0 arriba negativo, abajo positivo
+        coordX = Byte.parseByte(String.valueOf((this.id - (ancho - 1) * coordY) / ancho));
+        int tempD = (int)((coordX + coordY - 1) * 13.5f);
+        var tempL = (this.level - 7) * 20;
+        _esCaminableLevel = (tempD - tempL) >= 0;
+        var a = 0F;
+        if ((int)slope == 1) {
+            a = 0F;
+        }
+        else {
+            a = 0.5f;
+        }
+        var b = level - 7;
+        height = a + b;
     }
 
     public int getId() {
         return id;
     }
+    public Byte getCoordY() { return coordY;}
+    public Byte getCoordX() { return coordX;}
 
     public boolean isWalkable(boolean useObject) {
         if (this.object != null && useObject)
@@ -828,7 +861,7 @@ public class GameCase {
                     this.getObject().disable();
                     SocketManager.GAME_SEND_GDF_PACKET_TO_MAP(player.getCurMap(), this);
                     int qua = Formulas.getRandomValue(1, 5);//On a entre 1 et 10 eaux
-                    GameObject obj = World.world.getObjTemplate(537).createNewItem(qua, false);
+                    GameObject obj = World.world.getObjTemplate(537).createNewItem(qua, false,0);
                     if (player.addObjet(obj, true))
                         World.world.addGameObject(obj, true);
                     SocketManager.GAME_SEND_IQ_PACKET(player, player.getId(), qua);
@@ -863,7 +896,7 @@ public class GameCase {
                     this.getObject().disable();
                     SocketManager.GAME_SEND_GDF_PACKET_TO_MAP(player.getCurMap(), this);
                     int qua = Formulas.getRandomValue(1, 10);//On a entre 1 et 10 eaux
-                    GameObject obj = World.world.getObjTemplate(311).createNewItem(qua, false);
+                    GameObject obj = World.world.getObjTemplate(311).createNewItem(qua, false,0);
                     if (player.addObjet(obj, true))
                         World.world.addGameObject(obj, true);
                     SocketManager.GAME_SEND_IQ_PACKET(player, player.getId(), qua);
@@ -1117,7 +1150,7 @@ public class GameCase {
                 this.object.disable();
                 SocketManager.GAME_SEND_GDF_PACKET_TO_MAP(perso.getCurMap(), this);
                 int qua = Formulas.getRandomValue(1, 5);//On a entre 1 et 5 patates
-                GameObject obj = World.world.getObjTemplate(537).createNewItem(qua, false);
+                GameObject obj = World.world.getObjTemplate(537).createNewItem(qua, false,0);
                 if (perso.addObjet(obj, true))
                     World.world.addGameObject(obj, true);
                 SocketManager.GAME_SEND_IQ_PACKET(perso, perso.getId(), qua);
@@ -1131,11 +1164,19 @@ public class GameCase {
                 this.object.disable();
                 SocketManager.GAME_SEND_GDF_PACKET_TO_MAP(perso.getCurMap(), this);
                 qua = Formulas.getRandomValue(1, 10);//On a entre 1 et 10 eaux
-                obj = World.world.getObjTemplate(311).createNewItem(qua, false);
+                obj = World.world.getObjTemplate(311).createNewItem(qua, false,0);
                 if (perso.addObjet(obj, true))
                     World.world.addGameObject(obj, true);
                 SocketManager.GAME_SEND_IQ_PACKET(perso, perso.getId(), qua);
                 break;
         }
+    }
+
+    public void celdaNornmal() {
+
+    }
+
+    public Boolean isActivate() {
+        return activate;
     }
 }

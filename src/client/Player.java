@@ -51,11 +51,13 @@ import quest.QuestPlayer;
 import util.TimerWaiter;
 import util.lang.Lang;
 
+import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public class Player {
 
@@ -69,6 +71,7 @@ public class Player {
     public Stats stats;
     public boolean isNew = false;
     //Job
+    private JobAction _curJobAction;
     //Disponibilit�
     public boolean _isAbsent = false;
     public boolean _isInvisible = false;
@@ -102,7 +105,7 @@ public class Player {
     private long exp;
     private int curPdv;
     private int maxPdv;
-    private Stats statsParcho = new Stats();
+    private Stats statsParcho = new Stats(true);
     private long kamas;
     private int _spellPts;
     private int _capital;
@@ -219,6 +222,50 @@ public class Player {
     private Map<Integer, QuestPlayer> questList = new HashMap<>();
     private boolean changeName;
     public boolean afterFight = false;
+    public int isParcho = 0;
+
+    private boolean maitre;
+    public boolean ipdrop = false;
+    public boolean noitems = false;
+    public boolean passturn = false;
+    public boolean boutique =  false;
+    public boolean isInvocControlable = false;
+    private ArrayList<Player> compagnon = new ArrayList<>();
+    private Fighter currentCompagnon = null;
+    //Systeme de Maitre
+    //Commande .maitre
+    public List<Player> PlayerList1 = new ArrayList<Player>();
+    public Player SlaveLeader = null;
+
+    //Retourne la liste des esclaves
+    @SuppressWarnings("rawtypes")
+    public List getSlaves(){
+        return PlayerList1;
+    }
+
+    public void addSlave(Player givenSlave){
+        PlayerList1.add(givenSlave);
+    }
+    //Retourne le chef des esclaves
+    public Player getSlaveLeader(){
+        return SlaveLeader;
+    }
+    //Defini un chef pour ce Player
+    public void setSlaveLeader(Player givenPlayer){
+        SlaveLeader = givenPlayer;
+    }
+    //Dispose
+    public void disposeSlavery(){
+        for(Player slave: PlayerList1){
+            if(slave == null)continue;
+            if(slave.getFight() != null)continue;
+            if(!slave.isOnline())continue;
+            if(slave.getSlaveLeader() != this)continue;
+            slave.setSlaveLeader(null);
+        }
+        this.PlayerList1.clear(); // on vide la liste
+    }
+
 
     public ArrayList<Integer> getIsCraftingType() {
         return craftingType;
@@ -234,7 +281,7 @@ public class Player {
                   String savePos, String jobs, int mountXp, int mount, int honor,
                   int deshonor, int alvl, String z, byte title, int wifeGuid,
                   String morphMode, String allTitle, String emotes, long prison,
-                  boolean isNew, String parcho, long timeDeblo, boolean noall, String deadInformation, byte deathCount, long totalKills) {
+                  boolean isNew, String parcho, long timeDeblo, boolean noall, String deadInformation, byte deathCount, long totalKills, int isParcho) {
         this.id = id;
         this.noall = noall;
         this.name = name;
@@ -421,6 +468,7 @@ public class Player {
                 setGhost();
             else if (this.energy == -1)
                 setFuneral();
+            this.isParcho = isParcho;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -454,10 +502,9 @@ public class Player {
             String[] infos = item.split(":");
             int guid = Integer.parseInt(infos[0]);
             GameObject obj = World.world.getGameObject(guid);
-            if (obj == null || obj.getPosition() == -1)
+            if (obj == null)
                 continue;
-            GameObject newObj = obj.getClone();
-            objects.put(newObj.getGuid(), newObj);
+            objects.put(obj.getGuid(), obj);
         }
         this.maxPdv = (this.level - 1) * 5 + 50 + getStats().getEffect(Constant.STATS_ADD_VITA);
         this.curPdv = (this.maxPdv * pdvPer) / 100;
@@ -490,7 +537,7 @@ public class Player {
                 //224,
                 "", "", 100, "", (startMap != 0 ? (short) startMap : Constant.getStartMap(classe))
                 + ","
-                + (startCell != 0 ? (short) startCell : Constant.getStartCell(classe)), "", 0, -1, 0, 0, 0, z, (byte) 0, 0, "0;0", "", Config.INSTANCE.getALL_EMOTE() ? "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21" : "0", 0, true, "118,0;119,0;123,0;124,0;125,0;126,0", 0, false, "0,0,0,0", (byte) 0, 0);
+                + (startCell != 0 ? (short) startCell : Constant.getStartCell(classe)), "", 0, -1, 0, 0, 0, z, (byte) 0, 0, "0;0", "", Config.INSTANCE.getALL_EMOTE() ? "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21" : "0", 0, true, "118,0;119,0;123,0;124,0;125,0;126,0", 0, false, "0,0,0,0", (byte) 0, 0, 0);
         perso.emotes.add(1);
         perso._sorts = Constant.getStartSorts(classe);
         for (int a = 1; a <= perso.getLevel(); a++)
@@ -502,15 +549,15 @@ public class Player {
         if (!Database.getStatics().getPlayerData().add(perso))
             return null;
         World.world.addPlayer(perso);
-        if (Config.INSTANCE.getSERVER_KEY().equals("jiva")) {
+        if (Config.INSTANCE.getSERVER_KEY().equals("aegnor")) {
             for (ObjectTemplate t : World.world.getItemSet(5).getItemTemplates()) {
-                GameObject obj = t.createNewItem(1, true);
+                GameObject obj = t.createNewItem(1, true,5);
                 if (perso.addObjet(obj, true))
                     World.world.addGameObject(obj, true);
             }
             ObjectTemplate template = World.world.getObjTemplate(10207);
             if(template != null) {
-                GameObject object = template.createNewItem(1, true);
+                GameObject object = template.createNewItem(1, true,5);
                 if(object != null) {
                     object.getTxtStat().clear();
                     object.getTxtStat().putAll(Dopeul.generateStatsTrousseau());
@@ -522,10 +569,111 @@ public class Player {
         return perso;
     }
 
+    //controlable
+    public Player(final int id, final Monster.MobGrade mobModelo, Fighter caster) {
+        Stats stats = new Stats(mobModelo);
+        int  PDV = mobModelo.getPdv();
+        this.id = id;
+        name = mobModelo.getTemplate().getName();
+        classe = Constant.CLASS_MULTIMAN;
+        level = mobModelo.getLevel();
+        gfxId = mobModelo.getTemplate().getGfxId();
+        _size = 100;
+        this.stats = stats;
+        maxPdv = curPdv = PDV;
+        modifStatByInvocator(caster, mobModelo);
+        account = null;
+        restriction = null;
+        int i = 0;
+        for (Entry<Integer, Spell.SortStats> entry : mobModelo.getSpells().entrySet()) {
+            Spell.SortStats st = entry.getValue();
+            if (st == null) {
+                continue;
+            }
+            learnSpell(st.getSpellID(), st.getLevel(), Constant.SPELL_PLACES.get(i));
+            i++;
+        }
+        _saveSorts.putAll(mobModelo.getSpells());
+    }
+    public void modifStatByInvocator(Fighter caster, Monster.MobGrade MobModelo) {
+        float taux = (1.0F + (caster.getLvl()) / 100.0F);
+        int life = Math.round(MobModelo.getPdvMax() * taux);
+        this.curPdv = life;
+        this.maxPdv = this.curPdv;
+        int force = this.stats.get(Constant.STATS_ADD_FORC) * (int) taux;
+        int intel = this.stats.get(Constant.STATS_ADD_INTE) * (int) taux;
+        int agili = this.stats.get(Constant.STATS_ADD_AGIL) * (int) taux;
+        int sages = this.stats.get(Constant.STATS_ADD_SAGE) * (int) taux;
+        int chanc = this.stats.get(Constant.STATS_ADD_CHAN) * (int) taux;
+        this.stats.addOneStat(Constant.STATS_ADD_FORC, -(this.stats.get(Constant.STATS_ADD_FORC)));
+        this.stats.addOneStat(Constant.STATS_ADD_INTE, -(this.stats.get(Constant.STATS_ADD_INTE)));
+        this.stats.addOneStat(Constant.STATS_ADD_AGIL, -(this.stats.get(Constant.STATS_ADD_AGIL)));
+        this.stats.addOneStat(Constant.STATS_ADD_SAGE, -(this.stats.get(Constant.STATS_ADD_SAGE)));
+        this.stats.addOneStat(Constant.STATS_ADD_CHAN, -(this.stats.get(Constant.STATS_ADD_CHAN)));
+        this.stats.addOneStat(Constant.STATS_ADD_FORC, force);
+        this.stats.addOneStat(Constant.STATS_ADD_INTE, intel);
+        this.stats.addOneStat(Constant.STATS_ADD_AGIL, agili);
+        this.stats.addOneStat(Constant.STATS_ADD_SAGE, sages);
+        this.stats.addOneStat(Constant.STATS_ADD_CHAN, chanc);
+    }
+
+
+    public static Player crearInvoControlable(final int id, final Monster.MobGrade grado, Fighter acaster) {
+        Player multiman = new Player(id, grado, acaster);
+        multiman.isInvocControlable  = true;
+        return multiman;
+    }
+
     public static String getCompiledEmote(List<Integer> i) {
         int i2 = 0;
         for (Integer b : i) i2 += (2 << (b - 2));
         return i2 + "|0";
+    }
+
+    public void setCurrentCompagnon(Fighter fighter)
+    {
+        currentCompagnon = fighter;
+    }
+
+    public Fighter getCurrentCompagnon() {return currentCompagnon; }
+
+    public void deleteCurrentCompagnon()
+    {
+        currentCompagnon = null;
+    }
+
+    public int getisParcho() { return isParcho;}
+    public void setisParcho(int activate) { this.isParcho = activate;}
+
+    public ArrayList<Player> getAllCompagnons()
+    {
+        return compagnon;
+    }
+
+    public Player getCompagnon(Player player)
+    {
+        for(Player p : compagnon)
+        {
+            if(p == player)
+            {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public void addCompagnon(Player player)
+    {
+        compagnon.add(player);
+    }
+
+    public boolean isMultiman()
+    {
+        if(classe == Constant.CLASS_MULTIMAN)
+        {
+            return true;
+        }
+        return false;
     }
 
     //CLONAGE
@@ -1270,8 +1418,8 @@ public class Player {
             return;
         }
 
-        if (!_sorts.containsKey(Integer.valueOf(spell))) {
-            _sorts.put(Integer.valueOf(spell), World.world.getSort(spell).getStatsByLevel(level));
+        if (!_sorts.containsKey(spell)) {
+            _sorts.put(spell, World.world.getSort(spell).getStatsByLevel(level));
             replace_SpellInBook(pos);
             _sortsPlaces.remove(spell);
             _sortsPlaces.put(spell, pos);
@@ -1416,6 +1564,12 @@ public class Player {
         if (this.getMorphMode()) {
             int morphID = this.getClasse() * 10 + this.getSexe();
             this.setGfxId(morphID);
+            SocketManager.GAME_SEND_ERASE_ON_MAP_TO_MAP(this.getCurMap(), this.getId());
+            SocketManager.GAME_SEND_ADD_PLAYER_TO_MAP(this.getCurMap(), this);
+        }
+        else if(_morphId != this.getClasse() * 10 + this.getSexe())
+        {
+            this.setGfxId(this.getClasse() * 10 + this.getSexe());
             SocketManager.GAME_SEND_ERASE_ON_MAP_TO_MAP(this.getCurMap(), this.getId());
             SocketManager.GAME_SEND_ADD_PLAYER_TO_MAP(this.getCurMap(), this);
         }
@@ -1805,7 +1959,7 @@ public class Player {
     }
 
     public String parseToOa() {
-        return "Oa" + this.getId() + "|" + getGMStuffString();
+        return "Oa"  + this.getId() + "|"+ getGMStuffString() ;
     }
 
     public String parseToGM() {
@@ -1920,7 +2074,14 @@ public class Player {
 
             Integer obvi = object.getStats().getEffects().get(970);
             if (obvi == null) {
-                str.append(Integer.toHexString(object.getTemplate().getId()));
+                String mimibiote = object.getTxtStat().get(915);
+                if(mimibiote != null)
+                {
+                    str.append(Integer.toHexString(Integer.parseInt(mimibiote)));
+                }
+                else {
+                    str.append(Integer.toHexString(object.getTemplate().getId()));
+                }
             } else {
                 str.append(Integer.toHexString(obvi)).append("~16~").append(object.getObvijevanLook());
             }
@@ -1935,7 +2096,14 @@ public class Player {
 
             Integer obvi = object.getStats().getEffects().get(970);
             if (obvi == null) {
-                str.append(Integer.toHexString(object.getTemplate().getId()));
+                String mimibiote = object.getTxtStat().get(915);
+                if(mimibiote != null)
+                {
+                    str.append(Integer.toHexString(Integer.parseInt(mimibiote)));
+                }
+                else {
+                    str.append(Integer.toHexString(object.getTemplate().getId()));
+                }
             } else {
                 str.append(Integer.toHexString(obvi)).append("~17~").append(object.getObvijevanLook());
             }
@@ -1945,15 +2113,29 @@ public class Player {
 
         object = getObjetByPos(Constant.ITEM_POS_FAMILIER);
 
-        if (object != null)
-            str.append(Integer.toHexString(object.getTemplate().getId()));
+        if (object != null) {
+            object.parseStatsString();
+            String mimibiote = object.getTxtStat().get(915);
+            if (mimibiote != null) {
+                str.append(Integer.toHexString(Integer.parseInt(mimibiote)));
+            } else {
+                str.append(Integer.toHexString(object.getTemplate().getId()));
+            }
+        }
 
         str.append(",");
 
         object = getObjetByPos(Constant.ITEM_POS_BOUCLIER);
 
-        if (object != null)
-            str.append(Integer.toHexString(object.getTemplate().getId()));
+        if (object != null) {
+            object.parseStatsString();
+            String mimibiote = object.getTxtStat().get(915);
+            if (mimibiote != null) {
+                str.append(Integer.toHexString(Integer.parseInt(mimibiote)));
+            } else {
+                str.append(Integer.toHexString(object.getTemplate().getId()));
+            }
+        }
 
         return str.toString();
     }
@@ -1998,7 +2180,7 @@ public class Player {
         ASData.append(stats.getEffect(Constant.STATS_TRAPDOM)).append(",").append(sutffStats.getEffect(Constant.STATS_TRAPDOM)).append(",").append(donStats.getEffect(Constant.STATS_TRAPDOM)).append(",").append(buffStats.getEffect(Constant.STATS_TRAPDOM)).append("|");
         ASData.append(stats.getEffect(Constant.STATS_TRAPPER)).append(",").append(sutffStats.getEffect(Constant.STATS_TRAPPER)).append(",").append(donStats.getEffect(Constant.STATS_TRAPPER)).append(",").append(buffStats.getEffect(Constant.STATS_TRAPPER)).append("|");
         ASData.append(stats.getEffect(Constant.STATS_RETDOM)).append(",").append(sutffStats.getEffect(Constant.STATS_RETDOM)).append(",").append(donStats.getEffect(Constant.STATS_RETDOM)).append(",").append(buffStats.getEffect(Constant.STATS_RETDOM)).append("|");
-        ASData.append(stats.getEffect(Constant.STATS_ADD_CC)).append(",").append(sutffStats.getEffect(Constant.STATS_ADD_CC)).append(",").append(donStats.getEffect(Constant.STATS_ADD_CC)).append(",").append(buffStats.getEffect(Constant.STATS_ADD_CC)).append("|");
+        ASData.append(stats.getEffect(Constant.STATS_ADD_CC)).append(",").append(sutffStats.getEffect(Constant.STATS_ADD_CC)).append(",").append(donStats.getEffect(Constant.STATS_ADD_CC)).append(",").append(buffStats.getEffect(Constant.STATS_ADD_CC)).append("|").append(totalStats.getEffect(Constant.STATS_ADD_CC)).append("|");
         ASData.append(stats.getEffect(Constant.STATS_ADD_EC)).append(",").append(sutffStats.getEffect(Constant.STATS_ADD_EC)).append(",").append(donStats.getEffect(Constant.STATS_ADD_EC)).append(",").append(buffStats.getEffect(Constant.STATS_ADD_EC)).append("|");
         ASData.append(stats.getEffect(Constant.STATS_ADD_AFLEE)).append(",").append(sutffStats.getEffect(Constant.STATS_ADD_AFLEE)).append(",").append(0).append(",").append(buffStats.getEffect(Constant.STATS_ADD_AFLEE)).append(",").append(buffStats.getEffect(Constant.STATS_ADD_AFLEE)).append("|");
         ASData.append(stats.getEffect(Constant.STATS_ADD_MFLEE)).append(",").append(sutffStats.getEffect(Constant.STATS_ADD_MFLEE)).append(",").append(0).append(",").append(buffStats.getEffect(Constant.STATS_ADD_MFLEE)).append(",").append(buffStats.getEffect(Constant.STATS_ADD_MFLEE)).append("|");
@@ -2034,6 +2216,55 @@ public class Player {
             if (_honor < World.world.getExpLevel(n).pvp)
                 return n - 1;
         return 0;
+    }
+
+    public String stringStatsComplemento()
+    {
+        refreshStats();
+        refreshLife(true);
+        StringBuilder ASData = new StringBuilder();
+        ASData.append("As").append(xpString(",")).append("|");
+        ASData.append(kamas).append("|").append(_capital).append("|").append(_spellPts).append("|");
+        ASData.append(_align).append("~").append(_align).append(",").append(_aLvl).append(",").append(getGrade()).append(",").append(_honor).append(",").append(_deshonor).append(",").append((_showWings ? "1" : "0")).append("|");
+        int pdv = this.curPdv;
+        int pdvMax = this.maxPdv;
+        if (fight != null && !fight.isFinish()) {
+            Fighter f = fight.getFighterByPerso(this);
+            if (f != null) {
+                pdv = f.getPdv();
+                pdvMax = f.getPdvMax();
+            }
+        }
+        ASData.append(pdv).append(",").append(pdvMax).append("|");
+        ASData.append(this.getEnergy()).append(",10000|");
+        ASData.append(getInitiative()).append("|");
+        return ASData.toString();
+    }
+
+    public String stringStats() {
+        final StringBuilder str = new StringBuilder();
+        str.append(stringStatsComplemento());
+        int base = 0, equipement = 0, bendMald = 0, buff = 0, total = 0;
+        Stats stats = this.getStats();
+        Stats stuffStats = this.getStuffStats();
+        Stats donStats = this.getDonsStats();
+        Stats buffStats = this.getBuffsStats();
+        Stats totalStats = this.getTotalStats();
+        total = (stats.getEffect(Constant.STATS_ADD_PROS) + this.getStuffStats().getEffect(Constant.STATS_ADD_PROS) + (int)(Math.ceil(totalStats.getEffect(Constant.STATS_ADD_CHAN) / 10)) + buffStats.getEffect(Constant.STATS_ADD_PROS) + (int)Math.ceil(buffStats.getEffect(Constant.STATS_ADD_CHAN) / 10));
+        // prospeccion
+        str.append(total).append("|");
+        final int[] statsArray = {111, 128, 118, 125, 124, 123, 119, 126, 117, 182, 112, 142, 165, 138, 178, 225, 226, 220, 115,
+                122, 160, 161, 244, 214, 264, 254, 240, 210, 260, 250, 241, 211, 261, 251, 242, 212, 262, 252, 243, 213, 263, 253};
+        for (final int s : statsArray) {
+                base = stats.getEffect(s);
+                equipement = stuffStats.getEffect(s);
+                bendMald = donStats.getEffect(s);
+                buff = buffStats.getEffect(s);
+                total = totalStats.getEffect(s);
+
+            str.append(base).append(",").append(equipement).append(",").append(bendMald).append(",").append(buff).append(",").append(total).append("|");
+        }
+        return str.toString();
     }
 
     public String xpString(String c) {
@@ -2192,13 +2423,13 @@ public class Player {
         int pods = total.getEffect(Constant.STATS_ADD_PODS);
         pods += total.getEffect(Constant.STATS_ADD_FORC) * 5;
         for (JobStat SM : _metiers.values()) {
-            pods += SM.get_lvl() * 5;
+            pods += SM.get_lvl() * 5 * Config.INSTANCE.getRATE_JOB();
             if (SM.get_lvl() == 100)
                 pods += 1000;
         }
         if (pods < 1000)
             pods = 1000;
-        return pods;
+        return pods+7500;
     }
 
     public void refreshLife(boolean refresh) {
@@ -2322,7 +2553,7 @@ public class Player {
     public boolean addObjet(GameObject newObj, boolean stackIfSimilar) {
         for (Entry<Integer, GameObject> entry : objects.entrySet()) {
             GameObject obj = entry.getValue();
-            if (World.world.getConditionManager().stackIfSimilar(obj, newObj, stackIfSimilar)) {
+            if (World.world.getConditionManager().stackIfSimilar2(obj, newObj, stackIfSimilar)) {
                 obj.setQuantity(obj.getQuantity() + newObj.getQuantity());//On ajoute QUA item a la quantit� de l'objet existant
                 if (isOnline)
                     SocketManager.GAME_SEND_OBJECT_QUANTITY_PACKET(this, obj);
@@ -3291,7 +3522,7 @@ public class Player {
 
     private GameObject getSimilarBankItem(GameObject exGameObject) {
         for (GameObject gameObject : this.account.getBank())
-            if (World.world.getConditionManager().stackIfSimilar(gameObject, exGameObject, true))
+            if (World.world.getConditionManager().stackIfSimilar2(gameObject, exGameObject, true))
                 return gameObject;
         return null;
     }
@@ -3771,10 +4002,10 @@ public class Player {
     public void resetVars() {
         if (this.getExchangeAction() != null) {
             if (this.getExchangeAction().getValue() instanceof JobAction && ((JobAction) this.getExchangeAction().getValue()).getJobCraft() != null)
-                ((JobAction) this.getExchangeAction().getValue()).getJobCraft().getJobAction().broke = true;
+                ((JobAction) this.getExchangeAction().getValue()).getJobCraft().jobAction.broke = true;
             this.setExchangeAction(null);
         }
-
+        this._curJobAction = null;
         doAction = false;
         this.setGameAction(null);
 
@@ -3971,7 +4202,7 @@ public class Player {
             }
 
             this.setExchangeAction(new ExchangeAction<>(ExchangeAction.IN_ZAAPING, 0));
-            verifAndAddZaap(curMap.getId());
+            //verifAndAddZaap(curMap.getId());
             SocketManager.GAME_SEND_WC_PACKET(this);
         }
     }
@@ -4765,7 +4996,7 @@ public class Player {
     private GameObject getSimilarStoreItem(GameObject exGameObject) {
         for (Integer id : _storeItems.keySet()) {
             GameObject gameObject = World.world.getGameObject(id);
-            if (World.world.getConditionManager().stackIfSimilar(gameObject, exGameObject, true))
+            if (World.world.getConditionManager().stackIfSimilar2(gameObject, exGameObject, true))
                 return gameObject;
         }
 
@@ -5310,7 +5541,7 @@ public class Player {
                 if (obj.getPosition() == -1 && obj.getGuid() != oldID
                         && obj.getTemplate().getId() == objModelo.getId()
                         && obj.getStats().isSameStats(objet.getStats())
-                        && World.world.getConditionManager().stackIfSimilar(obj, objet, hasSimiler)) {
+                        && World.world.getConditionManager().stackIfSimilar2(obj, objet, hasSimiler)) {
                     obj.setQuantity(obj.getQuantity() + objet.getQuantity());
                     SocketManager.GAME_SEND_OBJECT_QUANTITY_PACKET(this, obj);
                     return true;
@@ -5363,7 +5594,7 @@ public class Player {
                         String[] split = stat.split("#");
                         int effect = Integer.parseInt(split[0], 16), spell = Integer.parseInt(split[1], 16);
                         int value = Integer.parseInt(split[3], 16);
-                        if(effect == 289)
+                        if(effect == 289 || effect == 282 || effect == 288)
                             value = 1;
                         SocketManager.SEND_SB_SPELL_BOOST(this, effect + ";" + spell + ";" + value);
                         addObjectClassSpell(spell, effect, value);
@@ -5543,11 +5774,11 @@ public class Player {
     }
 
     public boolean cantDefie() {
-        return getCurMap().noDefie;
+        return getCurMap().mapNoDefie();
     }
 
     public boolean cantAgro() {
-        return getCurMap().noAgro;
+        return getCurMap().mapNoAgression();
     }
 
     public boolean cantCanal() {
@@ -5555,7 +5786,7 @@ public class Player {
     }
 
     public boolean cantTP() {
-        return this.isInPrison() || getCurMap().noTP || EventManager.isInEvent(this);
+        return this.isInPrison() || getCurMap().mapNoTeleport() || EventManager.isInEvent(this);
     }
 
     public boolean isInPrison() {
@@ -5772,5 +6003,324 @@ public class Player {
             SocketManager.GAME_SEND_STATS_PACKET(this);
             Database.getStatics().getPlayerData().update(this);
         }
+    }
+
+    public void setCurJobAction(final JobAction JA) {
+        this._curJobAction = JA;
+    }
+
+    public JobAction getCurJobAction() {
+        return this._curJobAction;
+    }
+
+    // pour voir les cellules de combat du perso (sur sa map)
+    public void showFightCells() {
+        String places = this.getCurMap().getPlaces();
+        if (places.indexOf('|') == -1 || places.length() < 2) {
+            String mess = "Les places n'ont pas ete definies";
+            this.sendMessage(mess);
+            return;
+        }
+        SocketManager.send(this, "GZB"+ places);
+        //SocketManager.send(this, "GZB"+ places);
+    }
+
+    public void cancelFightCells() {
+        SocketManager.send(this, "GZB"+ "");
+    }
+
+    public int getProspection () {
+        return (getTotalStats().getEffect(Constant.STATS_ADD_PROS) + Math.round(getTotalStats().getEffect(Constant.STATS_ADD_CHAN) / 10));
+    }
+    public void SwapClasse(int classetochange){
+
+        if(isMorph())
+        {
+            return;
+        }
+        if (classetochange < 1) {
+            classetochange = 1;
+        } else if (classetochange > 12) {
+            classetochange = 12;
+        }
+        if (classetochange == getClasse()) {
+            SocketManager.GAME_SEND_BN_OUT(this, "Changement de Classe - Même Classe");
+            return;
+        }
+
+        Database.getStatics().getPlayerData().update(this);
+
+        parseSpells(parseSpellToDB());
+
+        for( int id : _sorts.keySet() ){
+            int AncLevel = getSortStatBySortIfHas(id).getLevel();
+            //this.sendMessage("Le sort "+id+" est lvl "+ AncLevel);
+            if (getSortStatBySortIfHas(id) != null){
+                if (AncLevel <= 1){}
+                else{
+                    unlearnSpell(this, id, 1, AncLevel, true, true);
+                }
+            }
+            //getGameClient().forgetSpell(id);
+        }
+
+        _sorts.clear();
+        _sortsPlaces.clear();
+        //On garde le tout
+        SocketManager.GAME_SEND_STATS_PACKET(this);
+
+
+        //this.sendMessage("Retrait des sorts terminé");
+        //_saveSpellPts = _spellPts;
+        //_saveSorts.putAll(_sorts);
+        //_saveSortsPlaces.putAll(_sortsPlaces);
+
+        //Pas besoin
+        //this.setLevel(1);
+        //this.addXp(oldXp);
+        //this.sendMessage("Reset des caractéristiques");
+        this.getStatsParcho().getMap().clear();
+        this.getStats().addOneStat(125,-this.getStats().getEffect(125));
+        this.getStats().addOneStat(124,-this.getStats().getEffect(124));
+        this.getStats().addOneStat(118,-this.getStats().getEffect(118));
+        this.getStats().addOneStat(123,-this.getStats().getEffect(123));
+        this.getStats().addOneStat(119,-this.getStats().getEffect(119));
+        this.getStats().addOneStat(126,-this.getStats().getEffect(126));
+        this.addCapital((this.getLevel() - 1) * 5 - this.get_capital());
+        //perso.addCapital((perso.getLevel() * 5) - 5);
+        SocketManager.GAME_SEND_STATS_PACKET(this);
+        SocketManager.GAME_SEND_Im_PACKET(this,"023;" + (this.getLevel() * 5 - 5));
+
+        this.setClasse(classetochange);
+
+        //this.sendMessage("Nouveau Morph");
+        // On morph avec la Nouvelle Classe
+        int UnMorphID = this.getClasse() * 10 + this.getSexe();
+        this.setGfxId(UnMorphID);
+        SocketManager.GAME_SEND_ERASE_ON_MAP_TO_MAP(this.getCurMap(), this.getId());
+        SocketManager.GAME_SEND_ADD_PLAYER_TO_MAP(this.getCurMap(), this);
+
+
+        if (this.fight == null) SocketManager.GAME_SEND_ALTER_GM_PACKET(this.getCurMap(), this);
+
+        //this.sendMessage("Ajouts des sort de la nouvelle classe");
+        //on ajoute les nouveau sort
+        _sorts = Constant.getStartSorts(classetochange);
+        for (int a = 1; a <= this.getLevel(); a++)
+            Constant.onLevelUpSpells(this, a);
+        _sortsPlaces = Constant.getStartSortsPlaces(classetochange);
+
+
+        //this._sorts.putAll(_saveSorts);
+        //_sortsPlaces.putAll(_saveSortsPlaces);
+
+
+        if (this.fight == null) {
+            SocketManager.GAME_SEND_ASK(this.getGameClient(), this);
+            SocketManager.GAME_SEND_SPELL_LIST(this);
+        }
+
+        //if (this.fight == null) SocketManager.GAME_SEND_STATS_PACKET(this);
+        //parseSpells(parseSpellToDB());
+        Database.getStatics().getPlayerData().update(this);
+    }
+
+    public boolean changeClasse(byte clase) {
+        if(isMorph())
+        {
+            return false;
+        }
+        if (clase < 1) {
+            clase = 1;
+        } else if (clase > 12) {
+            clase = 12;
+        }
+        if (clase == getClasse()) {
+            SocketManager.GAME_SEND_BN_OUT(this, "Changement de Classe - Même Classe");
+            return false;
+        }
+
+        setClasse(clase);
+        //Clase = Mundo.getClase(ClaseID);
+        SocketManager.GAME_SEND_AC_CHANGE_CLASSE(this, getClasse());
+        this._sorts = Constant.getStartSorts(classe);
+        for (int a = 1; a <= this.getLevel(); a++) {
+            Constant.onLevelUpSpells(this, a);
+        }
+        this._sortsPlaces = Constant.getStartSortsPlaces(classe);
+        int spellpoints = 0;
+        for(int i = 2; i < 201; i++)
+        {
+            spellpoints += 1;
+        }
+        this._spellPts = spellpoints;
+        if(isOnline)
+        {
+            SocketManager.GAME_SEND_SL_LISTE_SORTS(this);
+        }
+        demorph();
+        restat();
+        refreshToMap();
+        Database.getStatics().getPlayerData().updateInfos(this);
+        Database.getStatics().getPlayerData().update(this);
+        String	message = "Sauvegarde du Personnage terminé";
+        SocketManager.GAME_SEND_MESSAGE(this, message);
+        SocketManager.GAME_SEND_Im_PACKET(this, "1CHANGED_CLASSE_SUCCESS");
+        return true;
+
+
+
+
+    }
+
+    private void refreshToMap() {
+        if (fight == null) {
+            SocketManager.GAME_SEND_GM_REFRESH_PL_TO_MAP(getCurMap(), this);
+        } else if (fight.getState() == Constant.FIGHT_STATE_PLACE) {
+            final Fighter luchador = fight.getFighterByPerso(this);
+            if (luchador != null) {
+                SocketManager.GAME_SEND_GM_REFRESH_FIGHTER_IN_FIGHT(fight, luchador);
+            }
+        }
+    }
+
+    private void restat() {
+        this.getStatsParcho().getMap().clear();
+        this.getStats().addOneStat(125,-this.getStats().getEffect(125));
+        this.getStats().addOneStat(124,-this.getStats().getEffect(124));
+        this.getStats().addOneStat(118,-this.getStats().getEffect(118));
+        this.getStats().addOneStat(123,-this.getStats().getEffect(123));
+        this.getStats().addOneStat(119,-this.getStats().getEffect(119));
+        this.getStats().addOneStat(126,-this.getStats().getEffect(126));
+        this.addCapital((this.getLevel() - 1) * 5 - this.get_capital());
+        SocketManager.GAME_SEND_STATS_PACKET(this);
+        SocketManager.GAME_SEND_Im_PACKET(this,"023;" + (this.getLevel() * 5 - 5));
+    }
+
+    public String stringListeSorts() {
+        final StringBuilder str = new StringBuilder();
+        for (Spell.SortStats hp : _sorts.values()) {
+            if (hp.getSpell() == null) {
+                continue;
+            }
+            if (str.length() > 0) {
+                str.append(";");
+            }
+
+            str.append(hp.getSpellID()).append("~").append(hp.getLevel()).append("~").append(_sortsPlaces.get(hp.getSpellID()));
+        }
+        return str.toString();
+    }
+
+    public void changeColor(String packet) {
+        int playerOgrine = getAccount().getPoints() - Config.INSTANCE.getPRIX_CHANGEMENT_COULEUR();
+        getAccount().setPoints(playerOgrine);
+        if(!packet.isEmpty())
+        {
+            String[] colores = packet.substring(3).split(Pattern.quote("|"));
+            setColors(Integer.parseInt(colores[0]), Integer.parseInt(colores[1]), Integer.parseInt(colores[2]));
+            refreshToMap();
+            SocketManager.GAME_SEND_bV_CLOSE_PANEL(this);
+        }
+    }
+    public void setColors(int color1, int color2, int color3) {
+        if (color1 < -1) {
+            color1 = -1;
+        } else if (color1 > 16777215) {
+            color1 = 16777215;
+        }
+        if (color2 < -1) {
+            color2 = -1;
+        } else if (color2 > 16777215) {
+            color2 = 16777215;
+        }
+        if (color3 < -1) {
+            color3 = -1;
+        } else if (color3 > 16777215) {
+            color3 = 16777215;
+        }
+        this.color1 = color1;
+        this.color2 = color2;
+        this.color3 = color3;
+        Database.getStatics().getPlayerData().UPDATE_PLAYER_COLORS(this);
+    }
+
+    public void changePlayerName(String packet) {
+        if (!packet.isEmpty()) {
+            int playerOgrine = getAccount().getPoints() - Config.INSTANCE.getPRIX_CHANGEMENT_PSEUDO();
+            getAccount().setPoints(playerOgrine);
+            String[] params = packet.substring(3).split(";");
+            String nombre = params[0];
+            /*int colorN = 0;
+            try {
+                colorN = Integer.parseInt(params[1]);
+                if (colorN > 16777215) {
+                    colorN = 0;
+                }
+            } catch (Exception e) {
+                return;
+            }
+            if (nombre.equals(getName())) { // si tiene el mismo nombre y diferente color
+                if (colorN == colorNombre) {
+                    return
+                }
+            }*/
+            nombre = nombreValido(nombre, false);
+            if (nombre == null) {
+                SocketManager.ENVIAR_AAE_ERROR_CREAR_PJ(this, "a");
+                return;
+            }
+            if (nombre.isEmpty()) {
+                SocketManager.ENVIAR_AAE_ERROR_CREAR_PJ(this, "n");
+                return;
+            }
+            //_perso.colorNombre = colorN
+            setName(nombre);
+            SocketManager.ENVIAR_bn_CAMBIAR_NOMBRE_CONFIRMADO(this, nombre);
+            refreshToMap();
+            SocketManager.GAME_SEND_Im_PACKET(this, "1NAME_CHANGED;" + nombre);
+        } else {
+            //send(this, "bN" + this.colorNombre);
+        }
+    }
+
+    public static String nombreValido(String nombre, boolean comando) {
+        if (World.world.getPlayerPerName(nombre) != null) {
+            return null;
+        }
+        if (nombre.length() < 1 || nombre.length() > 20) {
+            return "";
+        }
+        if (!comando) {
+            StringBuilder nombreFinal = new StringBuilder();
+            final String nLower = nombre.toLowerCase();
+            final String abcMin = "abcdefghijklmnopqrstuvwxyz-";
+            int cantSimbol = 0;
+            char letra_A = ' ', letra_B = ' ';
+            boolean primera = true;
+            for (final char letra : nLower.toCharArray()) {
+                if (primera && letra == '-' || !abcMin.contains(letra + "") || letra == letra_A && letra == letra_B) {
+                    return "";
+                }
+                if (primera) {
+                    nombreFinal.append((letra + "").toUpperCase());
+                } else {
+                    nombreFinal.append(letra);
+                }
+                primera = false;
+                if (abcMin.contains(letra + "") && letra != '-') {
+                    letra_A = letra_B;
+                    letra_B = letra;
+                } else if (letra == '-') {
+                    primera = true;
+                    if (cantSimbol >= 1) {
+                        return "";
+                    }
+                    cantSimbol++;
+                }
+            }
+                nombre = nombreFinal.toString();
+        }
+        return nombre;
     }
 }

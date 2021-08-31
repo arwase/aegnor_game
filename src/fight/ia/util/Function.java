@@ -8,6 +8,7 @@ import common.SocketManager;
 import fight.Fight;
 import fight.Fighter;
 import fight.spells.LaunchedSpell;
+import fight.spells.Spell;
 import fight.spells.Spell.SortStats;
 import fight.spells.SpellEffect;
 import fight.traps.Glyph;
@@ -15,10 +16,7 @@ import game.action.GameAction;
 import game.world.World;
 import kernel.Constant;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Locos on 04/10/2015.
@@ -142,7 +140,7 @@ public class Function {
 
         List<SortStats> spells = new ArrayList<>();
         spells.add(spell);
-        return Function.instance.invocIfPossible(fight, fighter, spells);
+        return Function.getInstance().invocIfPossible(fight, fighter, spells);
     }
 
     public Fighter getNearest(Fight fight, Fighter fighter)
@@ -355,7 +353,7 @@ public class Function {
         if (nearest == null)
             return false;
         int nearestCell = fighter.getCell().getId();
-        int limit = 30;
+        int limit = 2000;
         int _loc0_ = 0;
         SortStats spell = null;
         if (fighter.haveState(36))
@@ -378,17 +376,39 @@ public class Function {
             spell = World.world.getSort(1107).getStatsByLevel(5);
             fighter.setState(35, 0);
         }
-        while (_loc0_++ < limit)
-        {
-            nearestCell = PathFinding.getNearestCellAround(fight.getMap(), nearestCell, nearest.getCell().getId(), null);
+        for (Fighter target : fight.getFighters(3)) {
+            if (target.getTeam() == fighter.getTeam()) continue;
+            List<Integer> cells = new ArrayList<>();
+            nearestCell = PathFinding.getAvailableCellArround(fight, target.getCell().getId(), cells);
+
+            if (nearestCell == 0)
+                break;
+            if (fight.canCastSpell1(fighter, spell, fight.getMap().getCase(nearestCell), -1)) {
+                fight.tryCastSpell(fighter, spell, nearestCell);
+                return true;
+            } else {
+                cells.add(nearestCell);
+            }
         }
-        if (nearestCell == -1)
-            return false;
+       /* while (_loc0_++ < limit)
+        {
+            nearestCell = PathFinding.get(fight.getMap(), nearestCell, nearest.getCell().getId(), null);
+            if(nearestCell > -1)
+            {
+                _loc0_ = limit;
+            }
+        }
+        if (nearestCell == -1) {
+            nearestCell = getNearestFreeCell(fight, nearest);
+            if (nearestCell == -1) {
+                return false;
+            }
+        }
         if (spell == null)
             return false;
         int invoc = fight.tryCastSpell(fighter, spell, nearestCell);
         if (invoc != 0)
-            return false;
+            return false;*/
         return true;
     }
 
@@ -1300,7 +1320,7 @@ public class Function {
         return null;
     }
 
-    public SortStats getInvocSpellDopeul(Fight fight, Fighter fighter, int nearestCell, List<SortStats> Spelllist)
+    public static SortStats getInvocSpellDopeul(Fight fight, Fighter fighter, int nearestCell, List<SortStats> Spelllist)
     {
         if (fight == null || fighter == null)
             return null;
@@ -1551,6 +1571,34 @@ public class Function {
         return true;
     }
 
+    public boolean debuffIfPossible(Fight fight, Fighter fighter, Fighter target)
+    {
+        if (fight == null || fighter == null)
+            return false;
+        if (target == null)
+            return false;
+        SortStats SS = null;
+        if(target.getFightBuff().isEmpty())
+        {
+            return false;
+        }
+        for(SortStats spell : fighter.getMob().getSpells().values()) {
+            for(SpellEffect spellEffect : spell.getEffects())
+            {
+                if(spellEffect.getEffectID() == 132)
+                {
+                    SS = spell;
+                }
+            }
+        }
+        if (SS == null)
+            return false;
+        int debuff = fight.tryCastSpell(fighter, SS, target.getCell().getId());
+        if (debuff != 0)
+            return false;
+        return true;
+    }
+
     public SortStats getBuffSpell(Fight fight, Fighter F, Fighter T)
     {
         if (fight == null || F == null)
@@ -1604,7 +1652,7 @@ public class Function {
         return false;
     }
 
-    public SortStats getBuffSpellDopeul(Fight fight, Fighter F, Fighter T, List<SortStats> Spelllist)
+    public static SortStats getBuffSpellDopeul(Fight fight, Fighter F, Fighter T, List<SortStats> Spelllist)
     {
         if (fight == null || F == null)
             return null;
@@ -1924,6 +1972,51 @@ public class Function {
         return nbrcase * 500;
     }
 
+    public int getMaxLaunchableAttaque(Fight fight, Fighter launcher)
+    {
+        ArrayList<Integer> CostBySpell = new ArrayList<Integer>();
+        int FighterPa = launcher.getCurPa(fight);
+        List<Integer> damageID = Arrays.asList(85, 86, 87, 88, 89, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100);
+        if (fight == null)
+            return 0;
+        if (launcher == null)
+            return 0;
+        for(Spell.SortStats s : launcher.getMob().getSpells().values())
+        {
+            ArrayList<SpellEffect> effects = s.getEffects();
+            boolean isAttackSpell = false;
+            for(SpellEffect spellEffect : effects) {
+                if (damageID.contains(spellEffect.getEffectID())) {
+                    isAttackSpell = true;
+                    break;
+                }
+            }
+            if(isAttackSpell)
+            {
+                CostBySpell.add(s.getPACost());
+            }
+        }
+        int count = 0;
+        boolean boucle = true;
+        while(boucle)
+        {
+            for(Integer i : CostBySpell)
+            {
+                int newPa = FighterPa - i;
+                if(newPa >= 0)
+                {
+                    FighterPa = newPa;
+                    count++;
+                }
+                else
+                {
+                    boucle = false;
+                }
+            }
+        }
+        return count;
+    }
+
     public int moveenfaceIfPossible(Fight fight, Fighter F, Fighter T, int dist)
     {
         if (fight == null)
@@ -1946,8 +2039,13 @@ public class Function {
         if (PathFinding.isNextTo(map, cell.getId(), cell2.getId()))
             return 0;
         int nbrcase = 0;
-
-        int cellID = PathFinding.getNearestligneGA(fight, cell2.getId(), cell.getId(), null, dist);
+        ArrayList<GameCase> forbiddens = new ArrayList<>();
+        Map<Integer, Fighter> allies = fight.getTeam(F.getTeam());
+        for(Fighter alier : allies.values())
+        {
+            forbiddens.add(alier.getCell());
+        }
+        int cellID = PathFinding.getNearestligneGA(fight, cell2.getId(), cell.getId(), forbiddens, dist);
         //On demande le chemin plus court
         //Mais le chemin le plus court ne prend pas en compte les bords de map.
         if (cellID == -1)
@@ -1955,7 +2053,7 @@ public class Function {
             Map<Integer, Fighter> ennemys = getLowHpEnnemyList(fight, F);
             for (Map.Entry<Integer, Fighter> target : ennemys.entrySet())
             {
-                int cellID2 = PathFinding.getNearestligneGA(fight, target.getValue().getCell().getId(), cell.getId(), null, dist);
+                int cellID2 = PathFinding.getNearestligneGA(fight, target.getValue().getCell().getId(), cell.getId(), forbiddens, dist);
                 if (cellID2 != -1)
                 {
                     cellID = cellID2;
@@ -1971,13 +2069,27 @@ public class Function {
         boolean ligneok = false;
         for (int a = 0; a < F.getCurPm(fight); a++)
         {
+            boolean contains1AlliesinLine = false;
             if (path.size() == a)
                 break;
-            if(ligneok == true)
+            if(ligneok)
                 break;
-            if(PathFinding.casesAreInSameLine(fight.getMap(), path.get(a).getId(), T.getCell().getId(), 'z', 70))
-                ligneok = true;
-            finalPath.add(path.get(a));
+            if(PathFinding.casesAreInSameLine(fight.getMap(), path.get(a).getId(), T.getCell().getId(), 'z', 70)) {
+                for (Fighter allie : allies.values()) {
+                    if (!PathFinding.casesAreInSameLine(fight.getMap(), T.getCell().getId(), allie.getCell().getId(), 'z', 70)) {
+                        ligneok = true;
+                    } else {
+                        contains1AlliesinLine = true;
+                    }
+                }
+                if(!contains1AlliesinLine) {
+                    finalPath.add(path.get(a));
+                }
+                else
+                {
+                    return 2;
+                }
+            }
         }
         String pathstr = "";
         try
@@ -2198,8 +2310,71 @@ public class Function {
         }
         return curF;
     }
+    public static int getNearestFreeCell(Fight fight, Fighter fighter)
+    {
+        if (fight == null || fighter == null)
+            return 0;
+         if(fighter.isDead())
+             return 0;
+        int Freecell = fight.getMap().getRandomNearFreeCellId(fighter.getCell().getId());
+        return Freecell;
+    }
+    public static Fighter getNearestEnnemy2(Fight fight, Fighter fighter)
+    {
+        if (fight == null || fighter == null)
+            return null;
+        int dist = 1000;
+        Fighter curF = null;
+        for (Fighter f : fight.getFighters(3))
+        {
+            if (f.isDead())
+                continue;
+            if (f.getTeam2() != fighter.getTeam2())//Si c'est un ennemis
+            {
+                int d = PathFinding.getDistanceBetween(fight.getMap(), fighter.getCell().getId(), f.getCell().getId());
+                if (d < dist)
+                {
+                    dist = d;
+                    curF = f;
+                }
+            }
+        }
+        return curF;
+    }
 
     public Fighter getNearestEnnemynbrcasemax(Fight fight, Fighter fighter, int distmin, int distmax)
+    {
+        if (fight == null || fighter == null)
+            return null;
+        Fighter curF = null;
+        for (Fighter f : fight.getFighters(3))
+        {
+            if (f.isDead())
+                continue;
+            if(f.getMob() != null && f.getMob().getTemplate() != null) {
+                boolean ok = false;
+                for (int i : Constant.STATIC_INVOCATIONS)
+                    if (i == f.getMob().getTemplate().getId())
+                        ok = true;
+                if(ok) continue;
+            }
+
+            if (f.getTeam2() != fighter.getTeam2())//Si c'est un ennemis
+            {
+                int d = PathFinding.getDistanceBetween(fight.getMap(), fighter.getCell().getId(), f.getCell().getId());
+                if (d < distmax)
+                {
+                    if (d > distmin)
+                    {
+                        distmax = d;
+                        curF = f;
+                    }
+                }
+            }
+        }
+        return curF;
+    }
+    public static Fighter getNearestEnnemynbrcasemax2(Fight fight, Fighter fighter, int distmin, int distmax)
     {
         if (fight == null || fighter == null)
             return null;
@@ -2438,7 +2613,7 @@ public class Function {
         return curF;
     }
 
-    public Map<Integer, Fighter> getLowHpEnnemyList(Fight fight, Fighter fighter)
+    public static Map<Integer, Fighter> getLowHpEnnemyList(Fight fight, Fighter fighter)
     {
         if (fight == null || fighter == null)
             return null;
@@ -2478,10 +2653,10 @@ public class Function {
         return list;
     }
 
-    public int attackIfPossible(Fight fight, Fighter fighter,List<SortStats> Spell)// 0 = Rien, 5 = EC, 666 = NULL, 10 = SpellNull ou ActionEnCour ou Can'tCastSpell, 0 = AttaqueOK
+    public int attackIfPossible(Fight fight, Fighter fighter, List<SortStats> Spell)// 0 = Rien, 5 = EC, 666 = NULL, 10 = SpellNull ou ActionEnCour ou Can'tCastSpell, 0 = AttaqueOK
     {
         if (fight == null || fighter == null)
-            return 0;
+            return -1;
         Map<Integer, Fighter> ennemyList = getLowHpEnnemyList(fight, fighter);
         SortStats SS = null;
         Fighter target = null;
@@ -2520,11 +2695,42 @@ public class Function {
         }
         else
         {
-            if (target == null || SS == null)
-                return 0;
-            int attack = fight.tryCastSpell(fighter, SS, target.getCell().getId());
-            if (attack != 0)
-                return SS.getSpell().getDuration();
+            if (SS == null)
+                return -1;
+            if(target != null) {
+                int attack = fight.tryCastSpell(fighter, SS, target.getCell().getId());
+                if (attack != 0) {
+                    return SS.getSpell().getDuration();
+                }
+            }
+            else
+            {
+                if(fighter.getMob().getTemplate().getId() == 1090 || fighter.getMob().getTemplate().getId() == 1091 || fighter.getMob().getTemplate().getId() == 1092)
+                {
+                    int cellid = getNearestFreeCell(fight, fighter);
+                    if(fighter.isMob() & fighter.getMob().getTemplate().getId() == 1090 & fighter.haveState(Constant.ETAT_ENCRE_PRIMAIRE))
+                    {
+                        int attack2 = fight.tryCastSpell(fighter, SS, cellid);
+                        if (attack2 != 0)
+                            return SS.getSpell().getDuration();
+                    }
+                    else if(fighter.isMob() & fighter.getMob().getTemplate().getId() == 1091 & fighter.haveState(Constant.ETAT_ENCRE_SECONDAIRE))
+                    {
+                        int attack2 = fight.tryCastSpell(fighter, SS, cellid);
+                        if (attack2 != 0)
+                            return SS.getSpell().getDuration();
+                    }
+                    else if(fighter.isMob() & fighter.getMob().getTemplate().getId() == 1092 & fighter.haveState(Constant.ETAT_ENCRE_TERTIDIAIRE))
+                    {
+                        int attack2 = fight.tryCastSpell(fighter, SS, cellid);
+                        if (attack2 != 0)
+                            return SS.getSpell().getDuration();
+                    }
+                }
+                else{
+                    return 0;
+                }
+            }
         }
         return 0;
     }
@@ -3060,7 +3266,7 @@ public class Function {
         return targets;
     }
 
-    public int getInfl(Fight fight, SortStats SS)
+    public static int getInfl(Fight fight, SortStats SS)
     {
         if (fight == null)
             return 0;
@@ -3215,7 +3421,7 @@ public class Function {
         return ss;
     }
 
-    public SortStats getBestSpellForTargetDopeul(Fight fight, Fighter F, Fighter T, int launch, List<SortStats> listspell)
+    public static SortStats getBestSpellForTargetDopeul(Fight fight, Fighter F, Fighter T, int launch, List<SortStats> listspell)
     {
         if (fight == null || F == null)
             return null;
@@ -3347,7 +3553,7 @@ public class Function {
         return ss;
     }
 
-    public int getBestTargetZone(Fight fight, Fighter fighter, SortStats spell, int launchCell, boolean line)
+    public static int getBestTargetZone(Fight fight, Fighter fighter, SortStats spell, int launchCell, boolean line)
     {
         if (fight == null || fighter == null)
             return 0;
@@ -3432,7 +3638,7 @@ public class Function {
         return inf;
     }
 
-    public int calculInfluence(SortStats ss, Fighter C, Fighter T)
+    public static int calculInfluence(SortStats ss, Fighter C, Fighter T)
     {
         int infTot = 0;
         for (SpellEffect SE : ss.getEffects())
@@ -3447,50 +3653,30 @@ public class Function {
                     inf = 200 * Formulas.getMiddleJet(SE.getJet());
                     break;
                 case 91:
-                    inf = 150 * Formulas.getMiddleJet(SE.getJet());
-                    break;
+                case 95:
+                case 94:
+                case 93:
                 case 92:
                     inf = 150 * Formulas.getMiddleJet(SE.getJet());
                     break;
-                case 93:
-                    inf = 150 * Formulas.getMiddleJet(SE.getJet());
-                    break;
-                case 94:
-                    inf = 150 * Formulas.getMiddleJet(SE.getJet());
-                    break;
-                case 95:
-                    inf = 150 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 96:
-                    inf = 100 * Formulas.getMiddleJet(SE.getJet());
-                    break;
-                case 97:
-                    inf = 100 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 98:
-                    inf = 100 * Formulas.getMiddleJet(SE.getJet());
-                    break;
+                case 97:
                 case 99:
-                    inf = 100 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 100:
                     inf = 100 * Formulas.getMiddleJet(SE.getJet());
                     break;
                 case 101:
-                    inf = 1000 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 127:
+                case 169:
+                case 168:
                     inf = 1000 * Formulas.getMiddleJet(SE.getJet());
                     break;
                 case 84:
-                    inf = 1500 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 77:
                     inf = 1500 * Formulas.getMiddleJet(SE.getJet());
                     break;
                 case 111:
-                    inf = -1000 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 128:
                     inf = -1000 * Formulas.getMiddleJet(SE.getJet());
                     break;
@@ -3498,6 +3684,11 @@ public class Function {
                     inf = -100 * Formulas.getMiddleJet(SE.getJet());
                     break;
                 case 131:
+                case 215:
+                case 216:
+                case 217:
+                case 218:
+                case 219:
                     inf = 300 * Formulas.getMiddleJet(SE.getJet());
                     break;
                 case 132:
@@ -3509,41 +3700,12 @@ public class Function {
                 case 150:
                     inf = -2000;
                     break;
-                case 168:
-                    inf = 1000 * Formulas.getMiddleJet(SE.getJet());
-                    break;
-                case 169:
-                    inf = 1000 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 210:
-                    inf = -300 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 211:
-                    inf = -300 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 212:
-                    inf = -300 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 213:
-                    inf = -300 * Formulas.getMiddleJet(SE.getJet());
-                    break;
                 case 214:
                     inf = -300 * Formulas.getMiddleJet(SE.getJet());
-                    break;
-                case 215:
-                    inf = 300 * Formulas.getMiddleJet(SE.getJet());
-                    break;
-                case 216:
-                    inf = 300 * Formulas.getMiddleJet(SE.getJet());
-                    break;
-                case 217:
-                    inf = 300 * Formulas.getMiddleJet(SE.getJet());
-                    break;
-                case 218:
-                    inf = 300 * Formulas.getMiddleJet(SE.getJet());
-                    break;
-                case 219:
-                    inf = 300 * Formulas.getMiddleJet(SE.getJet());
                     break;
                 case 265:
                     inf = -250 * Formulas.getMiddleJet(SE.getJet());

@@ -46,7 +46,7 @@ public class IA30 extends AbstractNeedSpell  {
 
             if(this.fighter.getCurPa(this.fight) > 0 && this.fighter.nbInvocation() < 2) {
                 if (Function.getInstance().invocIfPossible(this.fight, this.fighter, this.invocations)) {
-                    time = 2000;
+                    time = 100;
                     action = true;
                 }
             }
@@ -54,7 +54,7 @@ public class IA30 extends AbstractNeedSpell  {
 
             if(this.fighter.getCurPa(this.fight) > 0 && !action) {
                 if (Function.getInstance().buffIfPossible(this.fight, this.fighter, this.fighter, this.buffs)) {
-                    time = 400;
+                    time = 100;
                     action = true;
                 }
             }

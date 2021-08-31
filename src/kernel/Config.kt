@@ -1,5 +1,7 @@
 package kernel
 
+import java.io.ObjectInputFilter
+
 object Config {
 
     val startTime = System.currentTimeMillis()
@@ -19,7 +21,7 @@ object Config {
     var ENCRYPT_PACKET = ConfigReader.data[ConfigReader.options.encryptPacket]
     var TIME_PER_EVENT: Short = ConfigReader.data[ConfigReader.options.event.timePerEvent].toShort()
 
-    var NAME: String = "StarLoco"
+    var NAME: String = "Aegnor Beta"
     var url: String = ""
     var startMessage = "Bienvenue sur le serveur $NAME !"
     var colorMessage = "B9121B"
@@ -31,6 +33,13 @@ object Config {
     var RATE_HONOR = ConfigReader.data[ConfigReader.rate.honor]
     var RATE_JOB = ConfigReader.data[ConfigReader.rate.job]
     var RATE_XP = ConfigReader.data[ConfigReader.rate.xp]
+    var RATE_FM = ConfigReader.data[ConfigReader.rate.fm]
+    var PERCENT_EXO = ConfigReader.data[ConfigReader.rate.percent_exo]
+
+    var PRIX_CHANGEMENT_CLASSE = ConfigReader.data[ConfigReader.prix.prix_changement_classe]
+    var PRIX_CHANGEMENT_COULEUR = ConfigReader.data[ConfigReader.prix.prix_changement_couleur]
+    var PRIX_CHANGEMENT_PSEUDO = ConfigReader.data[ConfigReader.prix.prix_changement_pseudo]
+    var PRIX_MIMIBIOTE = ConfigReader.data[ConfigReader.prix.prix_mimibiote]
 
     var exchangePort: Int = ConfigReader.data[ConfigReader.exchange.port]
     var gamePort: Int = ConfigReader.data[ConfigReader.server.port]

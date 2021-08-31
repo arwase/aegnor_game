@@ -48,11 +48,20 @@ object ConfigReader {
     }
 
     object rate : PropertyGroup() {
+        val fm by intType
+        val percent_exo by intType
         val xp by doubleType
         val job by intType
         val farm by intType
         val honor by intType
         val kamas by intType
+    }
+
+    object prix : PropertyGroup() {
+        val prix_changement_classe by intType
+        val prix_changement_couleur by intType
+        val prix_changement_pseudo by intType
+        val prix_mimibiote by intType
     }
 
     object mode : PropertyGroup() {

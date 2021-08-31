@@ -59,6 +59,22 @@ public class SocketManager {
         send(out, packet);
     }
 
+    public static void GAME_SEND_OCK_ACTUALISED_OBJECT(GameClient out, GameObject obj, String statsMimo){
+        String packet = "OCK" + obj.stringObjectMimibiote() + "," + statsMimo + ";";
+        send(out, packet);
+    }
+
+    public static void GAME_SEND_OCK_ACTUALISED_OBJECT(Player player, GameObject obj, String statsMimo){
+        String packet = "OCK" + obj.stringObjectMimibiote() + "," + statsMimo + ";";
+        send(player, packet);
+    }
+    public static void GAME_SEND_OCK_ACTUALISED_OBJECT(Player player, GameObject obj){
+        if (obj == null)
+            return;
+        String packet = "OCK" + obj.stringObjetoConGuiño();
+        send(player, packet);
+    }
+
     public static void GAME_SEND_AV0(GameClient out) {
         String packet = "AV0";
         send(out, packet);
@@ -112,9 +128,18 @@ public class SocketManager {
     }
 
     public static void GAME_SEND_STATS_PACKET(Player perso) {
-        String packet = perso.getAsPacket();
+        //String packet = perso.getAsPacket();
+        String packet = perso.stringStats();
         SocketManager.GAME_SEND_Ow_PACKET(perso);
         send(perso, packet);
+
+    }
+
+    public static void GAME_SEND_STATS_PACKET_TO_LEADER(Player perso, Player leader) {
+        //String packet = perso.getAsPacket();
+        String packet = perso.stringStats();
+        SocketManager.GAME_SEND_Ow_PACKET(leader);
+        send(leader, packet);
 
     }
 
@@ -816,8 +841,8 @@ public class SocketManager {
     }
 
     public static void GAME_SEND_GAMETURNSTART_PACKET_TO_FIGHT(Fight fight,
-                                                               int teams, int guid, int time) {
-        String packet = "GTS" + guid + "|" + time;
+                                                               int teams, int guid, int time, int turntotal) {
+        String packet = "GTS" + guid + "|" + time + "|" + turntotal;
         for (Fighter f : fight.getFighters(teams)) {
             if (f.hasLeft())
                 continue;
@@ -873,6 +898,26 @@ public class SocketManager {
 
         if (!s2.equals(""))
             packet += ";" + s2;
+        for (Fighter f : fight.getFighters(teams)) {
+            if (f.hasLeft())
+                continue;
+            if (f.getPlayer() == null || !f.getPlayer().isOnline())
+                continue;
+            send(f.getPlayer(), packet);
+        }
+    }
+
+    public static void GAME_SEND_GA_PACKET_TO_FIGHT(Fight fight, int teams,
+                                                    int actionID, String s1, String s2, int effect) {
+        String packet = "GA;" + actionID + ";" + s1;
+
+        if (!s2.equals(""))
+            packet += ";" + s2;
+
+        if( effect != 0 && ( actionID == 100 || actionID == 108) ) {
+            packet += ","+effect;
+        }
+
         for (Fighter f : fight.getFighters(teams)) {
             if (f.hasLeft())
                 continue;
@@ -1702,6 +1747,16 @@ public class SocketManager {
 
     }
 
+    public static void ENVIAR_Gf_MOSTRAR_CELDA_EN_PELEA(Fight pelea, int equipos, int id, int celdaID) {
+        String packet = "Gf"+id + "|" + celdaID;
+        for (Fighter fighter : pelea.getFighters(equipos)) {
+            if (fighter.hasLeft() || fighter.isMultiman()) {
+                continue;
+            }
+            send(fighter.getPlayer(), packet);
+        }
+    }
+
     public static void GAME_SEND_Ea_PACKET(Player perso, String str) {
         String packet = "Ea" + str;
         send(perso, packet);
@@ -1850,8 +1905,9 @@ public class SocketManager {
     }
 
     public static void GAME_SEND_ADD_NPC_TO_MAP(GameMap map, Npc npc) {
-        for (Player z : map.getPlayers())
+        for (Player z : map.getPlayers()) {
             send(z, "GM|" + npc.parse(false, z));
+        }
     }
 
     public static void GAME_SEND_ADD_NPC(Player player, Npc npc) {
@@ -2212,10 +2268,12 @@ public class SocketManager {
     public static void GAME_SEND_EHL_PACKET(Player out, int categ,
                                             String templates) //Packet de listage des templates dans une cat�gorie (En r�ponse au packet EHT)
     {
-        String packet = "EHL" + categ + "|" + templates;
-
+        String packet ="EHL" + categ + "|";
+        if(!templates.isEmpty())
+        {
+            packet += templates;
+        }
         send(out, packet);
-
     }
 
     public static void GAME_SEND_EHL_PACKET(Player out, String items) //Packet de listage des objets en vente
@@ -2678,4 +2736,72 @@ public class SocketManager {
             send(perso, "GM|" + npc.parse(true, perso));
     }
 
+    public static void GAME_SEND_BN_OUT(Player player, String s) {
+        String packet = "BN" + s;
+        send(player, packet);
+    }
+
+    public static void GAME_SEND_AC_CHANGE_CLASSE(Player player, int Classe) {
+        String packet = "AC" + Classe;
+        send(player, packet);
+    }
+
+    public static void GAME_SEND_SL_LISTE_SORTS(Player player) {
+        var packet = "SL" + player.stringListeSorts();
+        send(player, packet);
+    }
+
+    public static void GAME_SEND_SL_LISTE_SORTS_TO_LEADER(Player player, Player leader) {
+        var packet = "SL" + player.stringListeSorts();
+        send(leader, packet);
+    }
+
+    public static void ENVIAR_AI_CAMBIAR_ID(Player perso, int id) {
+        String packet = "AI"+ id;
+        send(perso, packet);
+    }
+
+    public static void GAME_SEND_GM_REFRESH_PL_TO_MAP(GameMap curMap, Player player) {
+        String packet = "GM|~" + player.parseToGM();
+        for (Player p : curMap.getPlayers()) {
+            if (p.getFight() == null) {
+                send(p, packet);
+            }
+        }
+    }
+
+    public static void GAME_SEND_GM_REFRESH_FIGHTER_IN_FIGHT(Fight fight, Fighter luchador) {
+        String packet = "GM|~" + luchador.getPlayer().parseToGM();
+        for (Fighter luchadore : fight.getTeam(3).values()) {
+            send(luchadore.getPlayer(), packet);
+        }
+    }
+
+    public static void ENVIAR_GM_LUCHADORES_A_PERSO2(GameMap map, Fighter fighter) {
+        String packet = map.getFighterGMPacket(fighter);
+        if (packet.isEmpty()) {
+            return;
+        }
+        send(fighter.getPlayer(), packet);
+    }
+
+    public static void GAME_SEND_bV_CLOSE_PANEL(Player player) {
+        String packet = "bV";
+        send(player, packet);
+    }
+
+    public static void ENVIAR_AAE_ERROR_CREAR_PJ(Player player, String letra) {
+        String packet = "AAE"+ letra;
+        send(player, packet);
+    }
+
+    public static void ENVIAR_bn_CAMBIAR_NOMBRE_CONFIRMADO(Player player, String nombre) {
+        String packet = "bn"+nombre;
+        send(player, packet);
+    }
+
+    public static void GAME_SEND_EHl(Player player, String str) {
+        String packet = "EHl" + str;
+        send(player, packet);
+    }
 }

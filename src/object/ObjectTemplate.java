@@ -2,6 +2,7 @@ package object;
 
 import client.Player;
 import client.other.Stats;
+import common.ConditionParser;
 import common.Formulas;
 import common.SocketManager;
 import database.Database;
@@ -10,12 +11,13 @@ import fight.spells.SpellEffect;
 import game.world.World;
 import kernel.Constant;
 import object.entity.SoulStone;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import other.Dopeul;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ObjectTemplate {
 
@@ -35,6 +37,7 @@ public class ObjectTemplate {
     private int avgPrice;
     private int points, newPrice;
     private ArrayList<ObjectAction> onUseActions;
+    private int boutique;
 
     public String toString() {
         return id + "";
@@ -42,7 +45,7 @@ public class ObjectTemplate {
 
     public ObjectTemplate(int id, String strTemplate, String name, int type,
                           int level, int pod, int price, int panoId, String conditions,
-                          String armesInfos, int sold, int avgPrice, int points, int newPrice) {
+                          String armesInfos, int sold, int avgPrice, int points, int newPrice, int boutique) {
         this.id = id;
         this.strTemplate = strTemplate;
         this.name = name;
@@ -62,6 +65,7 @@ public class ObjectTemplate {
         this.avgPrice = avgPrice;
         this.points = points;
         this.newPrice = newPrice;
+        this.boutique = boutique;
         if(armesInfos.isEmpty()) return;
         try {
             String[] infos = armesInfos.split(";");
@@ -77,7 +81,7 @@ public class ObjectTemplate {
         }
     }
 
-    public void setInfos(String strTemplate, String name, int type, int level, int pod, int price, int panoId, String conditions, String armesInfos, int sold, int avgPrice, int points, int newPrice) {
+    public void setInfos(String strTemplate, String name, int type, int level, int pod, int price, int panoId, String conditions, String armesInfos, int sold, int avgPrice, int points, int newPrice, int boutique) {
         this.strTemplate = strTemplate;
         this.name = name;
         this.type = type;
@@ -96,6 +100,7 @@ public class ObjectTemplate {
         this.avgPrice = avgPrice;
         this.points = points;
         this.newPrice = newPrice;
+        this.boutique = boutique;
         try {
             String[] infos = armesInfos.split(";");
             PACost = Integer.parseInt(infos[0]);
@@ -278,7 +283,7 @@ public class ObjectTemplate {
                 txtStat.put(Constant.STATS_PETS_EPO, actualStat.get(Constant.STATS_PETS_EPO));
             if (actualStat.containsKey(Constant.STATS_PETS_REPAS))
                 txtStat.put(Constant.STATS_PETS_REPAS, actualStat.get(Constant.STATS_PETS_REPAS));
-            item = new GameObject(id, getId(), 1, Constant.ITEM_POS_NO_EQUIPED, obj.getStats(), new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), txtStat, 0);
+            item = new GameObject(id, getId(), 1, Constant.ITEM_POS_NO_EQUIPED, obj.getStats(), new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), txtStat, 0, 0, -1);
             World.world.removePetsEntry(obj.getGuid());
             Database.getStatics().getPetData().delete(obj.getGuid());
         }
@@ -290,7 +295,7 @@ public class ObjectTemplate {
         Map<Integer, String> stats = new HashMap<>();
         stats.putAll(obj.getTxtStat());
 
-        GameObject object = new GameObject(id, getId(), 1, Constant.ITEM_POS_NO_EQUIPED, obj.getStats(), new ArrayList<>(), new HashMap<>(), stats, 0);
+        GameObject object = new GameObject(id, getId(), 1, Constant.ITEM_POS_NO_EQUIPED, obj.getStats(), new ArrayList<>(), new HashMap<>(), stats, 0, 0, -1);
 
         long time = System.currentTimeMillis();
         World.world.addPetsEntry(new PetEntry(id, getId(), time, 0, Integer.parseInt(stats.get(Constant.STATS_PETS_PDV), 16), Integer.parseInt(stats.get(Constant.STATS_PETS_POIDS), 16), !stats.containsKey(Constant.STATS_PETS_EPO)));
@@ -301,71 +306,80 @@ public class ObjectTemplate {
     public GameObject createNewBenediction(int turn) {
         int id = Database.getStatics().getObjectData().getNextId();
         GameObject item = null;
-        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true);
+        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true, 0);
         stats.addOneStat(Constant.STATS_TURN, turn);
-        item = new GameObject(id, getId(), 1, Constant.ITEM_POS_BENEDICTION, stats, new ArrayList<>(), new HashMap<>(), new HashMap<>(), 0);
+        item = new GameObject(id, getId(), 1, Constant.ITEM_POS_BENEDICTION, stats, new ArrayList<>(), new HashMap<>(), new HashMap<>(), 0, 0, -1);
         return item;
     }
 
     public GameObject createNewMalediction() {
         int id = Database.getStatics().getObjectData().getNextId();
-        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true);
+        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true, 0);
         stats.addOneStat(Constant.STATS_TURN, 1);
-        return new GameObject(id, getId(), 1, Constant.ITEM_POS_MALEDICTION, stats, new ArrayList<>(), new HashMap<>(), new HashMap<>(), 0);
+        return new GameObject(id, getId(), 1, Constant.ITEM_POS_MALEDICTION, stats, new ArrayList<>(), new HashMap<>(), new HashMap<>(), 0, 0, -1);
     }
 
     public GameObject createNewRoleplayBuff() {
         int id = Database.getStatics().getObjectData().getNextId();
-        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true);
+        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true, 0);
         stats.addOneStat(Constant.STATS_TURN, 1);
-        return new GameObject(id, getId(), 1, Constant.ITEM_POS_ROLEPLAY_BUFF, stats, new ArrayList<>(), new HashMap<>(), new HashMap<>(), 0);
+        return new GameObject(id, getId(), 1, Constant.ITEM_POS_ROLEPLAY_BUFF, stats, new ArrayList<>(), new HashMap<>(), new HashMap<>(), 0, 0, -1);
     }
 
     public GameObject createNewCandy(int turn) {
         int id = Database.getStatics().getObjectData().getNextId();
         GameObject item = null;
-        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true);
+        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true, 0);
         stats.addOneStat(Constant.STATS_TURN, turn);
-        item = new GameObject(id, getId(), 1, Constant.ITEM_POS_BONBON, stats, new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), new HashMap<Integer, String>(), 0);
+        item = new GameObject(id, getId(), 1, Constant.ITEM_POS_BONBON, stats, new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), new HashMap<Integer, String>(), 0, 0, -1);
         return item;
     }
 
     public GameObject createNewFollowPnj(int turn) {
         int id = Database.getStatics().getObjectData().getNextId();
         GameObject item = null;
-        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true);
+        Stats stats = generateNewStatsFromTemplate(getStrTemplate(), true, 0);
         stats.addOneStat(Constant.STATS_TURN, turn);
         stats.addOneStat(148, 0);
-        item = new GameObject(id, getId(), 1, Constant.ITEM_POS_PNJ_SUIVEUR, stats, new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), new HashMap<Integer, String>(), 0);
+        item = new GameObject(id, getId(), 1, Constant.ITEM_POS_PNJ_SUIVEUR, stats, new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), new HashMap<Integer, String>(), 0, 0, -1);
         return item;
     }
-
-    public GameObject createNewItem(int qua, boolean useMax) {
+    private final Integer[] ItemsRarityAllowed = new Integer[]{1,2,3,4,5,6,7,8,9,10,11,16,17,19,20,21,22,23,81,82};
+    public GameObject createNewItem(int qua, boolean useMax, int rarity) {
         int id = Database.getStatics().getObjectData().getNextId();
         GameObject item;
+        List<Integer> verif = new ArrayList<>(Arrays.asList(ItemsRarityAllowed));
+        if(!verif.contains(getType()))
+        {
+            rarity = 0;
+        }
         if (getType() == Constant.ITEM_TYPE_QUETES && (Constant.isCertificatDopeuls(getId()) || getId() == 6653)) {
             Map<Integer, String> txtStat = new HashMap<Integer, String>();
             txtStat.put(Constant.STATS_DATE, System.currentTimeMillis() + "");
-            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), txtStat, 0);
+            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), txtStat, 0,0, -1);
         } else if (this.getId() == 10207) {
-            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), Dopeul.generateStatsTrousseau(), 0);
+            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<SpellEffect>(), new HashMap<Integer, Integer>(), Dopeul.generateStatsTrousseau(), 0,0, -1);
         } else if (getType() == Constant.ITEM_TYPE_FAMILIER) {
-            item = new GameObject(id, getId(), 1, Constant.ITEM_POS_NO_EQUIPED, (useMax ? generateNewStatsFromTemplate(World.world.getPets(this.getId()).getJet(), false) : new Stats(false, null)), new ArrayList<>(), new HashMap<>(), World.world.getPets(getId()).generateNewtxtStatsForPets(), 0);
+            item = new GameObject(id, getId(), 1, Constant.ITEM_POS_NO_EQUIPED, (useMax ? generateNewStatsFromTemplate(World.world.getPets(this.getId()).getJet(), false, 0) : new Stats(false, null)), new ArrayList<>(), new HashMap<>(), World.world.getPets(getId()).generateNewtxtStatsForPets(), 0,0, -1);
             //Ajouter du Pets_data SQL et World
             long time = System.currentTimeMillis();
             World.world.addPetsEntry(new PetEntry(id, getId(), time, 0, 10, 0, false));
             Database.getStatics().getPetData().add(id, time, getId());
         } else if(getType() == Constant.ITEM_TYPE_CERTIF_MONTURE) {
-            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax), getEffectTemplate(getStrTemplate()), new HashMap<>(), new HashMap<>(), 0);
+            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax, 0), getEffectTemplate(getStrTemplate()), new HashMap<>(), new HashMap<>(), 0,0,-1);
         } else {
             if (getType() == Constant.ITEM_TYPE_OBJET_ELEVAGE) {
-                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), getStringResistance(getStrTemplate()), 0);
+                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), getStringResistance(getStrTemplate()), 0,0,-1);
             } else if (Constant.isIncarnationWeapon(getId())) {
                 Map<Integer, Integer> Stats = new HashMap<>();
                 Stats.put(Constant.ERR_STATS_XP, 0);
                 Stats.put(Constant.STATS_NIVEAU, 1);
-                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax), getEffectTemplate(getStrTemplate()), Stats, new HashMap<Integer, String>(), 0);
-            } else {
+                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax, 0), getEffectTemplate(getStrTemplate()), Stats, new HashMap<Integer, String>(), 0,0,-1);
+            } else if(getType() == 113)
+            {
+                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, getStrTemplate(), 0,0,-1);
+            }
+            else {
                 Map<Integer, String> Stat = new HashMap<>();
                 switch (getType()) {
                     case 1:
@@ -387,38 +401,131 @@ public class ObjectTemplate {
                         }
                         break;
                 }
-                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax), getEffectTemplate(getStrTemplate()), new HashMap<Integer, Integer>(), Stat, 0);
+                int rarete = 0;
+
+                if(rarity < 1) {
+                    if(ArrayUtils.contains( Constant.ITEM_TYPE_WITH_RARITY, getType() ) ) {
+                        rarete = GameObject.getAleaRarity();
+                    }
+                }
+                else {
+                    if(ArrayUtils.contains( Constant.ITEM_TYPE_WITH_RARITY, getType() ) )
+                    {
+                        rarete = rarity;
+                    }
+                }
+                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax, rarete), getEffectTemplate(getStrTemplate()), new HashMap<Integer, Integer>(), Stat, 0,rarete, -1);
                 item.getSpellStats().addAll(this.getSpellStatsTemplate());
             }
         }
         return item;
+    }
+    public GameObject createNewItemWithoutDuplicationForJobs(Collection<GameObject> objects, int qua, boolean useMax,int chanceimpact) {
+
+        int id = -1;
+        GameObject item = null;
+        try{
+
+            if (this.getType() == Constant.ITEM_TYPE_QUETES && (Constant.isCertificatDopeuls(this.getId()) || this.getId() == 6653)) {
+                Map<Integer, String> txtStat = new HashMap<>();
+                txtStat.put(Constant.STATS_DATE, System.currentTimeMillis() + "");
+                item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), txtStat, 0,0, -1);
+            } else if (this.getId() == 10207) {
+                item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), Dopeul.generateStatsTrousseau(), 0,0, -1);
+            } else if (this.getType() == Constant.ITEM_TYPE_FAMILIER) {
+                item = new GameObject(id, this.getId(), 1, Constant.ITEM_POS_NO_EQUIPED, (useMax ? generateNewStatsFromTemplate(World.world.getPets(this.getId()).getJet(), false,0) : new Stats(false, null)), new ArrayList<>(), new HashMap<>(), World.world.getPets(this.getId()).generateNewtxtStatsForPets(), 0,0, -1);
+                //Ajouter du Pets_data SQL et World
+                long time = System.currentTimeMillis();
+                World.world.addPetsEntry(new PetEntry(id, getId(), time, 0, 10, 0, false));
+                Database.getStatics().getPetData().add(id, time, this.getId());
+            } else if(this.getType() == Constant.ITEM_TYPE_CERTIF_MONTURE) {
+                item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(this.getStrTemplate(), useMax,0), getEffectTemplate(this.getStrTemplate()), new HashMap<>(), new HashMap<>(), 0,0,-1);
+            } else {
+                if (this.getType() == Constant.ITEM_TYPE_OBJET_ELEVAGE) {
+                    item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), getStringResistance(getStrTemplate()), 0,0,-1);
+                } else if (Constant.isIncarnationWeapon(this.getId())) {
+                    Map<Integer, Integer> Stats = new HashMap<>();
+                    Stats.put(Constant.ERR_STATS_XP, 0);
+                    Stats.put(Constant.STATS_NIVEAU, 1);
+                    item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(this.getStrTemplate(), useMax,0), getEffectTemplate(this.getStrTemplate()), Stats, new HashMap<>(), 0,0,-1);
+
+                } else {
+                    Map<Integer, String> Stat = new HashMap<>();
+                    switch (this.getType()) {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+                            if( this.getStrTemplate() !="" || !StringUtils.isEmpty(this.getStrTemplate()) || !StringUtils.isBlank(this.getStrTemplate()) ){
+                                String[] splitted = getStrTemplate().split(",");
+                                for (String s : splitted) {
+                                    String[] stats = s.split("#");
+                                    int statID = Integer.parseInt(stats[0], 16);
+                                    if (statID == Constant.STATS_RESIST) {
+                                        String ResistanceIni = stats[1];
+                                        Stat.put(statID, ResistanceIni);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                    int rarete = 0;
+                    if( ArrayUtils.contains( Constant.ITEM_TYPE_WITH_RARITY, getType() )  )
+                    {
+                        rarete = GameObject.getAleaRarity(chanceimpact);
+                    }
+
+                    item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(this.getStrTemplate(), useMax,rarete), getEffectTemplate(getStrTemplate()), new HashMap<Integer, Integer>(), Stat, 0,rarete, -1);
+
+                }
+
+            }
+
+            for(GameObject object : objects)
+                if(World.world.getConditionManager().stackIfSimilar(object, item, true))
+                    return object;
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return item;
+
     }
 
     public GameObject createNewItemWithoutDuplication(Collection<GameObject> objects, int qua, boolean useMax) {
         int id = -1;
-        GameObject item;
+        GameObject item = null;
+        try{
+
+        List<Integer> verif = new ArrayList<>(Arrays.asList(ItemsRarityAllowed));
         if (getType() == Constant.ITEM_TYPE_QUETES && (Constant.isCertificatDopeuls(getId()) || getId() == 6653)) {
             Map<Integer, String> txtStat = new HashMap<>();
             txtStat.put(Constant.STATS_DATE, System.currentTimeMillis() + "");
-            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), txtStat, 0);
+            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), txtStat, 0,0,-1);
         } else if (this.getId() == 10207) {
-            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), Dopeul.generateStatsTrousseau(), 0);
+            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), Dopeul.generateStatsTrousseau(), 0,0,-1);
         } else if (getType() == Constant.ITEM_TYPE_FAMILIER) {
-            item = new GameObject(id, getId(), 1, Constant.ITEM_POS_NO_EQUIPED, (useMax ? generateNewStatsFromTemplate(World.world.getPets(this.getId()).getJet(), false) : new Stats(false, null)), new ArrayList<>(), new HashMap<>(), World.world.getPets(getId()).generateNewtxtStatsForPets(), 0);
+            item = new GameObject(id, getId(), 1, Constant.ITEM_POS_NO_EQUIPED, (useMax ? generateNewStatsFromTemplate(World.world.getPets(this.getId()).getJet(), false, 0) : new Stats(false, null)), new ArrayList<>(), new HashMap<>(), World.world.getPets(getId()).generateNewtxtStatsForPets(), 0,0,-1);
             //Ajouter du Pets_data SQL et World
             long time = System.currentTimeMillis();
             World.world.addPetsEntry(new PetEntry(id, getId(), time, 0, 10, 0, false));
             Database.getStatics().getPetData().add(id, time, getId());
         } else if(getType() == Constant.ITEM_TYPE_CERTIF_MONTURE) {
-            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax), getEffectTemplate(getStrTemplate()), new HashMap<>(), new HashMap<>(), 0);
+            item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax, 0), getEffectTemplate(getStrTemplate()), new HashMap<>(), new HashMap<>(), 0,0,-1);
         } else {
             if (getType() == Constant.ITEM_TYPE_OBJET_ELEVAGE) {
-                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), getStringResistance(getStrTemplate()), 0);
+                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), getStringResistance(getStrTemplate()), 0,0,-1);
             } else if (Constant.isIncarnationWeapon(getId())) {
                 Map<Integer, Integer> Stats = new HashMap<>();
                 Stats.put(Constant.ERR_STATS_XP, 0);
                 Stats.put(Constant.STATS_NIVEAU, 1);
-                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax), getEffectTemplate(getStrTemplate()), Stats, new HashMap<>(), 0);
+                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax, 0), getEffectTemplate(getStrTemplate()), Stats, new HashMap<>(), 0,0,-1);
             } else {
                 Map<Integer, String> Stat = new HashMap<>();
                 switch (getType()) {
@@ -430,25 +537,48 @@ public class ObjectTemplate {
                     case 6:
                     case 7:
                     case 8:
-                        String[] splitted = getStrTemplate().split(",");
-                        for (String s : splitted) {
-                            String[] stats = s.split("#");
-                            int statID = Integer.parseInt(stats[0], 16);
-                            if (statID == Constant.STATS_RESIST) {
-                                String ResistanceIni = stats[1];
-                                Stat.put(statID, ResistanceIni);
+                        if( this.getStrTemplate() !="" || !StringUtils.isEmpty(this.getStrTemplate()) || !StringUtils.isBlank(this.getStrTemplate()) ) {
+                            String[] splitted = getStrTemplate().split(",");
+                            for (String s : splitted) {
+                                String[] stats = s.split("#");
+                                int statID = 64;
+                                try {
+                                     statID = Integer.parseInt(stats[0], 16);
+                                }
+                                catch(Exception e) {
+                                     statID = 64;
+                                    e.printStackTrace();
+                                }
+                                if (statID == Constant.STATS_RESIST) {
+                                    String ResistanceIni = stats[1];
+                                    Stat.put(statID, ResistanceIni);
+                                }
                             }
                         }
                         break;
                 }
-                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax), getEffectTemplate(getStrTemplate()), new HashMap<Integer, Integer>(), Stat, 0);
+
+                int rarete = 0;
+                if( ArrayUtils.contains( Constant.ITEM_TYPE_WITH_RARITY, getType() )  )
+                {
+                    rarete = GameObject.getAleaRarity();
+                }
+
+                item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(getStrTemplate(), useMax, rarete), getEffectTemplate(getStrTemplate()), new HashMap<Integer, Integer>(), Stat, 0, rarete,-1);
                 item.getSpellStats().addAll(this.getSpellStatsTemplate());
             }
         }
 
-        for(GameObject object : objects)
-            if(World.world.getConditionManager().stackIfSimilar(object, item, true))
+        for(GameObject object : objects) {
+            if (World.world.getConditionManager().stackIfSimilar2(object, item, true)) {
                 return object;
+            }
+        }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return item;
     }
 
@@ -482,11 +612,13 @@ public class ObjectTemplate {
     }
 
     public Stats generateNewStatsFromTemplate(String statsTemplate,
-                                              boolean useMax) {
+                                              boolean useMax, int rarete) {
+
         Stats itemStats = new Stats(false, null);
         //Si stats Vides
         if (statsTemplate.equals("") || statsTemplate == null)
             return itemStats;
+
 
         String[] splitted = statsTemplate.split(",");
         for (String s : splitted) {
@@ -494,13 +626,11 @@ public class ObjectTemplate {
             int statID = Integer.parseInt(stats[0], 16);
             boolean follow = true;
 
-
             for (int a : Constant.ARMES_EFFECT_IDS)
+                //Si c'est un Effet Actif
                 if (a == statID)
                     follow = false;
-            if (!follow)//Si c'�tait un effet Actif d'arme
-                continue;
-            if (statID >= 281 && statID <= 294)
+            if (!follow)//Si c'ï¿½tait un effet Actif d'arme
                 continue;
             if (statID == Constant.STATS_RESIST)
                 continue;
@@ -521,25 +651,90 @@ public class ObjectTemplate {
             String jet = "";
             int value = 1;
             try {
-                jet = stats[4];
-                value = Formulas.getRandomJet(jet);
-                if (useMax) {
-                    try {
-                        //on prend le jet max
-                        int min = Integer.parseInt(stats[1], 16);
-                        int max = Integer.parseInt(stats[2], 16);
-                        value = min;
-                        if (max != 0)
-                            value = max;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        value = Formulas.getRandomJet(jet);
+                switch (rarete) {
+                    case 0:
+                    case 1:{
+                        if(stats.length > 4) {
+                            jet = stats[4];
+                            value = Formulas.getRandomJet(jet);
+                            if (useMax) {
+                                try {
+                                    //on prend le jet max
+                                    int min = Integer.parseInt(stats[1], 16);
+                                    int max = Integer.parseInt(stats[2], 16);
+                                    value = min;
+                                    if (max != 0)
+                                        value = max;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    value = Formulas.getRandomJet(jet);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case 2 :{
+                        if(stats.length > 4) {
+                            jet = stats[4];
+                            int min = Integer.parseInt(stats[1], 16);
+                            int max = Integer.parseInt(stats[2], 16);
+                            value = Formulas.getRandomJetWithRarity(min, max, rarete);
+                            if (useMax) {
+                                try {
+                                    //on prend le jet max
+                                    min = Integer.parseInt(stats[1], 16);
+                                    max = Integer.parseInt(stats[2], 16);
+                                    value = min;
+                                    if (max != 0)
+                                        value = max;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    value = Formulas.getRandomJet(jet);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case 4 :
+                    case 5 : {
+                        if(stats.length > 4) {
+                            jet = stats[4];
+                            int min = Integer.parseInt(stats[1], 16);
+                            int max = Integer.parseInt(stats[2], 16);
+                            value = Formulas.getRandomJetWithRarity(min, max, rarete);
+                            if (useMax) {
+                                try {
+                                    value = Formulas.getRandomJetWithRarity(min, max, 5);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    value = Formulas.getRandomJetWithRarity(min, max, rarete);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case 3 :{
+                        try {
+                            //on prend le jet max
+                            int min = Integer.parseInt(stats[1], 16);
+                            int max = Integer.parseInt(stats[2], 16);
+                            value = min;
+                            if (max != 0)
+                                value = max;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            value = Formulas.getRandomJet(jet);
+                        }
+                        break;
                     }
                 }
+                if(value > 0) {
+                    itemStats.addOneStat(statID, value);
+                }
+
             } catch (Exception e) {
-               System.err.println(statsTemplate + " : " + s + " : " + e.getMessage());
+                e.printStackTrace();
             }
-            itemStats.addOneStat(statID, value);
         }
         return itemStats;
     }
@@ -604,5 +799,83 @@ public class ObjectTemplate {
         long oldSold = getSold();
         sold += amount;
         avgPrice = (int) ((getAvgPrice() * oldSold + price) / getSold());
+    }
+
+    public GameObject createNewItemWithoutDuplicationWithrarity(Collection<GameObject> objects, int qua, boolean useMax, int rarity) {
+
+        int id = -1;
+        GameObject item = null;
+        try{
+
+            if (this.getType() == Constant.ITEM_TYPE_QUETES && (Constant.isCertificatDopeuls(this.getId()) || this.getId() == 6653)) {
+                Map<Integer, String> txtStat = new HashMap<>();
+                txtStat.put(Constant.STATS_DATE, System.currentTimeMillis() + "");
+                item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), txtStat, 0,0,-1);
+            } else if (this.getId() == 10207) {
+                item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), Dopeul.generateStatsTrousseau(), 0,0,-1);
+            } else if (this.getType() == Constant.ITEM_TYPE_FAMILIER) {
+                item = new GameObject(id, this.getId(), 1, Constant.ITEM_POS_NO_EQUIPED, (useMax ? generateNewStatsFromTemplate(World.world.getPets(this.getId()).getJet(), false,0) : new Stats(false, null)), new ArrayList<>(), new HashMap<>(), World.world.getPets(this.getId()).generateNewtxtStatsForPets(), 0,0,-1);
+                //Ajouter du Pets_data SQL et World
+                long time = System.currentTimeMillis();
+                World.world.addPetsEntry(new PetEntry(id, getId(), time, 0, 10, 0, false));
+                Database.getStatics().getPetData().add(id, time, this.getId());
+            } else if(this.getType() == Constant.ITEM_TYPE_CERTIF_MONTURE) {
+                item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(this.getStrTemplate(), useMax,0), getEffectTemplate(this.getStrTemplate()), new HashMap<>(), new HashMap<>(), 0,0,-1);
+            } else {
+                if (this.getType() == Constant.ITEM_TYPE_OBJET_ELEVAGE) {
+                    item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), getStringResistance(getStrTemplate()), 0,0,-1);
+                } else if (Constant.isIncarnationWeapon(this.getId())) {
+                    Map<Integer, Integer> Stats = new HashMap<>();
+                    Stats.put(Constant.ERR_STATS_XP, 0);
+                    Stats.put(Constant.STATS_NIVEAU, 1);
+                    item = new GameObject(id, this.getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(this.getStrTemplate(), useMax,0), getEffectTemplate(this.getStrTemplate()), Stats, new HashMap<>(), 0,0,-1);
+
+                } else {
+                    Map<Integer, String> Stat = new HashMap<>();
+                    switch (this.getType()) {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+                            if( this.getStrTemplate() !="" || !StringUtils.isEmpty(this.getStrTemplate()) || !StringUtils.isBlank(this.getStrTemplate()) ){
+                                String[] splitted = getStrTemplate().split(",");
+                                for (String s : splitted) {
+                                    String[] stats = s.split("#");
+                                    int statID = Integer.parseInt(stats[0], 16);
+                                    if (statID == Constant.STATS_RESIST) {
+                                        String ResistanceIni = stats[1];
+                                        Stat.put(statID, ResistanceIni);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                    int rarete = rarity;
+
+                    item = new GameObject(id, getId(), qua, Constant.ITEM_POS_NO_EQUIPED, generateNewStatsFromTemplate(this.getStrTemplate(), useMax,rarete), getEffectTemplate(getStrTemplate()), new HashMap<Integer, Integer>(), Stat, 0,rarete,-1);
+
+                }
+
+            }
+
+            for(GameObject object : objects)
+                if(World.world.getConditionManager().stackIfSimilar2(object, item, true))
+                    return object;
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return item;
+
+    }
+
+    public int getBoutique() {
+        return boutique;
     }
 }

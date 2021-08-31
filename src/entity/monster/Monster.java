@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 public class Monster {
     private int id;
+    private String name;
     private int gfxId;
     private int align;
     private String colors;
@@ -34,12 +35,13 @@ public class Monster {
     private boolean isCapturable;
     private int aggroDistance = 0;
 
-    public Monster(int id, int gfxId, int align, String colors,
+    public Monster(int id,String name, int gfxId, int align, String colors,
                    String thisGrades, String thisSpells, String thisStats,
                    String thisStatsInfos, String thisPdvs, String thisPoints,
                    String thisInit, int minKamas, int maxKamas, String thisXp, int ia,
                    boolean capturable, int aggroDistance) {
         this.id = id;
+        this.name = name;
         this.gfxId = gfxId;
         this.align = align;
         this.colors = colors;
@@ -194,6 +196,22 @@ public class Monster {
             drops.remove(remove);
         }
     }
+
+    public MobGrade getGrade(int gradevalue) {
+        int graderandom = 1;
+        for (Entry<Integer, MobGrade> grade : getGrades().entrySet()) {
+            if (graderandom == gradevalue)
+                return grade.getValue();
+            else
+                graderandom++;
+        }
+        return null;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public enum TipoGrupo {
         FIJO, NORMAL, SOLO_UNA_PELEA, HASTA_QUE_MUERA
     }
@@ -904,10 +922,10 @@ public class Monster {
         }
 
         public void addStarBonus() {
-            if(this.getStarBonus() >= 150) {
-                this.starBonus = 150;
+            if(this.getStarBonus() >= 200) {
+                this.starBonus = 200;
             } else {
-                this.starBonus += 3;
+                this.starBonus += 15;
             }
         }
 
@@ -997,12 +1015,18 @@ public class Monster {
 
                 isFirst = false;
             }
+
             totalExp = (long) (totalExp * (starBonus / 100f + Config.INSTANCE.getRATE_XP()));
             toreturn.append("+").append(this.cellId).append(";").append(this.orientation).append(";");
             toreturn.append(getStarBonus());// bonus en pourcentage (�toile/20%) // Actuellement 1%/min
             toreturn.append(";").append(this.id).append(";").append(mobIDs).append(";-3;").append(mobGFX).append(";")
                     .append(mobLevels).append(";").append(totalExp).append(";").append(colors);
             return toreturn.toString();
+        }
+
+        public void setStarBonus(int i) {
+            this.starBonus = (short) i;
+
         }
     }
 
@@ -1295,6 +1319,12 @@ public class Monster {
             });
             strStats.append(",").append(Constant.STATS_ADD_INIT).append(":").append(getInit());
             return strStats.toString();
+        }
+
+        public String getStringResi() {
+            String Resi ="";
+            Resi = this.stats.get(Constant.STATS_ADD_RP_NEU) + "," + this.stats.get(Constant.STATS_ADD_RP_TER) + "," + this.stats.get(Constant.STATS_ADD_RP_FEU) + "," + this.stats.get(Constant.STATS_ADD_RP_EAU) + "," +this.stats.get(Constant.STATS_ADD_RP_AIR);
+            return Resi;
         }
     }
 }

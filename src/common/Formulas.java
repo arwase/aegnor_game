@@ -45,7 +45,67 @@ public class Formulas {
             return -1;
         }
     }
+    public static int getRandomJetWithRarity(int min ,int max, int rarity)//1d5+6
+    {
+        try {
+            int num = 0;
+            switch (rarity) {
+                case 2 : {
+                    if (min < max) {
+                        min = (int) Math.floor(min + ((max - min)*0.75));
+                        num = getRandomValue(min, max);
+                    }
+                    else if (min == max) {
+                        min = max;
+                        num = min;
+                    }
+                    else {
+                        num = min;
+                    }
+                    break;
+                }
+                case 3 : {
+                    // pas géré ici car simple jet parfait
+                    break;
+                }
+                case 4 : {
+                    if (min < max) {
+                        min = (int) Math.floor(min + ((max - min)*0.75));
+                        max = (int) Math.floor(max + ((max) *0.5));
+                        num = getRandomValue(min, max);
+                    }
+                    else if (min == max) {
+                        min = max;
+                        num = min;
+                    }
+                    else {
+                        num = min;
+                    }
+                    break;
+                }
+                case 5 : {
+                    if (min < max) {
+                        max = (int) Math.floor(max + ((max)*0.5));
+                        num = max;
+                    }
+                    else if (min == max) {
+                        min = max;
+                        num = min;
+                    }
+                    else {
+                        num = min;
+                    }
+                    break;
+                }
+            }
 
+            return num;
+        } catch (NumberFormatException e) {
+            //World.world.logger.trace("New item 2: "+e);
+            e.printStackTrace();
+            return -1;
+        }
+    }
     public static int getMaxJet(String jet) {
         int num = 0;
         try {
@@ -67,18 +127,22 @@ public class Formulas {
     {
         try {
             int num = 0;
-            int des = Integer.parseInt(jet.split("d")[0]);
-            int faces = Integer.parseInt(jet.split("d")[1].split("\\+")[0]);
-            int add = Integer.parseInt(jet.split("d")[1].split("\\+")[1]);
-            if (faces == 0 && add == 0) {
-                num = getRandomValue(0, des);
-            } else {
-                for (int a = 0; a < des; a++) {
-                    num += getRandomValue(1, faces);
+            int splited = jet.split("d").length;
+            if(jet.split("d").length > 1) {
+                int des = Integer.parseInt(jet.split("d")[0]);
+                int faces = Integer.parseInt(jet.split("d")[1].split("\\+")[0]);
+                int add = Integer.parseInt(jet.split("d")[1].split("\\+")[1]);
+                if (faces == 0 && add == 0) {
+                    num = getRandomValue(0, des);
+                } else {
+                    for (int a = 0; a < des; a++) {
+                        num += getRandomValue(1, faces);
+                    }
                 }
+                num += add;
+                return num;
             }
-            num += add;
-            return num;
+            return Integer.parseInt(jet);
         } catch (NumberFormatException e) {
             e.printStackTrace();
             return -1;
@@ -507,12 +571,12 @@ public class Formulas {
                     statC = caster.getTotalStats().getEffect(Constant.STATS_ADD_AGIL);
                     num = (jet * ((100 + statC + perdomC + (multiplier * 100)) / 100)) + domC;
                     if (target.hasBuff(105) && spellid != 71) {
-                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(105).getValue());
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(105).getValue(), 105);
                         int value = (int) num - target.getBuff(105).getValue();
                         return value > 0 ? value : 0 ;
                     }
                     if (target.hasBuff(184) && spellid != 71) {
-                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(184).getValue());
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(184).getValue(), 105);
                         int value = (int) num - target.getBuff(184).getValue();
                         return value > 0 ? value : 0 ;
                     }
@@ -524,12 +588,12 @@ public class Formulas {
                     statC = caster.getTotalStats().getEffect(Constant.STATS_ADD_FORC);
                     num = (jet * ((100 + statC + perdomC + (multiplier * 100)) / 100)) + domC;
                     if (target.hasBuff(105) && spellid != 71) {
-                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(105).getValue());
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(105).getValue(), 105);
                         int value = (int) num - target.getBuff(105).getValue();
                         return value > 0 ? value : 0 ;
                     }
                     if (target.hasBuff(184) && spellid != 71) {
-                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(184).getValue());
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(184).getValue(), 105);
                         int value = (int) num - target.getBuff(184).getValue();
                         return value > 0 ? value : 0 ;
                     }
@@ -540,12 +604,12 @@ public class Formulas {
                     statC = caster.getTotalStats().getEffect(Constant.STATS_ADD_INTE);
                     num = (jet * ((100 + statC + perdomC + (multiplier * 100)) / 100)) + domC;
                     if (target.hasBuff(105) && spellid != 71) {
-                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(105).getValue());
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(105).getValue(), 105);
                         int value = (int) num - target.getBuff(105).getValue();
                         return value > 0 ? value : 0 ;
                     }
                     if (target.hasBuff(184) && spellid != 71) {
-                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(184).getValue());
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId() + "", target.getId() + "," + target.getBuff(184).getValue(), 105);
                         int value = (int) num - target.getBuff(184).getValue();
                         return value > 0 ? value : 0 ;
                     }
@@ -560,7 +624,7 @@ public class Formulas {
                     renvoie = (int) num;
                 num -= renvoie;
                 SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 107, "-1", target.getId()
-                        + "," + renvoie);
+                        + "," + renvoie, 107);
                 if (renvoie > caster.getPdv())
                     renvoie = caster.getPdv();
                 if (num < 1)
@@ -573,7 +637,7 @@ public class Formulas {
                     caster.removePdv(caster, renvoie);
 
                 SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 100, caster.getId()
-                        + "", caster.getId() + ",-" + renvoie);
+                        + "", caster.getId() + ",-" + renvoie, 107);
             }
         }
         int reduc = (int) ((num / (float) 100) * respT);//Reduc %resis
@@ -585,7 +649,7 @@ public class Formulas {
         if (!isHeal)
             if (armor > 0)
                 SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getId()
-                        + "", target.getId() + "," + armor);
+                        + "", target.getId() + "," + armor, 105);
         if (!isHeal)
             num -= resfT;//resis fixe
         //d�gats finaux
@@ -1269,5 +1333,144 @@ public class Formulas {
         for (String i : alpha.split(" "))
             msg = msg.replace(i, "H");
         return msg;
+    }
+
+    // NOUVELLE FONCTION PAS TROP MAL
+    public static ArrayList<Integer> chanceFM2(final int PoidMaxItem, final int PoidMiniItem,final int PoidTotItemActuel, final int PoidActuelStatAFm,
+                                               final int PoidTotStatsExoItemActuel,final int poidRune,  final int maxStat, final int minStat,final int actualStat, final int statsAdd,
+                                               double poidUnitaire, final int statsJetfutur, final float x, final float coef, Player player, int puit,String loi) {
+
+
+        final ArrayList<Integer> chances = new ArrayList<Integer>();
+
+        int p1 = 0;
+        int p2 = 0;
+        int p3 = 0;
+
+        if(loi == "exo") {
+            p1 = (Config.INSTANCE.getPERCENT_EXO() * Config.INSTANCE.getRATE_FM());
+            p2 = 0;
+            p3 = (100-p1);
+
+            chances.add(0, p1);
+            chances.add(1, p2);
+            chances.add(2, p3);
+
+            return chances;
+        }
+
+        final int diff = (int) Math.abs(PoidMaxItem * 1.3f - PoidTotItemActuel);
+
+        //player.sendMessage("Poid en JP : " + WeightTotalBase );
+        //player.sendMessage("Poid en JM : " + WeightTotalBaseMin );
+        //player.sendMessage("Poid de l'obj actuel : " + PoidTotItemActuel );
+        //player.sendMessage("Stats Max ITEM : " + maxStat );
+        //player.sendMessage("Stats Min ITEM : " + minStat );
+        //player.sendMessage("Stats Actuel : " + actualStat );
+        //player.sendMessage("Je confond sans doute : " + PoidTotItemActuel + " != " +PoidActuelStatAFm +" + "+ PoidTotStatsExoItemActuel  );
+        //player.sendMessage("Poid de la stats a montÃ© : " + (PoidActuelStatAFm + PoidTotStatsExoItemActuel)  );
+        //player.sendMessage("Poid de la rune : " + poidRune );
+        //player.sendMessage("DiffÃ©rentiel  : " + diff );
+        //player.sendMessage("Coefficient : " + coef );
+        //player.sendMessage("Je sais pas trop mais dans la multiplication : " + x );
+        //player.sendMessage("Stats ajoutÃ© : " + statsAdd );
+        //player.sendMessage("Puits de l'objet : " + puit );
+        //player.sendMessage("Rate FM : " + Config.getInstance().rateFm );
+
+
+
+        float c = 1.0f;
+        final float m1 = maxStat - (actualStat + statsAdd);
+        final float m2 = maxStat - minStat;
+        if (1.0f - m1 / m2 > 1.0) {
+            c = (1.0f - (1.0f - m1 / m2) / 2.0f) / 2.0f;
+        } else if (1.0f - m1 / m2 > 0.8) {
+            c = 1.0f - (1.0f - m1 / m2) / 2.0f;
+        }
+        if (c < 0.0f) {
+            c = 0.0f;
+        }
+
+
+        try {
+
+            final int moyenne = (int) Math.floor(maxStat - (((maxStat - minStat)) / 2) );
+            //player.sendMessage("moyenne : " + moyenne );
+
+            float mStat = 1.0f;
+            // Si la stats n'est pas prÃ©sent sur l'obj (Exclu EXO)
+            if(maxStat == 0) {
+                mStat = 1f;
+            }
+            else {
+                //player.sendMessage("moyenne : " + moyenne );
+                //player.sendMessage("actualStat : " + actualStat );
+                //player.sendMessage("actualStat : " + actualStat );
+                // Si la diffÃ©rence entre la stat sencÃ© etre prÃ©sente et la sats est null on limite la hausse
+                if( actualStat > 0) {
+                    mStat = (float)((float)moyenne / (float)actualStat);
+                    //player.sendMessage("mStat : " + mStat );
+                    if (mStat > 5f) {
+                        mStat = 5f;
+                    }
+                }
+                else {
+                    mStat = 5f;
+                }
+                //player.sendMessage("mStat : " + mStat );
+            }
+
+            if(mStat==0f) {
+                mStat = 1;
+            }
+            //player.sendMessage("a = "+ (PoidMaxItem + diff)+ "*" + coef + "*" + mStat + "*" + x + "*" +  Config.getInstance().rateFm  );
+            final float a = (PoidMaxItem + diff) * coef * mStat * x * Config.INSTANCE.getRATE_FM();
+            float b = (float) (Math.sqrt(PoidTotItemActuel + PoidActuelStatAFm)  + poidRune);
+
+            //player.sendMessage("Le total c'est  " + a );
+            //player.sendMessage("Le diviseur c'est  " + b );
+
+            if (b < 1.0) {
+                b = 1.0f;
+            }
+
+            p1 = (int) Math.floor(a / b);
+            p2 = 0;
+            p3 = 0;
+
+            if (p1 < 5) {
+                p1 = 5;
+                p2 = 0;
+                p3 = 95;
+            }
+            else if (p1 > 80) {
+                p1 = 80;
+                p2 = 19;
+            }
+            if (p2 == 0 && p3 == 0) {
+                p2 = (int) Math.floor(a / Math.sqrt(PoidTotItemActuel + PoidActuelStatAFm ));
+                if (p2 > 100 - p1) {
+                    p2 = 100 - p1;
+                }
+                if (p2 > 50) {
+                    p2 = 50;
+                }
+            }
+
+            //player.sendMessage("La chance SN c'est  " + p2 );
+            chances.add(0, p1);
+            chances.add(1, p2);
+            chances.add(2, p3);
+        }
+        catch(Exception e) {
+            player.sendMessage("ERREUR:" + e );
+            p1 = 5;
+            p2 = 0;
+            p3 = 95;
+            chances.add(0, p1);
+            chances.add(1, p2);
+            chances.add(2, p3);
+        }
+        return chances;
     }
 }

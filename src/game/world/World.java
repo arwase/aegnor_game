@@ -3,6 +3,9 @@ package game.world;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import client.Classe;
+import common.*;
+import kernel.Boutique;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.LoggerFactory;
 import area.Area;
 import area.SubArea;
@@ -14,10 +17,6 @@ import area.map.labyrinth.PigDragon;
 import client.Account;
 import client.Player;
 import client.other.Stats;
-import common.ConditionParser;
-import common.CryptManager;
-import common.Formulas;
-import common.SocketManager;
 import database.Database;
 import entity.Collector;
 import entity.Prism;
@@ -106,6 +105,12 @@ public class World {
 
     public HouseManager getHouseManager() {
         return houseManager;
+    }
+
+    private Encryptador encryptador = new Encryptador();
+
+    public Encryptador getEncryptador() {
+        return encryptador;
     }
 
     private CryptManager cryptManager = new CryptManager();
@@ -470,6 +475,8 @@ public class World {
         PigDragon.initialize();
         logger.debug("Initialization of the dungeon : Labyrinth of the Minotoror.");
         Minotoror.initialize();
+        logger.debug("Initialisation de la boutique IG.");
+        Boutique.initPacket();
 
         Database.getStatics().getServerData().updateTime(time);
         logger.info("All data was loaded successfully at "
@@ -1062,7 +1069,7 @@ public class World {
 
     }
 
-    public GameObject newObjet(int id, int template, int qua, int pos, String stats, int puit) {
+    public GameObject newObjet(int id, int template, int qua, int pos, String stats, int puit, int rarity, int mimibiote) {
         if (getObjTemplate(template) == null) {
             return null;
         }
@@ -1075,13 +1082,13 @@ public class World {
             try {
                 Map<Integer, String> txtStat = new HashMap<>();
                 txtStat.put(Constant.STATS_DATE, stats.substring(3) + "");
-                return new GameObject(id, template, qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), txtStat, puit);
+                return new GameObject(id, template, qua, Constant.ITEM_POS_NO_EQUIPED, new Stats(false, null), new ArrayList<>(), new HashMap<>(), txtStat, puit, rarity, mimibiote);
             } catch (Exception e) {
                 e.printStackTrace();
-                return new GameObject(id, template, qua, pos, stats, 0);
+                return new GameObject(id, template, qua, pos, stats, 0,rarity, -1);
             }
         } else {
-            return new GameObject(id, template, qua, pos, stats, 0);
+            return new GameObject(id, template, qua, pos, stats, 0,rarity, mimibiote);
         }
     }
 
@@ -1091,16 +1098,16 @@ public class World {
         changeHdv.put(4607, 4271); // HDV Alchimistes
         changeHdv.put(4622, 4216); // HDV Bijoutiers
         changeHdv.put(4627, 4232); // HDV Bricoleurs
-        changeHdv.put(5112, 4178); // HDV B�cherons
+        changeHdv.put(5112, 4178); // HDV Bûcherons
         changeHdv.put(4562, 4183); // HDV Cordonniers
-        changeHdv.put(8754, 8760); // HDV Biblioth�que
+        changeHdv.put(8754, 8760); // HDV Bibliothèque
         changeHdv.put(5317, 4098); // HDV Forgerons
-        changeHdv.put(4615, 4247); // HDV P�cheurs
+        changeHdv.put(4615, 4247); // HDV Pêcheurs
         changeHdv.put(4646, 4262); // HDV Ressources
         changeHdv.put(8756, 8757); // HDV Forgemagie
         changeHdv.put(4618, 4174); // HDV Sculpteurs
         changeHdv.put(4588, 4172); // HDV Tailleurs
-        changeHdv.put(8482, 10129); // HDV �mes
+        changeHdv.put(8482, 10129); // HDV Âmes
         changeHdv.put(4595, 4287); // HDV Bouchers
         changeHdv.put(4630, 2221); // HDV Boulangers
         changeHdv.put(5311, 4179); // HDV Mineurs
@@ -1772,6 +1779,7 @@ public class World {
             case Constant.STATS_ADD_PA2:
                 r = 100.0;
                 break;
+            case Constant.STATS_ADD_DOMA2:
             case Constant.STATS_ADD_DOMA:
                 r = 20.0;
                 break;
@@ -1920,6 +1928,7 @@ public class World {
             case Constant.STATS_ADD_PA2:
                 r = 0.0;
                 break;
+            case Constant.STATS_ADD_DOMA2:
             case Constant.STATS_ADD_DOMA:
                 r = 5.0;
                 break;
@@ -2147,6 +2156,29 @@ public class World {
                 0, TimeUnit.SECONDS, TimerWaiter.DataType.CLIENT);
     }
 
+    public ArrayList<ObjectTemplate> getPotentialBlackItem(int level) {
+        ArrayList<ObjectTemplate> array = new ArrayList<>();
+        if(level>=175){
+            level=175;
+        }
+        final int levelMin = (level - 5 <= 1 ? 2 : level - 5), levelMax = level + 5;
+        getObjectsTemplates().values().stream().filter(objectTemplate -> objectTemplate != null && objectTemplate.getPanoId() == -1 && !objectTemplate.getStrTemplate().contains("32c#")
+                && (levelMin <= objectTemplate.getLevel() && objectTemplate.getLevel() <= levelMax) && ArrayUtils.contains( Constant.ITEM_TYPE_OBJ_BLACK, objectTemplate.getType() )  ).forEach(array::add);
+        return array;
+    }
+
+    public Player getPlayerPerName(String nombre) {
+        Player p = null;
+        for(Player player : players.values())
+        {
+            if(player.getName().equals(nombre))
+            {
+                p = player;
+            }
+        }
+        return p;
+    }
+
     public static class Drop {
         private int objectId, ceil, action, level;
         private String condition;
@@ -2204,6 +2236,20 @@ public class World {
             } catch(IndexOutOfBoundsException ignored) { return null; }
             return drop;
         }
+
+        public double getPercentbyGrade(int Grade) {
+            double percent = percents.get(Grade -1);
+            return percent;
+        }
+    }
+
+    public House getCasaDentroPorMapa(Short mapaID) {
+        for (House casa : Houses.values()) {
+            if (casa.getHouseMaps().contains(mapaID)) {
+                return casa;
+            }
+        }
+        return null;
     }
 
     public static class Couple<L, R> {

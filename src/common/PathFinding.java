@@ -439,7 +439,8 @@ public class PathFinding {
             int nextCase = GetCaseIDFromDirrection(id, dir, map, true);
 
             for (Trap trap : fight.getAllTraps()) {
-                if (getDistanceBetweenTwoCase(map, trap.getCell(), map.getCase(nextCase)) <= trap.getSize()) {
+                int val = getDistanceBetweenTwoCase(map, trap.getCell(), map.getCase(nextCase));
+                if (getDistanceBetweenTwoCase(map, trap.getCell(), map.getCase(nextCase)) >= trap.getSize()) {
                     id = nextCase;
                     b = true;
                 }
@@ -1559,25 +1560,25 @@ public class PathFinding {
         char[] dirs = {'b', 'd', 'f', 'h'};
         for (char d : dirs) {
 
-            // On cherche la celluleID correspondant � la direction associ�
+            // On cherche la celluleID correspondant ï¿½ la direction associï¿½
             int c = PathFinding.GetCaseIDFromDirrection(startCell, d, map, true);
             if (map.getCase(c) == null)
                 continue;
             // On cherche la distance entre
             int dis = PathFinding.getDistanceBetween(map, endCell, c);
-            // Si la distance est strictement inf�rieur � 1000 et que la case
+            // Si la distance est strictement infï¿½rieur ï¿½ 1000 et que la case
             // est marchable et que personne ne
             // se trouve dessus et que la case n'est pas interdite
             if (dis < dist && map.getCase(c).isWalkable(true, true, -1)
                     && map.getCase(c).getFirstFighter() == null
                     && !forbidens.contains(map.getCase(c))) {
-                // On cr�e la distance
+                // On crï¿½e la distance
                 dist = dis;
                 // On modifie la cellule
                 cellID = c;
             }
         }
-        // On renvoie -1 si pas trouv�
+        // On renvoie -1 si pas trouvï¿½
         return cellID == startCell ? -1 : cellID;
     }
 
@@ -1736,6 +1737,73 @@ public class PathFinding {
 
         return test.contains(id);
     }
+    private ArrayList<Character> listaDirEntreDosCeldas(GameMap mapa, int celdaInicio, int celdaDestino) {
+        if (celdaInicio == celdaDestino || mapa == null) {
+            return null;
+        }
+        var abc = new ArrayList<Character>(4);
+        var b = listaDirEntreDosCeldas2(mapa, celdaInicio, celdaDestino, (-1));
+        for (int i = 0; i < 4; i++) {
+            switch (b.get(i)) {
+                case 0 :
+                    abc.add(i, 'b');
+                    break;
+                case 1 :
+                    abc.add(i,'d');
+                    break;
+                case 2 :
+                    abc.add(i,'f');
+                    break;
+                case 3 :
+                    abc.add(i,'h');
+                    break;
+            }
+        }
+        return abc;
+    }
+    private ArrayList<Byte> listaDirEntreDosCeldas2(
+            GameMap mapa, int celdaInicio, int celdaDestino,
+            int celdaAnterior
+    ) {
+        if (celdaInicio == celdaDestino || mapa == null) {
+            return null;
+        }
+        GameCase cInicio = mapa.getCase(celdaInicio);
+        GameCase cDestino = mapa.getCase(celdaDestino);
+        var difX = cDestino.getCoordX() - cInicio.getCoordX();
+        var difY = cDestino.getCoordY() - cInicio.getCoordY();
+        if (Math.abs(difY) == Math.abs(difX) && celdaAnterior > 0) {
+            return listaDirEntreDosCeldas2(mapa, celdaAnterior, celdaDestino, -1);
+        } else if (Math.abs(difY) > Math.abs(difX)) {
+            Integer[] c1 = new Integer[]{difX, 0, 2};
+            Integer[] c2 = new Integer[]{difY, 1, 3};
+            var c = new ArrayList<Integer[]>();
+            c.add(c1);
+            c.add(c2);
+           return formulaDireccion(c);
+        } else {
+            Integer[] c1 = new Integer[]{difY, 1, 3};
+            Integer[] c2 = new Integer[]{difX, 0, 2};
+            var c = new ArrayList<Integer[]>();
+            c.add(c1);
+            c.add(c2);
+            return formulaDireccion(c);
+        }
+    }
+
+    private ArrayList<Byte> formulaDireccion(ArrayList<Integer[]> c) {
+        ArrayList<Byte> abc = new ArrayList<Byte>(4);
+        for (int i = 0; i < 2; i++) {
+            Integer dif = c.get(i)[0];
+            var p = i;
+            if (dif < 0) {
+                p = Math.abs(3 - i);
+            }
+            abc.add(p, Byte.parseByte(c.get(i)[1].toString()));
+            abc.add(Math.abs(3 - p), Byte.parseByte(c.get(i)[2].toString()));
+        }
+        return abc;
+    }
 
     public static ArrayList<Integer> getLoS(int cell1, int cell2) {
         ArrayList<Integer> Los = new ArrayList<Integer>();
@@ -1751,7 +1819,7 @@ public class PathFinding {
             while (!next) {
                 cell += i;
                 Los.add(cell);
-                if (isBord2(cell) || isBord1(cell) || cell <= 0 || cell >= 480)
+                if (isBord2(cell) || isBord1(cell) || cell <= 0 || cell >= 400)
                     next = true;
                 if (cell == cell2) {
                     return Los;
@@ -1763,8 +1831,13 @@ public class PathFinding {
 
     public static boolean checkLoS(GameMap map, int cell1, int cell2,
                                    Fighter fighter, boolean isPeur) {
-        if (fighter != null && fighter.getPlayer() != null) // on ne rev�rifie pas (en plus du client) pour les joueurs
+
+        if (fighter == null) // on ne rev�rifie pas (en plus du client) pour les joueurs
+            return false;
+
+        if (fighter.getPlayer() != null) // on ne rev�rifie pas (en plus du client) pour les joueurs
             return true;
+
         ArrayList<Integer> CellsToConsider = new ArrayList<Integer>();
         CellsToConsider = getLoSBotheringIDCases(map, cell1, cell2, true);
         if (CellsToConsider == null) {

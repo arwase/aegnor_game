@@ -233,6 +233,15 @@ public class IAHandler {
                     case 71://IA Ougah
                         ia = new IA71(fight, fighter, (byte) 4);
                         break;
+                    case 72://IA Corbac aprivoiser attaque,pm en ligne de vue droite,attaque,pm fuite
+                        ia = new IA72(fight, fighter, (byte) 8);
+                        break;
+                    case 73: //IA Prespic
+                        ia = new IA73(fight, fighter, (byte) 4);
+                        break;
+                    case 74: //IA Bouftou
+                        ia = new IA74(fight, fighter, (byte) 4);
+                        break;
 
 
                 }

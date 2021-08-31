@@ -5,10 +5,7 @@ import area.map.entity.InteractiveDoor;
 import area.map.entity.MountPark;
 import client.Player;
 import client.other.Party;
-import common.CryptManager;
-import common.Formulas;
-import common.PathFinding;
-import common.SocketManager;
+import common.*;
 import database.Database;
 import database.dynamics.data.MapData;
 import entity.Collector;
@@ -110,11 +107,13 @@ public class GameMap {
     private Map<Integer, Integer> mobExtras = new HashMap<>();
     private String mapData;
     private short capabilities;
+    private short capabilitiesCompiled;
     private int musicID;
     private int ambianceID;
     private int backgroundID;
     private int outDoor;
     private int maxMerchant;
+    public ArrayList<Integer> trabajos = new ArrayList<Integer>();
 
     public GameMap(short id, String date, byte w, byte h, String key, String places, String dData, String monsters, String mapPos, byte maxGroup, byte fixSize, byte minSize, byte maxSize, String forbidden, byte sniffed, short capabilities, int musicID, int ambianceID, int backgroundID, int outDoor, int maxMerchant) {
         this.id = id;
@@ -127,7 +126,14 @@ public class GameMap {
         this.maxSize = maxSize;
         this.minSize = minSize;
         this.fixSize = fixSize;
-        this.mapData = dData;
+        if(key.length() > 0)
+        {
+            this.mapData = World.world.getEncryptador().decifrarMapData(key, dData);
+        }
+        else {
+
+            this.mapData = dData;
+        }
         this.capabilities = capabilities;
         this.musicID = musicID;
         this.ambianceID = ambianceID;
@@ -135,6 +141,7 @@ public class GameMap {
         this.outDoor = outDoor;
         this.maxMerchant = maxMerchant;
         this.cases = World.world.getCryptManager().decompileMapData(this, dData, sniffed);
+        //World.world.getEncryptador().decompilarMapaData(this);
 
         try {
             if (!places.equalsIgnoreCase("") && !places.equalsIgnoreCase("|"))
@@ -169,7 +176,7 @@ public class GameMap {
             noDefie = split[4].equals("1");
             noAgro = split[5].equals("1");
             noCanal = split[6].equals("1");
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
 
         String unique = "";
         if(monsters.contains("@")) {
@@ -248,35 +255,26 @@ public class GameMap {
         this.minSize = minSize;
         this.fixSize = fixSize;
     }
-    public Short capabilitiesCompilado()
-    {
-        Short parametros = 0;
-        if (noAgro) {
-            parametros = (short)((int)parametros + 1);
+
+    public static boolean IsInDj (GameMap map) {
+
+        Map<Integer, ArrayList<Action>> actionsOnMap = map.GetEndFightAction();
+        for (Map.Entry<Integer, ArrayList<Action> > entry : actionsOnMap.entrySet()) {
+            ArrayList<Action> Actions =  entry.getValue();
+            for (Action action : Actions) {
+                //player.sendMessage("L'action " + action.getId() + " " + action.getArgs());
+                if( action.getId() == 0 ){
+                    return true;
+                }
+            }
         }
-        if (noCanal) {
-            parametros = (short)((int)parametros + 2);
-        }
-        if (noTP) {
-            parametros = (short)((int)parametros + 4);
-        }
-        if (noDefie) {
-            parametros = (short)((int)parametros + 8);
-        }
-        if (noCollector) {
-            parametros = (short)((int)parametros + 16);
-        }
-        if (noMarchand) {
-            parametros = (short)((int)parametros + 32);
-        }
-        /*if (mapaAbonado()) {
-            parametros = (parametros.toInt() + 64).toShort()
-        }*/
-        if (noPrism) {
-            parametros = (short)((int)parametros+ 128);
-        }
-        return parametros;
+        return false;
     }
+
+    public Map<Integer, ArrayList<Action>> GetEndFightAction() {
+        return this.endFightAction ;
+    }
+
 
     public static void removeMountPark(int guildId) {
         try {
@@ -440,67 +438,7 @@ public class GameMap {
         return durabilityMax;
     }
 
-    public String getForbidden()
-    {
-        StringBuilder infos = new StringBuilder();
-        if(noMarchand == true)
-        {
-            infos.append("1;");
-        }
-        else
-        {
-            infos.append("0;");
-        }
-        if(noCollector == true)
-        {
-            infos.append("1;");
-        }
-        else
-        {
-            infos.append("0;");
-        }
-        if(noPrism == true)
-        {
-            infos.append("1;");
-        }
-        else
-        {
-            infos.append("0;");
-        }
-        if(noTP == true)
-        {
-            infos.append("1;");
-        }
-        else
-        {
-            infos.append("0;");
-        }
-        if(noDefie == true)
-        {
-            infos.append("1;");
-        }
-        else
-        {
-            infos.append("0;");
-        }
-        if(noAgro == true)
-        {
-            infos.append("1;");
-        }
-        else
-        {
-            infos.append("0;");
-        }
-        if(noCanal == true)
-        {
-            infos.append("1");
-        }
-        else
-        {
-            infos.append("0");
-        }
-        return infos.toString();
-    }
+
     public void setRestriction(String forbidden)
     {
         try
@@ -709,6 +647,19 @@ public class GameMap {
         return null;
     }
 
+    public void addCases(GameCase cases)
+    {
+        this.cases.add(cases);
+    }
+
+    public GameCase getCase(String id) {
+        int id2 = Integer.parseInt(id);
+        for(GameCase gameCase : this.cases)
+            if(gameCase.getId() == (id2))
+                return gameCase;
+        return null;
+    }
+
     public void removeCase(int id) {
         Iterator<GameCase> iterator = this.cases.iterator();
 
@@ -911,7 +862,7 @@ public class GameMap {
                 }
             }
 
-            cases.add(new GameCase(map, gameCase.getId(), gameCase.isWalkable(true, true, -1), gameCase.isLoS(), (gameCase.getObject() == null ? -1 : gameCase.getObject().getId())));
+            cases.add(new GameCase(map, gameCase.getId(), gameCase.isWalkable(true, true, -1), gameCase.isLoS(), gameCase.level, gameCase.slope, gameCase.isActivate(), (gameCase.getObject() == null ? -1 : gameCase.getObject().getId())));
         }
         map.setCases(cases);
         return map;
@@ -919,7 +870,7 @@ public class GameMap {
 
     public GameMap getMapCopyIdentic() {
         GameMap map = new GameMap(id, date, w, h, key, placesStr, X, Y, maxGroup, fixSize, minSize, maxSize);
-        List<GameCase> cases = this.cases.stream().map(entry -> new GameCase(map, entry.getId(), entry.isWalkable(false), entry.isLoS(), (entry.getObject() == null ? -1 : entry.getObject().getId()))).collect(Collectors.toList());
+        List<GameCase> cases = this.cases.stream().map(entry -> new GameCase(map, entry.getId(), entry.isWalkable(false), entry.isLoS(), entry.level, entry.slope, entry.isActivate(), (entry.getObject() == null ? -1 : entry.getObject().getId()))).collect(Collectors.toList());
         map.setCases(cases);
         return map;
     }
@@ -1044,6 +995,86 @@ public class GameMap {
     public int getCapabilities() {
         return capabilities;
     }
+    public void setParametros(Short d) {
+        capabilities = d;
+        capabilities = capabilitiesCompiled;
+        /*if (colorCeldasAtacante.isEmpty() && (esDungeon() || esArena())) {
+            colorCeldasAtacante = "red"
+        }*/
+    }
+    public Boolean mapNoAgression() {
+        return (((int)capabilities) & 1) == 1;
+    }
+
+    public Boolean isArena() {
+        return (((int)capabilities) & 2) == 2;
+    }
+
+    public Boolean isDungeon() {
+        return (((int)capabilities) & 4) == 4;
+    }
+
+    public Boolean mapNoDefie() {
+        return (((int)capabilities) & 8) == 8;
+    }
+
+    public Boolean mapNoCollector() {
+        return (((int)capabilities) & 16) == 16;
+    }
+
+    public Boolean mapNoMerchant() {
+        return (((int)capabilities) & 32) == 32;
+    }
+
+    public Boolean mapAbo() {
+        return (((int)capabilities) & 64) == 64;
+    }
+
+    public Boolean mapNoPrism() {
+        if (isDungeon() || isArena() || World.world.getCasaDentroPorMapa(id) != null || !trabajos.isEmpty()) {
+            return true;
+        } else
+        {
+            return (((int) capabilities) & 128) == 128;
+        }
+    }
+
+    public Boolean mapNoSaveTeleport() {
+        return (((int) capabilities) & 256) == 256;
+    }
+
+    public Boolean mapNoTeleport() {
+        return (((int) capabilities) & 512) == 512;
+    }
+
+    public Short getCapabilitiesCompiled() {
+        short parametros = 0;
+        if (mapNoAgression()) {
+            parametros = (short)(parametros + 1);
+        }
+        if (isArena()) {
+            parametros = (short)(parametros + 2);
+        }
+        if (isDungeon()) {
+            parametros = (short)(parametros + 4);
+        }
+        if (mapNoDefie()) {
+            parametros = (short)(parametros + 8);
+        }
+        if (mapNoCollector()) {
+            parametros = (short)(parametros + 16);
+        }
+        if (mapNoMerchant()) {
+            parametros = (short)(parametros + 32);
+        }
+        if (mapAbo()) {
+            parametros = (short)(parametros + 64);
+        }
+        if (mapNoPrism()) {
+            parametros = (short)(parametros + 128);
+        }
+        return parametros;
+    }
 
     public void setCapabilities(short capabilities) {
         this.capabilities = capabilities;
@@ -1083,6 +1114,60 @@ public class GameMap {
 
     public int getMaxMerchant() {
         return maxMerchant;
+    }
+
+    public void refreshSpawnsWithMaxStars() {
+
+
+        for (int id : this.mobGroups.keySet()) {
+            SocketManager.GAME_SEND_ERASE_ON_MAP_TO_MAP(this, id);
+        }
+        this.mobGroups.clear();
+        spawnGroupWithStars(Constant.ALIGNEMENT_NEUTRE, this.maxGroup, true, -1);//Spawn des groupes d'alignement neutre
+    }
+
+    public void spawnGroupWithStars(int align, int nbr, boolean log, int cellID) {
+        if (nbr < 1)
+            return;
+        if (this.mobGroups.size() - this.fixMobGroups.size() >= this.maxGroup)
+            return;
+        for (int a = 1; a <= nbr; a++) {
+            // mobExtras
+            ArrayList<Monster.MobGrade> mobPoss = new ArrayList<>(this.mobPossibles);
+            if (!this.mobExtras.isEmpty()) {
+                for (Entry<Integer, Integer> entry : this.mobExtras.entrySet()) {
+                    if (entry.getKey() == 499) // Si c'est un minotoboule de nowel
+                        if (!Config.INSTANCE.getNOEL()) // Si ce n'est pas nowel
+                            continue;
+                    int random = Formulas.getRandomValue(0, 99);
+                    while (entry.getValue() > random) {
+                        Monster mob = World.world.getMonstre(entry.getKey());
+                        if (mob == null)
+                            continue;
+                        Monster.MobGrade mobG = mob.getRandomGrade();
+                        if (mobG == null)
+                            continue;
+                        mobPoss.add(mobG);
+                        if (entry.getKey() == 422 || entry.getKey() == 499) // un seul DDV / Minotoboule
+                            break;
+                        random = Formulas.getRandomValue(0, 99);
+                    }
+                }
+            }
+
+            while(this.mobGroups.get(this.nextObjectId) != null)
+                this.nextObjectId--;
+
+            Monster.MobGroup group = new Monster.MobGroup(this.nextObjectId, align, mobPoss, this, cellID, this.fixSize, this.minSize, this.maxSize, null);
+            group.setStarBonus(150);
+
+            if (group.getMobs().isEmpty())
+                continue;
+            this.mobGroups.put(this.nextObjectId, group);
+            if (log)
+                SocketManager.GAME_SEND_MAP_MOBS_GM_PACKET(this, group);
+            this.nextObjectId--;
+        }
     }
 
     private static class RespawnGroup {
@@ -1261,6 +1346,12 @@ public class GameMap {
                 if(fighter.getFight() == player.getFight() && fighter == target)
                     return "GM|" + fighter.getGmPacket('~', false);
         return "";
+    }
+
+    public String getFighterGMPacket(Fighter fighter) {
+        StringBuilder str = new StringBuilder("GM");
+        str.append("|").append(fighter.getGmPacket('+', false));
+        return str.toString();
     }
 
     public String getMobGroupGMsPackets() {
@@ -1516,7 +1607,7 @@ public class GameMap {
                 return;
             }
 
-        final Party party = player.getParty();
+        /*final Party party = player.getParty();
 
         if(party != null && party.getMaster() != null && !party.getMaster().getName().equals(player.getName()) && party.isWithTheMaster(player, false)) return;
 
@@ -1538,6 +1629,55 @@ public class GameMap {
                 else
                     fight.joinFight(follower, player.getId());
             }), 1, TimeUnit.SECONDS, TimerWaiter.DataType.CLIENT);
+        }*/
+        int id = 1;
+        if(this.fights == null)
+            this.fights = new ArrayList<>();
+        if (!this.fights.isEmpty())
+            id = ((Fight) (this.fights.toArray()[this.fights.size() - 1])).getId() + 1;
+        this.mobGroups.remove(group.getId());
+        this.fights.add(new Fight(id, this, player, group));
+        SocketManager.GAME_SEND_MAP_FIGHT_COUNT_TO_MAP(this);
+
+        Fight fight = null;
+        fight = player.getFight();
+        int guid = player.getId();
+        if (player.getSlaves() != null) {
+            if (player.getSlaves().size() > 0) {
+
+                boolean ok;
+                ok = true;
+                if (ok) {
+                    for (Player slave : player.PlayerList1) {
+                        //Si l'esclave est null
+                        if (slave == null) {
+                            continue;
+                        }
+                        //Si l'esclave n'est pas sur notre map
+                        if (slave.getCurMap() != player.getCurMap()) {
+                            continue;
+                        }
+                        //Si l'esclave est en combat
+                        if (slave.getFight() != null) {
+                            continue;
+                        }
+
+                        //Verification recursives
+                        if (slave.getAccount() != null) {
+                            if (slave.getAccount().getGameClient() != null) {
+                                //On duplique la game action du maitre pour les slaves
+                                // slave.getAccount().getGameClient().gameParseDeplacementPacket(GA);
+                                try{
+                                    fight.joinFight(slave,guid);
+                                }
+                                catch(Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

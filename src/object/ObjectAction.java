@@ -150,6 +150,7 @@ public class ObjectAction {
                                     break;
                                 case 614://Exp�rience m�tier.
                                     JobStat job = player.getMetierByID(Integer.parseInt(arg0.split(";")[1]));
+                                    val = 50000;
                                     if (job == null) {
                                         isOk1 = false;
                                         isOk2 = false;
@@ -523,7 +524,7 @@ public class ObjectAction {
                             SocketManager.GAME_SEND_MESSAGE(player, "Vos ailes doivent être activer afin de poser un prisme.");
                             return;
                         }
-                        if (map0.noPrism || (subArea != null && (subArea.getId() == 9 || subArea.getId() == 95)) || map0.haveMobFix() || map0.getMobGroups().isEmpty()) {
+                        if (map0.mapNoPrism() || (subArea != null && (subArea.getId() == 9 || subArea.getId() == 95)) || map0.haveMobFix() || map0.getMobGroups().isEmpty()) {
                             SocketManager.GAME_SEND_MESSAGE(player, "Vous ne pouvez pas poser de prisme sur cette map.");
                             return;
                         }
@@ -610,7 +611,7 @@ public class ObjectAction {
                     case 26://Ajout d'objet.
                         if (player0.getFight() != null) return;
                         for (String i : arg.split(";")) {
-                            obj = World.world.getObjTemplate(Integer.parseInt(i.split(",")[0])).createNewItem(Integer.parseInt(i.split(",")[1]), false);
+                            obj = World.world.getObjTemplate(Integer.parseInt(i.split(",")[0])).createNewItem(Integer.parseInt(i.split(",")[1]), false,0);
                             if (player.addObjet(obj, true))
                                 World.world.addGameObject(obj, true);
                         }
@@ -724,6 +725,19 @@ public class ObjectAction {
                             return;
                         }
                         break;
+                    case 36 : // Mimibiote
+                    {
+                        if(player.getFight() != null) {
+                            player.sendMessage("Vous ne pouvez pas utiliser un Mimibiote en combat");
+                            return;
+                        }
+                        GameObject object1 = World.world.getObjTemplate(4).createNewItem(1, false,0);
+                        if (player.addObjet(object1, true))
+                            World.world.addGameObject(object1, true);
+                        SocketManager.GAME_SEND_Ow_PACKET(player);
+                        SocketManager.send(player, "XM");
+                        break;
+                    }
                 }
                 turn++;
             }
@@ -759,7 +773,7 @@ public class ObjectAction {
                     if (objectTemplate == null)
                         continue;
 
-                    GameObject newGameObject = objectTemplate.createNewItem(couple.second, true);
+                    GameObject newGameObject = objectTemplate.createNewItem(couple.second, true,0);
 
                     if (newGameObject == null)
                         continue;
